@@ -13,8 +13,8 @@ import { navbar_second } from "../utils/constant";
 
 const Footer = () => {
   return (
-    <div className="flex flex-col   ">
-      <div className="flex flex-col md:mx-24 border my-5 rounded-md p-3">
+    <div className="flex flex-col  p-3 md:p-0 ">
+      <div className="flex flex-col md:mx-24 border  my-5 rounded-md p-3">
         {navbar_second.map((navList, i) => (
           <div key={i} className="flex flex-wrap overflow-hidden">
             <span className="text-wrap">{navList.title}</span>
