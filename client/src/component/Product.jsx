@@ -7,11 +7,11 @@ import { Separator } from "@radix-ui/react-separator";
 
 const Product = () => {
   return (
-    <div className="flex flex-col gap-5 w-[43%]">
-      <div className="md:w-[400px] md:h-[400px]  lg:h-[550px] lg:w-[550px] overflow-hidden rounded-md border">
+    <div className="flex flex-col gap-5 md:w-[43%]">
+      <div className="md:w-[400px]  md:h-[400px]  lg:h-[550px] lg:w-[550px] overflow-hidden rounded-md border">
         <img src={product2} alt="" className="h-full w-full object-contain" />
       </div>
-      <div className="flex w-full gap-2  justify-between">
+      <div className="flex w-full gap-2 justify-between">
         <Button
           variant="outline"
           className="border-fuchsia-800 font-mier-bold font-semibold h-12 text-lg text-fuchsia-800 w-1/2"
@@ -29,7 +29,7 @@ const Product = () => {
         <h4 className="font-mier-demi font-semibold my-2 text-slate-800">
           Similar 4 products
         </h4>
-        <div className="flex w-full h-24 gap-2">
+        <div className="flex w-full h-20 md:h-24 gap-2">
           <img
             src={product1}
             alt=""

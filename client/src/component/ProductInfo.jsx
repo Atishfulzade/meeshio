@@ -1,15 +1,13 @@
 import React from "react";
 import { FaStar } from "react-icons/fa6";
-import { product2 } from "../assets";
 import { Button } from "@/components/ui/button";
 import { BsShopWindow } from "react-icons/bs";
 import { Progress } from "@/components/ui/progress";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 
 const ProductInfo = () => {
   return (
-    <div className="h-full w-[50%] flex flex-col gap-3">
+    <div className="h-full md:w-[50%] mt-8 md:mt-0 flex flex-col gap-3">
       {/* Product Title and Price */}
       <Card className="rounded-md border gap-2 p-3">
         <CardHeader>

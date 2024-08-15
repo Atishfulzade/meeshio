@@ -3,7 +3,7 @@ import { product1 } from "../assets";
 
 const ProductGallary = () => {
   return (
-    <div className="w-20 h-full flex gap-1 flex-col ">
+    <div className="md:w-20 w-8 h-8 flex-shrink-0 md:h-full flex gap-1 flex-col ">
       <img
         src={product1}
         alt=""

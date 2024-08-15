@@ -22,7 +22,7 @@ const SignInForm = () => {
     },
   });
   return (
-    <div className="md:h-fit pb-3 justify-center items-center w-[25%] mt-20 rounded-md overflow-hidden bg-white border">
+    <div className="md:h-fit pb-3 justify-center items-center md:w-[25%] w-[90%] mt-20 rounded-md overflow-hidden bg-white border">
       <img src={signIn} alt="Sign In" className="h-[44%] w-full" />
       <form
         onSubmit={formik.handleSubmit}

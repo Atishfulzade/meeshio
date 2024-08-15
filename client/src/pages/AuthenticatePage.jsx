@@ -7,7 +7,7 @@ const AuthenticatePage = () => {
   console.log(location);
 
   return (
-    <div className="flex justify-center items-center h-screen bg-[url('./assets/bg.svg')] backdrop-blur bg-white fill-background">
+    <div className="flex justify-center items-center h-screen w-full bg-[url('./assets/bg.svg')] backdrop-blur bg-white fill-background">
       <SignInForm />
     </div>
   );

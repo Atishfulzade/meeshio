@@ -2,9 +2,9 @@ import { Suspense, lazy, useEffect, useCallback } from "react";
 import { Routes, Route } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setIsMobile } from "./redux_store/identifyMobile";
+import Loader from "./component/Loader";
 
 // Lazy load components
-const Header = lazy(() => import("./component/Header"));
 const Home = lazy(() => import("./pages/Home"));
 const ProductPage = lazy(() => import("./pages/ProductPage"));
 const SignInForm = lazy(() => import("./component/SignInForm"));
@@ -49,7 +49,7 @@ function App() {
   }
 
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<Loader />}>
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={isMobile ? <MobileHome /> : <Home />} />
