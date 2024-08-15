@@ -5,6 +5,23 @@ import "swiper/css";
 import "swiper/css/thumbs";
 import { product1, product2, product3 } from "../assets"; // Ensure product1 is properly imported and optimized
 import SearchBar from "./SearchBar";
+import Cards from "./Cards";
+import { Button } from "@/components/ui/button";
+import { TbArrowsSort } from "react-icons/tb";
+import { FaAngleDown } from "react-icons/fa6";
+import { IoFilter } from "react-icons/io5";
+
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
+import { Separator } from "../components/ui/separator";
 
 const MobileHome = () => {
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
@@ -84,6 +101,196 @@ const MobileHome = () => {
             className="w-28 h-full object-cover border border-slate-600 rounded-lg"
           />
         </div>
+      </div>
+      <div className="flex flex-col">
+        <div className="flex border-2 justify-around">
+          <Drawer>
+            <DrawerTrigger asChild>
+              <div className="flex text-sm m-3 font-mier-demi gap-1 items-center">
+                <TbArrowsSort /> Sort
+              </div>
+            </DrawerTrigger>
+            <DrawerContent>
+              <div className="mx-auto w-full max-w-sm">
+                <DrawerHeader>
+                  <DrawerTitle>Move Goal</DrawerTitle>
+                  <DrawerDescription>
+                    Set your daily activity goal.
+                  </DrawerDescription>
+                </DrawerHeader>
+                <div className="p-4 pb-0">
+                  <div className="flex items-center justify-center space-x-2">
+                    hollo
+                    <div className="flex-1 text-center">
+                      <div className="text-7xl font-bold tracking-tighter">
+                        goal
+                      </div>
+                      <div className="text-[0.70rem] uppercase text-muted-foreground">
+                        Calories/day
+                      </div>
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="h-8 w-8 shrink-0 rounded-full"
+                      onClick={() => onClick(10)}
+                    >
+                      <span className="sr-only">Increase</span>
+                    </Button>
+                  </div>
+                  <div className="mt-3 h-[120px]">hello world</div>
+                </div>
+                <DrawerFooter>
+                  <Button>Submit</Button>
+                  <DrawerClose asChild>
+                    <Button variant="outline">Cancel</Button>
+                  </DrawerClose>
+                </DrawerFooter>
+              </div>
+            </DrawerContent>
+          </Drawer>
+          <Separator orientation="vertical" />
+          <Drawer>
+            <DrawerTrigger asChild>
+              <div className="flex text-sm m-3 font-mier-demi gap-1 items-center">
+                Category <FaAngleDown />
+              </div>
+            </DrawerTrigger>
+            <DrawerContent>
+              <div className="mx-auto w-full max-w-sm">
+                <DrawerHeader>
+                  <DrawerTitle>Move Goal</DrawerTitle>
+                  <DrawerDescription>
+                    Set your daily activity goal.
+                  </DrawerDescription>
+                </DrawerHeader>
+                <div className="p-4 pb-0">
+                  <div className="flex items-center justify-center space-x-2">
+                    hollo
+                    <div className="flex-1 text-center">
+                      <div className="text-7xl font-bold tracking-tighter">
+                        goal
+                      </div>
+                      <div className="text-[0.70rem] uppercase text-muted-foreground">
+                        Calories/day
+                      </div>
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="h-8 w-8 shrink-0 rounded-full"
+                      onClick={() => onClick(10)}
+                    >
+                      <span className="sr-only">Increase</span>
+                    </Button>
+                  </div>
+                  <div className="mt-3 h-[120px]">hello world</div>
+                </div>
+                <DrawerFooter>
+                  <Button>Submit</Button>
+                  <DrawerClose asChild>
+                    <Button variant="outline">Cancel</Button>
+                  </DrawerClose>
+                </DrawerFooter>
+              </div>
+            </DrawerContent>
+          </Drawer>
+          <Separator orientation="vertical" />
+          <Drawer>
+            <DrawerTrigger asChild>
+              <div className="flex text-sm m-3 font-mier-demi gap-1 items-center">
+                Gender <FaAngleDown />
+              </div>
+            </DrawerTrigger>
+            <DrawerContent>
+              <div className="mx-auto w-full max-w-sm">
+                <DrawerHeader>
+                  <DrawerTitle>Move Goal</DrawerTitle>
+                  <DrawerDescription>
+                    Set your daily activity goal.
+                  </DrawerDescription>
+                </DrawerHeader>
+                <div className="p-4 pb-0">
+                  <div className="flex items-center justify-center space-x-2">
+                    hollo
+                    <div className="flex-1 text-center">
+                      <div className="text-7xl font-bold tracking-tighter">
+                        goal
+                      </div>
+                      <div className="text-[0.70rem] uppercase text-muted-foreground">
+                        Calories/day
+                      </div>
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="h-8 w-8 shrink-0 rounded-full"
+                      onClick={() => onClick(10)}
+                    >
+                      <span className="sr-only">Increase</span>
+                    </Button>
+                  </div>
+                  <div className="mt-3 h-[120px]">hello world</div>
+                </div>
+                <DrawerFooter>
+                  <Button>Submit</Button>
+                  <DrawerClose asChild>
+                    <Button variant="outline">Cancel</Button>
+                  </DrawerClose>
+                </DrawerFooter>
+              </div>
+            </DrawerContent>
+          </Drawer>
+          <Separator orientation="vertical" />
+          <Drawer>
+            <DrawerTrigger asChild>
+              <div className="flex text-sm m-3 font-mier-demi gap-1 items-center">
+                <IoFilter /> Filter
+              </div>
+            </DrawerTrigger>
+            <DrawerContent>
+              <div className="mx-auto w-full max-w-sm">
+                <DrawerHeader>
+                  <DrawerTitle>Move Goal</DrawerTitle>
+                  <DrawerDescription>
+                    Set your daily activity goal.
+                  </DrawerDescription>
+                </DrawerHeader>
+                <div className="p-4 pb-0">
+                  <div className="flex items-center justify-center space-x-2">
+                    hollo
+                    <div className="flex-1 text-center">
+                      <div className="text-7xl font-bold tracking-tighter">
+                        goal
+                      </div>
+                      <div className="text-[0.70rem] uppercase text-muted-foreground">
+                        Calories/day
+                      </div>
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="h-8 w-8 shrink-0 rounded-full"
+                      onClick={() => onClick(10)}
+                    >
+                      <span className="sr-only">Increase</span>
+                    </Button>
+                  </div>
+                  <div className="mt-3 h-[120px]">hello world</div>
+                </div>
+                <DrawerFooter>
+                  <Button>Submit</Button>
+                  <DrawerClose asChild>
+                    <Button variant="outline">Cancel</Button>
+                  </DrawerClose>
+                </DrawerFooter>
+              </div>
+            </DrawerContent>
+          </Drawer>
+        </div>
+
+        <h4>Products for You</h4>
+        <Cards />
       </div>
     </div>
   );

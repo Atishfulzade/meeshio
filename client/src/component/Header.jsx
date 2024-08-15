@@ -176,6 +176,9 @@ const Header = () => {
         <div className="flex gap-5 md:hidden">
           <ImHeart size={22} className="text-red-600" />
           <HiMiniShoppingCart size={22} className="text-pink-600" />
+          <Badge className="absolute top-2 right-1 rounded-full bg-fuchsia-800 text-center w-4 h-4 flex p-1 ">
+            5
+          </Badge>
         </div>
       </div>
       {!ismobile && location.pathname !== "/user/authenticate" && (

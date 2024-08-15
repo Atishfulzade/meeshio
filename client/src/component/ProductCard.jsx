@@ -9,7 +9,7 @@ const ProductCard = () => {
     <div
       className={`border ${
         ismobile
-          ? "h-80 w-full mx-auto rounded-none border-collapse"
+          ? "h-80 w-1/2 mx-auto rounded-none border-collapse"
           : "h-96 w-[250px] rounded-md"
       }`}
     >
