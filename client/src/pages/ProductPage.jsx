@@ -7,7 +7,7 @@ import Cards from "../component/Cards";
 
 const ProductPage = () => {
   return (
-    <div className="flex w-full flex-col gap-3 px-24  mt-32">
+    <div className="flex w-full flex-col gap-3 px-24  mt-32 items-center">
       <div className="w-full flex  justify-between   h-full">
         <ProductGallary />
         <Product />

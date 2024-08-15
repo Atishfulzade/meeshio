@@ -160,6 +160,7 @@ const Header = () => {
               </HoverCard>
 
               <Link
+                to={"/cart"}
                 variant="link"
                 className="text-slate-800 font-mier-book text-[17px] font-normal justify-center items-center flex flex-col h-full"
               >

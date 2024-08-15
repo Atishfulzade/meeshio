@@ -14,10 +14,10 @@ import CategoryPage from "./pages/CategoryPage";
 import DashBoard from "./pages/DashBoard";
 import PaymentPage from "./pages/PaymentPage";
 import CartPage from "./pages/CartPage";
-
+import { useSelector } from "react-redux";
+import MobileHome from "./component/MobileHome";
 function App() {
   const dispatch = useDispatch();
-
   const updateIsMobile = useCallback(() => {
     const windowSize = window.innerWidth <= 768;
     dispatch(setIsMobile(windowSize));
@@ -43,12 +43,13 @@ function App() {
       timeout = setTimeout(later, wait);
     };
   }
+  const isMobile = useSelector((state) => state.identifyMobile.isMobile);
 
   return (
     <>
       <Routes>
         <Route path="/" element={<Layout />}>
-          <Route index element={<Home />} />
+          <Route index element={isMobile ? <MobileHome /> : <Home />} />
           <Route path="product/:productId" element={<ProductPage />} />
           <Route path="user/authenticate" element={<AuthenticatePage />} />
           <Route path="user/profile" element={<ProfilePage />} />

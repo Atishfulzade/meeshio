@@ -14,18 +14,17 @@ import { navbar_second } from "../utils/constant";
 const Footer = () => {
   return (
     <div className="flex flex-col   ">
-      <div className="flex flex-col md:mx-24 border my-5 text-wrap  rounded-md p-3 ">
-        {navbar_second.map((navList) => (
-          <div className="text-wrap flex overflow-hidden ">
-            <span className="whitespace-nowrap text-wrap">{navList.title}</span>
-            <div className="flex gap-2 text-wrap">
-              {navList.links.map((links) => (
-                <div className="flex gap-2 text-wrap">
-                  <span className="whitespace-nowrap text-wrap">
-                    {links.heading}
-                  </span>
-                  {links.category.map((list) => (
-                    <span className="whitespace-nowrap text-wrap">
+      <div className="flex flex-col md:mx-24 border my-5 rounded-md p-3">
+        {navbar_second.map((navList, i) => (
+          <div key={i} className="flex flex-wrap overflow-hidden">
+            <span className="text-wrap">{navList.title}</span>
+            <div className="flex flex-wrap gap-1">
+              {navList.links.map((links, index) => (
+                <div key={index} className="flex flex-wrap gap-2">
+                  <span className="flex">{links.heading}</span>
+
+                  {links.category.map((list, i) => (
+                    <span key={i} className="flex text-wrap break-words">
                       {list.title}
                     </span>
                   ))}
@@ -35,6 +34,7 @@ const Footer = () => {
           </div>
         ))}
       </div>
+
       <div className="flex w-full py-10 gap-3 md:px-24 justify-between bg-slate-100 ">
         <div className=" gap-5 flex flex-col">
           <h2 className="md:text-4xl font-mier-book  text-slate-800">

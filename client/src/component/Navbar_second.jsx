@@ -12,7 +12,6 @@ import SearchBar from "./SearchBar";
 import { useSelector } from "react-redux";
 const Navbar_second = () => {
   const ismobile = useSelector((state) => state.identifyMobile.isMobile);
-  console.log(ismobile);
 
   return (
     <div className="w-full h-12">
