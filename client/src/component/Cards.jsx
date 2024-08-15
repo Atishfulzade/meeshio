@@ -7,7 +7,7 @@ const Cards = ({ width }) => {
   return (
     <div
       className={`flex flex-wrap h-full justify-center ${
-        ismobile ? "gap-0 w-full" : `gap-3 ${width}`
+        ismobile ? "gap-0 w-full" : `gap-2 ${width}`
       }`}
     >
       {Array(12)

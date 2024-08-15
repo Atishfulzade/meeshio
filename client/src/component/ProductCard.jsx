@@ -7,10 +7,10 @@ const ProductCard = () => {
 
   return (
     <div
-      className={`border  ${
+      className={`border ${
         ismobile
-          ? "h-80 w-[50%] mx-auto rounded-none border-collapse"
-          : "h-96 w-[255px] rounded-md"
+          ? "h-80 w-full mx-auto rounded-none border-collapse"
+          : "h-96 w-[250px] rounded-md"
       }`}
     >
       <img src={product1} alt="" className="w-full h-[61%] object-contain" />

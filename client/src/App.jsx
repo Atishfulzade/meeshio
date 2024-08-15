@@ -1,23 +1,27 @@
-import Header from "./component/Header";
-import { useEffect, useCallback } from "react";
+import { Suspense, lazy, useEffect, useCallback } from "react";
 import { Routes, Route } from "react-router-dom";
-import Home from "./pages/Home";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setIsMobile } from "./redux_store/identifyMobile";
-import ProductPage from "./pages/ProductPage";
-import SignInForm from "./component/SignInForm";
-import Layout from "./component/Layout";
-import ErrorPage from "./pages/ErrorPage";
-import AuthenticatePage from "./pages/AuthenticatePage";
-import ProfilePage from "./pages/ProfilePage";
-import CategoryPage from "./pages/CategoryPage";
-import DashBoard from "./pages/DashBoard";
-import PaymentPage from "./pages/PaymentPage";
-import CartPage from "./pages/CartPage";
-import { useSelector } from "react-redux";
-import MobileHome from "./component/MobileHome";
+
+// Lazy load components
+const Header = lazy(() => import("./component/Header"));
+const Home = lazy(() => import("./pages/Home"));
+const ProductPage = lazy(() => import("./pages/ProductPage"));
+const SignInForm = lazy(() => import("./component/SignInForm"));
+const Layout = lazy(() => import("./component/Layout"));
+const ErrorPage = lazy(() => import("./pages/ErrorPage"));
+const AuthenticatePage = lazy(() => import("./pages/AuthenticatePage"));
+const ProfilePage = lazy(() => import("./pages/ProfilePage"));
+const CategoryPage = lazy(() => import("./pages/CategoryPage"));
+const DashBoard = lazy(() => import("./pages/DashBoard"));
+const PaymentPage = lazy(() => import("./pages/PaymentPage"));
+const CartPage = lazy(() => import("./pages/CartPage"));
+const MobileHome = lazy(() => import("./component/MobileHome"));
+
 function App() {
   const dispatch = useDispatch();
+  const isMobile = useSelector((state) => state.identifyMobile.isMobile);
+
   const updateIsMobile = useCallback(() => {
     const windowSize = window.innerWidth <= 768;
     dispatch(setIsMobile(windowSize));
@@ -43,10 +47,9 @@ function App() {
       timeout = setTimeout(later, wait);
     };
   }
-  const isMobile = useSelector((state) => state.identifyMobile.isMobile);
 
   return (
-    <>
+    <Suspense fallback={<div>Loading...</div>}>
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={isMobile ? <MobileHome /> : <Home />} />
@@ -62,7 +65,7 @@ function App() {
           <Route path="delete_account" element={<SignInForm />} />
         </Route>
       </Routes>
-    </>
+    </Suspense>
   );
 }
 

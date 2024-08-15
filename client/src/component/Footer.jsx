@@ -35,9 +35,9 @@ const Footer = () => {
         ))}
       </div>
 
-      <div className="flex w-full py-10 gap-3 md:px-24 justify-between bg-slate-100 ">
+      <div className="flex w-full py-10 gap-10 md:gap-3 px-3 md:p-0 md:px-24 flex-col md:flex-row justify-between bg-slate-100 ">
         <div className=" gap-5 flex flex-col">
-          <h2 className="md:text-4xl font-mier-book  text-slate-800">
+          <h2 className="md:text-4xl text-xl font-mier-book  text-slate-800">
             Shop Non-Stop on Meeshio
           </h2>
           <p className="text-lg text-slate-700 leading-5 font-mier">
@@ -45,10 +45,10 @@ const Footer = () => {
             Delivery
           </p>
           <div className="flex gap-3">
-            <Link className="bg-black w-44 p-2 h-14 rounded-md">
+            <Link className="bg-black w-32 h-11 md:w-44 p-2 md:h-14 rounded-md">
               <img src={playstore} alt="playstore" className="w-full" />
             </Link>
-            <Link className="bg-black w-44 p-2 h-14 rounded-md">
+            <Link className="bg-black w-32 h-11 md:w-44 p-2 md:h-14 rounded-md">
               <img src={appstore} alt="appstore" className="w-full" />
             </Link>
           </div>

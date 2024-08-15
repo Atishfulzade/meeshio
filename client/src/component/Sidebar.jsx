@@ -4,7 +4,7 @@ import FilterBar from "./FilterBar";
 
 const Sidebar = () => {
   return (
-    <div className="w-[210px] flex flex-col gap-3  h-fit">
+    <div className="w-[20%] bg-yellow-800 flex flex-col gap-3  h-fit">
       <ComboboxDemo />
       <FilterBar />
     </div>
