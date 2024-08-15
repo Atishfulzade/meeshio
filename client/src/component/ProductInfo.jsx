@@ -9,14 +9,14 @@ const ProductInfo = () => {
   return (
     <div className="h-full md:w-[50%] mt-8 md:mt-0 flex flex-col gap-3">
       {/* Product Title and Price */}
-      <Card className="rounded-md border gap-2 p-3">
-        <CardHeader>
-          <h3 className="font-mier-demi font-semibold text-lg line-clamp-2 text-slate-500">
+      <Card className="rounded-md border md:gap-2 md:p-3">
+        <CardHeader className="p-2">
+          <h3 className="font-mier-demi font-semibold  text-lg line-clamp-2 text-slate-500">
             Anti-Splash Expandable Head Nozzle Bathroom Tap Adjustable Splash
             Sprinkler Head Sprinkler Water Saving Device Faucet Regulator
           </h3>
         </CardHeader>
-        <CardContent className="flex flex-col gap-2">
+        <CardContent className="flex flex-col gap-2 p-2">
           <h3 className="text-3xl text-slate-700 font-mier-book font-medium">
             ₹68
           </h3>
@@ -27,7 +27,7 @@ const ProductInfo = () => {
             </span>
             11548 Reviews
           </div>
-          <span className="bg-slate-50 px-3 w-fit py-1 rounded-full text-xs md:text-sm text-slate-700">
+          <span className="bg-slate-100 px-3 h-fit w-fit py-1 rounded-full text-xs md:text-sm text-slate-700">
             Free Delivery
           </span>
         </CardContent>
