@@ -103,10 +103,10 @@ const MobileHome = () => {
         </div>
       </div>
       <div className="flex flex-col">
-        <div className="flex border-2 justify-around">
+        <div className="flex border-2 sticky top-0 justify-around z-30 bg-white">
           <Drawer>
             <DrawerTrigger asChild>
-              <div className="flex text-sm m-3 font-mier-demi gap-1 items-center">
+              <div className="flex text-sm w-[25%] justify-center py-3 border font-mier-demi gap-1 items-center">
                 <TbArrowsSort /> Sort
               </div>
             </DrawerTrigger>
@@ -152,7 +152,7 @@ const MobileHome = () => {
           <Separator orientation="vertical" />
           <Drawer>
             <DrawerTrigger asChild>
-              <div className="flex text-sm m-3 font-mier-demi gap-1 items-center">
+              <div className="flex text-sm w-[25%] justify-center py-3 border font-mier-demi gap-1 items-center">
                 Category <FaAngleDown />
               </div>
             </DrawerTrigger>
@@ -198,7 +198,7 @@ const MobileHome = () => {
           <Separator orientation="vertical" />
           <Drawer>
             <DrawerTrigger asChild>
-              <div className="flex text-sm m-3 font-mier-demi gap-1 items-center">
+              <div className="flex text-sm w-[25%] justify-center py-3 border font-mier-demi gap-1 items-center">
                 Gender <FaAngleDown />
               </div>
             </DrawerTrigger>
@@ -244,7 +244,7 @@ const MobileHome = () => {
           <Separator orientation="vertical" />
           <Drawer>
             <DrawerTrigger asChild>
-              <div className="flex text-sm m-3 font-mier-demi gap-1 items-center">
+              <div className="flex text-sm w-[25%] justify-center py-3 border font-mier-demi gap-1 items-center">
                 <IoFilter /> Filter
               </div>
             </DrawerTrigger>
