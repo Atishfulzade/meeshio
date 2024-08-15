@@ -79,29 +79,38 @@ const MobileHome = () => {
       </div>
       <div className="flex flex-col p-3 gap-2 w-full">
         <h3 className="font-mier-demi">Daily Deals</h3>
-        <div className="flex  h-28 overflow-x-auto w-full gap-2">
-          <img
-            src={product1}
-            alt=""
-            className="w-28 h-28 object-cover border border-slate-600 rounded-lg"
-          />
-          <img
-            src={product1}
-            alt=""
-            className="w-28 h-full object-cover border border-slate-600 rounded-lg"
-          />
-          <img
-            src={product1}
-            alt=""
-            className="w-28 h-full object-cover border border-slate-600 rounded-lg"
-          />
-          <img
-            src={product1}
-            alt=""
-            className="w-28 h-full object-cover border border-slate-600 rounded-lg"
-          />
+        <div className="flex h-28 overflow-x-auto w-full gap-2">
+          <div className="flex-shrink-0 w-28 h-full">
+            <img
+              src={product1}
+              alt=""
+              className="w-full h-full object-cover border border-slate-600 rounded-lg"
+            />
+          </div>
+          <div className="flex-shrink-0 w-28 h-full">
+            <img
+              src={product1}
+              alt=""
+              className="w-full h-full object-cover border border-slate-600 rounded-lg"
+            />
+          </div>
+          <div className="flex-shrink-0 w-28 h-full">
+            <img
+              src={product1}
+              alt=""
+              className="w-full h-full object-cover border border-slate-600 rounded-lg"
+            />
+          </div>
+          <div className="flex-shrink-0 w-28 h-full">
+            <img
+              src={product1}
+              alt=""
+              className="w-full h-full object-cover border border-slate-600 rounded-lg"
+            />
+          </div>
         </div>
       </div>
+
       <div className="flex flex-col">
         <div className="flex border-2 sticky top-0 justify-around z-30 bg-white">
           <Drawer>
