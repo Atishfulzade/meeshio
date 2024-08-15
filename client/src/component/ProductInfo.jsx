@@ -34,8 +34,8 @@ const ProductInfo = () => {
       </Card>
 
       {/* Select Size */}
-      <Card className="rounded-md border p-3">
-        <CardHeader>
+      <Card className="rounded-md border md:p-3 ">
+        <CardHeader className="p-2">
           <h3 className="text-lg font-semibold font-mier-bold text-slate-700">
             Select size
           </h3>
@@ -48,8 +48,8 @@ const ProductInfo = () => {
       </Card>
 
       {/* Product Details */}
-      <Card className="rounded-md border p-3">
-        <CardHeader>
+      <Card className="rounded-md border md:p-3">
+        <CardHeader className="p-2">
           <h3 className="text-lg font-semibold font-mier-bold text-slate-700">
             Product Details
           </h3>
@@ -69,12 +69,12 @@ const ProductInfo = () => {
 
       {/* Sold By */}
       <Card className="rounded-md border p-3">
-        <CardHeader>
+        <CardHeader className="p-2">
           <h3 className="text-lg font-semibold font-mier-bold text-slate-700">
             Sold By
           </h3>
         </CardHeader>
-        <CardContent className="flex items-center gap-3">
+        <CardContent className="flex items-center  gap-3">
           <BsShopWindow
             className="bg-blue-300 rounded-full h-16 w-16 p-3"
             fill="white"
@@ -108,19 +108,19 @@ const ProductInfo = () => {
 
       {/* Product Ratings & Reviews */}
       <Card className="rounded-md border p-3">
-        <CardHeader>
+        <CardHeader className="p-2">
           <h3 className="text-lg font-semibold font-mier-bold text-slate-700">
             Product Ratings & Reviews
           </h3>
         </CardHeader>
-        <CardContent className="flex justify-between gap-2">
-          <div className="flex flex-col items-center gap-1 justify-center  text-5xl text-green-500 w-[20%]">
+        <CardContent className="flex md:flex-row flex-col md:justify-between items-center justify-center gap-2">
+          <div className="flex md:flex-col flex-row  items-center md:gap-1 gap-5 justify-center  text-5xl text-green-500 w-[20%]">
             <h1 className="flex items-center gap-1">
               4.5 <FaStar size={24} />
             </h1>
-            <div className="text-xs font-mier-demi text-slate-600">
-              <p>7562 Ratings</p>
-              <p>2663 Reviews</p>
+            <div className="text-xs  font-mier-demi text-slate-600">
+              <p className="whitespace-nowrap">7562 Ratings</p>
+              <p className="whitespace-nowrap">2663 Reviews</p>
             </div>
           </div>
           <div className="flex flex-col w-[80%] gap-2">
