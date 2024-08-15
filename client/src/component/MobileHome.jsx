@@ -3,7 +3,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Thumbs, Autoplay } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/thumbs";
-import { product1 } from "../assets"; // Ensure product1 is properly imported and optimized
+import { product1, product2, product3 } from "../assets"; // Ensure product1 is properly imported and optimized
 import SearchBar from "./SearchBar";
 
 const MobileHome = () => {
@@ -25,7 +25,7 @@ const MobileHome = () => {
           autoplay={{ delay: 3000, disableOnInteraction: false }} // Autoplay after 3 seconds
           thumbs={{ swiper: thumbsSwiper }} // Connect the thumbs swiper
           modules={[Thumbs, Autoplay]} // Include Autoplay module
-          className="h-44 w-full"
+          className="h-[150px] w-full"
           onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)} // Track active slide
         >
           {slides.map((slide, index) => (
@@ -59,6 +59,31 @@ const MobileHome = () => {
           watchSlidesProgress
           className="mt-5"
         ></Swiper>
+      </div>
+      <div className="flex flex-col p-3 gap-2 w-full">
+        <h3 className="font-mier-demi">Daily Deals</h3>
+        <div className="flex  h-28 overflow-x-auto w-full gap-2">
+          <img
+            src={product1}
+            alt=""
+            className="w-28 h-28 object-cover border border-slate-600 rounded-lg"
+          />
+          <img
+            src={product1}
+            alt=""
+            className="w-28 h-full object-cover border border-slate-600 rounded-lg"
+          />
+          <img
+            src={product1}
+            alt=""
+            className="w-28 h-full object-cover border border-slate-600 rounded-lg"
+          />
+          <img
+            src={product1}
+            alt=""
+            className="w-28 h-full object-cover border border-slate-600 rounded-lg"
+          />
+        </div>
       </div>
     </div>
   );
