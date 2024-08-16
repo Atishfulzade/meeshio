@@ -116,3 +116,8 @@
   @apply appearance-none;
   -moz-appearance: textfield;
 }
+
+.active-step-class {
+  transition: all 0.3s ease;
+  background-color: fuchsia;
+}

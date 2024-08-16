@@ -59,7 +59,7 @@ function App() {
           <Route path="*" element={<ErrorPage />} />
           <Route path="category" element={<CategoryPage />} />
           <Route path="payment" element={<PaymentPage />} />
-          <Route path="Cart" element={<CartPage />} />
+          <Route path="checkout" element={<CartPage />} />
           <Route path="supplier/login" element={<SignInForm />} />
           <Route path="supplier/dashboard" element={<DashBoard />} />
           <Route path="delete_account" element={<SignInForm />} />

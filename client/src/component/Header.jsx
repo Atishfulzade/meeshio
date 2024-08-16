@@ -181,9 +181,9 @@ const Header = () => {
           </Badge>
         </div>
       </div>
-      {!ismobile && location.pathname !== "/user/authenticate" && (
-        <Navbar_second />
-      )}
+      {!ismobile &&
+        location.pathname !== "/user/authenticate" &&
+        location.pathname !== "/checkout" && <Navbar_second />}
       <Separator orientation="vertical" />
     </div>
   );
