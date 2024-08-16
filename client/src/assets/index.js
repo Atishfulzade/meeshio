@@ -39,14 +39,20 @@ import style3 from "./style3.webp";
 import assessories from "./assessories.webp";
 import electronics from "./electronics.webp";
 import footwear from "./footwear.webp";
+import securePayment from "./securePayment.png";
+import upi from "./upi.png";
+import cardPayment from "./cardPayment.png";
 export {
   meeshoLogo,
+  cardPayment,
+  upi,
   style1,
   style2,
   assessories,
   footwear,
   electronics,
   style3,
+  securePayment,
   playstore,
   playstore_small,
   star,
