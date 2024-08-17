@@ -49,7 +49,7 @@ const Cart = ({ nextStep }) => {
   return (
     <div className="mt-5 md:h-[86vh] md:px-24 gap-10 px-0 justify-center md:gap-3 md:flex-row flex-col  flex">
       {cart.length === 0 ? (
-        <div className="text-3xl font-mier-demi text-fuchsia-700 mt-10">
+        <div className="text-3xl text-center h-[20vh] font-mier-demi text-fuchsia-700 mt-10">
           Your Cart is Empty
         </div>
       ) : (

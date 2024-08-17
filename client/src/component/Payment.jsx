@@ -64,21 +64,30 @@ const Payment = ({ nextStep, prevStep }) => {
             <Accordion type="single" collapsible className="w-full">
               <AccordionItem value="item-1">
                 <AccordionTrigger>
-                  <span className="text-xl font-mier-book flex items-center gap-3">
+                  <span className="md:text-xl font-mier-book flex items-center gap-3">
                     {" "}
-                    <img src={cardPayment} alt="" className="h-7 w-7" /> Card
-                    Payment
+                    <img
+                      src={cardPayment}
+                      alt=""
+                      className="md:h-7 md:w-7 h-6 w-6"
+                    />{" "}
+                    Card Payment
                   </span>
                 </AccordionTrigger>
-                <AccordionContent className="text-lg cursor-pointer text-fuchsia-600 font-mier-demi">
+                <AccordionContent className="md:text-lg cursor-pointer text-fuchsia-600 font-mier-book">
                   Add Credit/Debit card{" "}
                 </AccordionContent>
               </AccordionItem>
               <AccordionItem value="item-2">
                 <AccordionTrigger>
-                  <span className="text-xl font-mier-book flex items-center gap-3">
+                  <span className="md:text-xl font-mier-book flex items-center gap-3">
                     {" "}
-                    <img src={upi} alt="" className="h-7 w-7" /> UPI
+                    <img
+                      src={upi}
+                      alt=""
+                      className="md:h-7 md:w-7 h-6 w-6"
+                    />{" "}
+                    UPI
                   </span>
                 </AccordionTrigger>
                 <AccordionContent>
