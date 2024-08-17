@@ -15,8 +15,10 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "../components/ui/button";
+import { useSelector } from "react-redux";
 
 const Address = ({ nextStep, prevStep }) => {
+  const isMobile = useSelector((state) => state.identifyMobile.isMobile);
   // Dummy address data
   const addressDetail = [
     {
@@ -49,16 +51,16 @@ const Address = ({ nextStep, prevStep }) => {
   };
 
   return (
-    <div className="mt-5 h-[74vh] md:px-24 w-full justify-center gap-3 flex">
-      <div className="flex flex-col gap-2 ">
+    <div className="mt-5 md:h-[86vh] w-full md:px-24  px-0 justify-center md:gap-3 md:flex-row flex-col  flex">
+      <div className="flex flex-col md:gap-2 w-full md:w-1/2">
         <span
           onClick={prevStep}
-          className="absolute top-24 left-10 border p-2 rounded-full cursor-pointer"
+          className="absolute md:top-24 top-16 md:left-10 left-3 border p-2 rounded-full cursor-pointer"
         >
           <IoMdArrowBack />
         </span>
-        <div className="flex justify-between ">
-          <h3 className="text-xl font-mier">Address Details</h3>
+        <div className="flex md:justify-between justify-center  md:flex-row flex-col p-3 md:p-0">
+          <h3 className="text-xl  my-2 font-mier-bold">Address Details</h3>
           <Dialog>
             <DialogTrigger asChild>
               <Button className="bg-fuchsia-700 hover:bg-fuchsia-800">
@@ -73,7 +75,7 @@ const Address = ({ nextStep, prevStep }) => {
                   done.
                 </DialogDescription>
               </DialogHeader>
-              <div className="grid gap-4 py-4">
+              <div className="grid gap-4 md:py-4">
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="name" className="text-right">
                     Name
@@ -101,7 +103,7 @@ const Address = ({ nextStep, prevStep }) => {
             </DialogContent>
           </Dialog>
         </div>
-        <div className="flex flex-col gap-2 h-full overflow-x-auto">
+        <div className="flex flex-col mt-20 gap-2 md:h-full ">
           <div className="p-3">
             <RadioGroup
               value={selectedAddress}
@@ -110,7 +112,7 @@ const Address = ({ nextStep, prevStep }) => {
               {addressDetail.map((address) => (
                 <div
                   key={address.id}
-                  className="flex border flex-col p-3 w-[400px] rounded-md gap-1 bg-slate-200 h-fit space-x-2 my-2"
+                  className="flex border flex-col p-3 md:w-[400px] w-full rounded-md gap-1 bg-slate-200 h-fit space-x-2 my-2"
                 >
                   <div className="flex items-start">
                     <RadioGroupItem
@@ -143,8 +145,8 @@ const Address = ({ nextStep, prevStep }) => {
           </div>
         </div>
       </div>
-      <Separator orientation="vertical" />
-      <div className="flex flex-col w-96">
+      {!isMobile && <Separator orientation="vertical" />}
+      <div className="flex flex-col md:w-96 w-full p-2 md:p-0">
         <h3 className="text-xl font-mier my-1">Product Details (2) products</h3>
         <div className="flex-col flex rounded-md font-mier-demi text-slate-600 border gap-3 p-3">
           <div className="flex text-lg justify-between">

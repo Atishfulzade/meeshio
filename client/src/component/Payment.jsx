@@ -43,16 +43,16 @@ const QRCodePayment = () => {
 
 const Payment = ({ nextStep, prevStep }) => {
   return (
-    <div className="mt-5 h-[86vh]  md:px-24 justify-center gap-3 flex">
-      <div className="flex flex-col w-1/2 gap-2">
+    <div className="mt-5 h-[86vh]  md:px-24 justify-center gap-3 flex md:flex-row flex-col">
+      <div className="flex flex-col md:w-1/2 gap-2 p-3 md:p-0">
         <span
           onClick={prevStep}
-          className="absolute top-24 left-10 border p-2 rounded-full"
+          className="absolute md:top-24 top-16 md:left-10 left-3 border p-2 rounded-full cursor-pointer"
         >
           <IoMdArrowBack />
         </span>
         <div className="flex flex-col border rounded-md p-3">
-          <div className="flex justify-between">
+          <div className="flex justify-between ">
             <h3 className="text-xl  font-mier-book">Select Payment Method</h3>
             <img
               src={securePayment}
@@ -60,7 +60,7 @@ const Payment = ({ nextStep, prevStep }) => {
               className="w-16 h-fit select-none"
             />
           </div>
-          <div className="flex">
+          <div className="flex ">
             <Accordion type="single" collapsible className="w-full">
               <AccordionItem value="item-1">
                 <AccordionTrigger>
@@ -90,7 +90,7 @@ const Payment = ({ nextStep, prevStep }) => {
         </div>
       </div>
       <Separator orientation="vertical" />
-      <div className="flex flex-col w-96">
+      <div className="flex flex-col md:w-96 p-3">
         <h3 className="text-xl font-mier my-1">Product Details (2) products</h3>
         <div className="flex-col flex rounded-md font-mier-demi text-slate-600 border gap-3 p-3 ">
           <div className="flex text-lg justify-between">

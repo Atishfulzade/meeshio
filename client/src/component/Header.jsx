@@ -187,7 +187,7 @@ const Header = () => {
           {cartValue.length < 1 ? (
             ""
           ) : (
-            <Badge className="absolute top-0 right-[-10px] rounded-full bg-fuchsia-800 text-center w-4 h-4 flex p-1 ">
+            <Badge className="absolute top-2 right-[5px] rounded-full bg-fuchsia-800 text-center w-4 h-4 flex p-1 ">
               {cartValue.length}
             </Badge>
           )}

@@ -47,7 +47,7 @@ const Cart = ({ nextStep }) => {
   };
 
   return (
-    <div className="mt-5 h-[86vh] md:px-24 justify-center gap-3 flex">
+    <div className="mt-5 md:h-[86vh] md:px-24 gap-10 px-0 justify-center md:gap-3 md:flex-row flex-col  flex">
       {cart.length === 0 ? (
         <div className="text-3xl font-mier-demi text-fuchsia-700 mt-10">
           Your Cart is Empty
@@ -56,11 +56,11 @@ const Cart = ({ nextStep }) => {
         <>
           <div className="flex flex-col gap-2">
             <h3 className="text-xl font-mier">Product Details</h3>
-            <div className="flex flex-col gap-2 h-full overflow-x-auto">
+            <div className="flex flex-col gap-2 h-full p-2 md:p-0">
               {cart.map((item, index) => (
                 <div
                   key={index}
-                  className="flex flex-col justify-between border w-[600px] min-w-[300px] rounded-md h-52"
+                  className="flex flex-col justify-between border md:w-[600px] min-w-[300px] rounded-md md:h-52"
                 >
                   <div className="flex p-3">
                     <img
@@ -72,16 +72,16 @@ const Cart = ({ nextStep }) => {
                       <h3 className="text-xl font-mier-demi text-slate-800 leading-5 flex-wrap line-clamp-2">
                         {item?.title}
                       </h3>
-                      <p className="line-clamp-1 font-mier-book">
+                      <p className="line-clamp-1 font-mier-book text-xs">
                         {item?.description}
                       </p>
-                      <div className="flex font-mier-demi w-full gap-4">
+                      <div className="flex font-mier-demi w-full flex-col md:flex-row md:gap-4">
                         <span className="whitespace-nowrap">
                           Price: ₹{item?.price}
                         </span>
-                        •<span>Selected Size: Free</span>•
+                        <span>•Selected Size: Free</span>
                         <div className="flex gap-2">
-                          Quantity:
+                          •Quantity:
                           <div className="flex select-none flex-shrink-0 text-sm overflow-hidden justify-around items-center border h-8 w-32 rounded-md">
                             <HiMinusSm
                               onClick={() => decreaseCount(index)}
@@ -131,11 +131,11 @@ const Cart = ({ nextStep }) => {
               ))}
             </div>
           </div>
-          <div className="flex flex-col w-96">
-            <h3 className="text-xl font-mier my-1">
+          <div className="flex flex-col md:w-96 w-full justify-center items-center ">
+            <h3 className="text-xl font-mier-bold my-1 text-left">
               Product Details ({cart.length}) products
             </h3>
-            <div className="flex-col flex rounded-md font-mier-demi text-slate-600 border gap-3 p-3">
+            <div className="flex-col flex rounded-md font-mier-demi   text-slate-600 border gap-3 p-3">
               <div className="flex text-lg justify-between">
                 <h4>Total Product price</h4>
                 <span>{cart.length} Quantity</span>

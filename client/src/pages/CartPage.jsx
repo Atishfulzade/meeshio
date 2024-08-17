@@ -6,7 +6,7 @@ const CartPage = () => {
   const steps = ["Cart", "Address", "Payment", "Summary"];
 
   return (
-    <div className="md:mt-20 px-24">
+    <div className="md:mt-20  md:px-24">
       <Stepper steps={steps} />;
     </div>
   );
