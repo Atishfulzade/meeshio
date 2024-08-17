@@ -22,6 +22,7 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { Separator } from "../components/ui/separator";
+import CardDisplay from "./CardDisplay";
 
 const MobileHome = () => {
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
@@ -298,8 +299,7 @@ const MobileHome = () => {
           </Drawer>
         </div>
 
-        <h4>Products for You</h4>
-        <Cards />
+        <CardDisplay />
       </div>
     </div>
   );

@@ -477,7 +477,7 @@ const filterData = [
     title: "Category",
     subCategory: [
       {
-        title: "Women T-shirt",
+        title: "Clothes",
       },
       {
         title: "Women Tops And Tunics",

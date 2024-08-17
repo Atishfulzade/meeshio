@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Separator } from "../components/ui/separator";
 import {
   Accordion,
@@ -6,15 +6,75 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Checkbox } from "@/components/ui/checkbox";
 import { filterData } from "../utils/constant";
 import SearchBar from "./SearchBar";
+import CategoryWithMore from "./CategoryWithMore";
 
-const FilterBar = () => {
-  const ITEMS_TO_SHOW = 10;
+const FilterBar = ({ products, setFilterProduct }) => {
+  const [selectedFilters, setSelectedFilters] = useState({});
+  const [searchInput, setSearchInput] = useState("");
+
+  // Apply filters whenever selectedFilters or products change
+  useEffect(() => {
+    applyFilters(selectedFilters);
+  }, [selectedFilters, products]);
+
+  const handleFilterChange = (filterCategory, filterValue) => {
+    setSelectedFilters((prevFilters) => {
+      const newFilters = { ...prevFilters };
+
+      if (!newFilters[filterCategory]) {
+        newFilters[filterCategory] = [];
+      }
+
+      if (newFilters[filterCategory].includes(filterValue)) {
+        newFilters[filterCategory] = newFilters[filterCategory].filter(
+          (value) => value !== filterValue
+        );
+        // If the filter array for a category is empty, remove the category from the filters
+        if (newFilters[filterCategory].length === 0) {
+          delete newFilters[filterCategory];
+        }
+      } else {
+        newFilters[filterCategory].push(filterValue);
+      }
+
+      return newFilters;
+    });
+  };
+
+  const applyFilters = (filters) => {
+    // If no filters are applied, show all products
+    if (Object.keys(filters).length === 0) {
+      setFilterProduct(products);
+      return;
+    }
+
+    const filterArray = Object.keys(filters).map((key) => ({
+      category: key,
+      values: filters[key],
+    }));
+
+    const filteredProducts = products?.filter((product) => {
+      return filterArray.every((filter) => {
+        if (filter.category === "Category") {
+          return filter.values.includes(product?.category?.name.toLowerCase());
+        }
+        if (filter.category === "Price") {
+          return filter.values.some((value) => {
+            const [min, max] = value.split("-").map(Number);
+            return product?.price >= min && product?.price <= max;
+          });
+        }
+        return true;
+      });
+    });
+
+    setFilterProduct(filteredProducts);
+  };
 
   return (
-    <div className="w-[300px] border rounded-md p-3">
+    <div className="w-full border rounded-md p-3">
       <div className="flex flex-col">
         <h4 className="text-slate-900 font-medium font-mier uppercase">
           Filters
@@ -30,46 +90,27 @@ const FilterBar = () => {
             <AccordionItem value={`item-${index}`}>
               <AccordionTrigger>{data.title}</AccordionTrigger>
               <AccordionContent className="flex flex-col gap-4">
-                {data.title === "Category" && <SearchBar width={"w-62"} />}
-                <CategoryWithMore subCategory={data.subCategory} />
+                {data.title === "Category" && (
+                  <SearchBar
+                    width={"w-62"}
+                    searchInput={searchInput}
+                    setSearchInput={setSearchInput}
+                  />
+                )}
+                <CategoryWithMore
+                  subCategory={data.subCategory}
+                  searchInput={searchInput}
+                  selectedFilters={selectedFilters}
+                  onFilterChange={(filterValue) => {
+                    handleFilterChange(data.title, filterValue);
+                  }}
+                />
               </AccordionContent>
             </AccordionItem>
           </Accordion>
         ))}
       </div>
     </div>
-  );
-};
-
-const CategoryWithMore = ({ subCategory }) => {
-  const [visibleCount, setVisibleCount] = useState(10);
-
-  const handleShowMore = () => {
-    setVisibleCount((prevCount) => prevCount + 10);
-  };
-
-  return (
-    <>
-      {subCategory.slice(0, visibleCount).map((subData, i) => (
-        <div className="flex items-center space-x-2" key={i}>
-          <Checkbox id={`terms${i}`} />
-          <label
-            htmlFor={`terms${i}`}
-            className="text-sm font-mier leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-          >
-            {subData.title}
-          </label>
-        </div>
-      ))}
-      {visibleCount < subCategory.length && (
-        <button
-          onClick={handleShowMore}
-          className="text-sm text-blue-600 hover:underline"
-        >
-          More
-        </button>
-      )}
-    </>
   );
 };
 
