@@ -5,11 +5,15 @@ import { HiMiniShoppingCart } from "react-icons/hi2";
 import { FaAngleDoubleRight } from "react-icons/fa";
 import { Separator } from "@radix-ui/react-separator";
 
-const Product = () => {
+const Product = ({ selectedImage }) => {
   return (
     <div className="flex flex-col gap-5 md:w-[43%]">
       <div className="md:w-[400px]  md:h-[400px]  lg:h-[550px] lg:w-[550px] overflow-hidden rounded-md border">
-        <img src={product2} alt="" className="h-full w-full object-contain" />
+        <img
+          src={selectedImage}
+          alt=""
+          className="h-full w-full object-contain"
+        />
       </div>
       <div className="flex w-full gap-2 justify-between">
         <Button
@@ -25,7 +29,7 @@ const Product = () => {
         </Button>
         <Separator orientation="horizantal" />
       </div>
-      <div className="flex flex-col">
+      {/* <div className="flex flex-col">
         <h4 className="font-mier-demi font-semibold my-2 text-slate-800">
           Similar 4 products
         </h4>
@@ -51,7 +55,7 @@ const Product = () => {
             className="w-20 object-contain h-full cursor-pointer"
           />
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

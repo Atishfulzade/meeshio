@@ -5,20 +5,19 @@ import { BsShopWindow } from "react-icons/bs";
 import { Progress } from "@/components/ui/progress";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 
-const ProductInfo = () => {
+const ProductInfo = ({ productDetails }) => {
   return (
     <div className="h-full md:w-[50%] mt-8 md:mt-0 flex flex-col gap-3">
       {/* Product Title and Price */}
       <Card className="rounded-md border md:gap-2 md:p-3">
         <CardHeader className="p-2">
           <h3 className="font-mier-demi font-semibold  text-lg line-clamp-2 text-slate-500">
-            Anti-Splash Expandable Head Nozzle Bathroom Tap Adjustable Splash
-            Sprinkler Head Sprinkler Water Saving Device Faucet Regulator
+            {productDetails?.title}
           </h3>
         </CardHeader>
         <CardContent className="flex flex-col gap-2 p-2">
           <h3 className="text-3xl text-slate-700 font-mier-book font-medium">
-            ₹68
+            ₹{productDetails?.price}
           </h3>
           <div className="flex items-center gap-2 text-xs md:text-sm text-slate-600">
             <span className="bg-green-600 text-white px-3 py-1 rounded-full flex items-center gap-1">
@@ -50,18 +49,19 @@ const ProductInfo = () => {
       {/* Product Details */}
       <Card className="rounded-md border md:p-3">
         <CardHeader className="p-2">
-          <h3 className="text-lg font-semibold font-mier-bold text-slate-700">
-            Product Details
+          <h3 className="  font-mier-bold text-slate-700">
+            {productDetails?.description}
           </h3>
         </CardHeader>
         <CardContent className="text-pretty">
           <p>
-            Name: Anti-Splash Expandable Head Nozzle Bathroom Tap Adjustable
-            Splash Sprinkler Head Sprinkler Water Saving Device Faucet Regulator
-            Material: Plastic Type: Nozzle Cock Installation Type: Single Handle
-            Installation Type Faucet Control: Handle Controlled Product Breadth:
-            0.5 Cm Product Height: 1 Cm Product Length: 1 Cm Net Quantity (N):
-            Pack Of 1
+            Name:{productDetails?.title} <br />
+            Material: Plastic <br />
+            Type: Nozzle Cock <br />
+            Installation Type: Single Handle Installation Type <br />
+            Faucet Control: Handle Controlled Product Breadth: 0.5 Cm Product{" "}
+            <br />
+            Height: 1 Cm Product Length: 1 Cm Net Quantity (N): Pack Of 1
           </p>
           <p className="mt-3">Manufactured in India</p>
         </CardContent>

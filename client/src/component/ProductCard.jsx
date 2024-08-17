@@ -2,12 +2,14 @@ import React from "react";
 import { product1, product2, product3 } from "../assets";
 import { FaStar } from "react-icons/fa";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 const ProductCard = ({ details }) => {
   const ismobile = useSelector((state) => state.identifyMobile.isMobile);
-
+  const navigate = useNavigate();
   return (
     <div
-      className={`border ${
+      onClick={() => navigate(`/product/${details?.id}`)}
+      className={`border cursor-pointer ${
         ismobile
           ? "h-80 w-1/2 mx-auto rounded-none border-collapse"
           : "h-96 w-[250px] rounded-md"
