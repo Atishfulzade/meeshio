@@ -1,26 +1,53 @@
-import React from "react";
-import { product1, product2, product3 } from "../assets";
+import React, { useEffect } from "react";
 import { Button } from "../components/ui/button";
 import { HiMiniShoppingCart } from "react-icons/hi2";
 import { FaAngleDoubleRight } from "react-icons/fa";
 import { Separator } from "@radix-ui/react-separator";
 import { Loader } from "lucide-react";
+import { useDispatch, useSelector } from "react-redux";
+import { updateCart } from "/src/redux_store/userInfoSlice.js"; // Make sure the path is correct
 
 const Product = ({ selectedImage, productDetails }) => {
+  const dispatch = useDispatch();
+  const cart = useSelector((state) => state.userInfo.cart);
+
+  // Retrieve cart from localStorage when the component mounts
+  useEffect(() => {
+    const storedCart = localStorage.getItem("cart");
+    if (storedCart) {
+      dispatch(updateCart(JSON.parse(storedCart)));
+    }
+  }, [dispatch]);
+
+  const addCart = () => {
+    // Add the product to the existing cart
+    const updatedCart = [...cart, productDetails];
+
+    // Dispatch the updated cart to Redux
+    dispatch(updateCart(updatedCart));
+
+    // Store the updated cart in localStorage
+    localStorage.setItem("cart", JSON.stringify(updatedCart));
+
+    alert("Product added to cart");
+  };
+
   if (!productDetails) {
-    return <Loader />;
+    return <Loader className="m-auto" />;
   }
+
   return (
     <div className="flex flex-col gap-5 md:w-[43%]">
-      <div className="md:w-[400px]  md:h-[400px]  lg:h-[550px] lg:w-[550px] overflow-hidden rounded-md border">
+      <div className="md:w-[400px] md:h-[400px] lg:h-[550px] lg:w-[550px] overflow-hidden rounded-md border">
         <img
           src={selectedImage || productDetails?.images[0]}
-          alt=""
+          alt={productDetails?.title}
           className="h-full w-full object-contain"
         />
       </div>
       <div className="flex md:w-[550px] gap-2 justify-between">
         <Button
+          onClick={addCart}
           variant="outline"
           className="border-fuchsia-800 font-mier-bold font-semibold h-12 text-lg text-fuchsia-800 w-1/2"
         >
@@ -31,35 +58,8 @@ const Product = ({ selectedImage, productDetails }) => {
           <FaAngleDoubleRight size={20} className="mr-2" />
           Buy Now
         </Button>
-        <Separator orientation="horizantal" />
+        <Separator orientation="horizontal" />
       </div>
-      {/* <div className="flex flex-col">
-        <h4 className="font-mier-demi font-semibold my-2 text-slate-800">
-          Similar 4 products
-        </h4>
-        <div className="flex w-full h-20 md:h-24 gap-2">
-          <img
-            src={product1}
-            alt=""
-            className="w-20 object-contain h-full cursor-pointer"
-          />
-          <img
-            src={product2}
-            alt=""
-            className="w-20 object-contain h-full cursor-pointer"
-          />
-          <img
-            src={product1}
-            alt=""
-            className="w-20 object-contain h-full cursor-pointer"
-          />
-          <img
-            src={product3}
-            alt=""
-            className="w-20 object-contain h-full cursor-pointer"
-          />
-        </div>
-      </div> */}
     </div>
   );
 };

@@ -20,12 +20,12 @@ import {
 import { Link } from "react-router-dom";
 import Navbar_second from "./Navbar_second";
 import SearchBar from "./SearchBar";
-
 const Header = () => {
   const ismobile = useSelector((state) => state.identifyMobile.isMobile);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  const cartValue = useSelector((state) => state.userInfo.cart);
   return (
     <div className="w-full bg-white fixed top-0 left-0 z-30 flex flex-col ">
       <div className="flex w-full gap-3 justify-between items-center  h-14 md:h-[70px] md:border-b-2 px-3 md:px-24 md:py-2  py-2">
@@ -160,25 +160,37 @@ const Header = () => {
               </HoverCard>
 
               <Link
-                to={"/cart"}
+                to={"/checkout"}
                 variant="link"
                 className="text-slate-800 font-mier-book text-[17px] font-normal justify-center items-center flex flex-col h-full"
               >
                 <PiShoppingCart size={20} />
                 Cart
               </Link>
-              <Badge className="absolute top-0 right-[-10px] rounded-full bg-fuchsia-800 text-center w-4 h-4 flex p-1 ">
-                5
-              </Badge>
+              {cartValue.length < 1 ? (
+                ""
+              ) : (
+                <Badge className="absolute top-0 right-[-10px] rounded-full bg-fuchsia-800 text-center w-4 h-4 flex p-1 ">
+                  {cartValue.length}
+                </Badge>
+              )}
             </div>
           )}
         </div>
         <div className="flex gap-5 md:hidden">
           <ImHeart size={22} className="text-red-600" />
-          <HiMiniShoppingCart size={22} className="text-pink-600" />
-          <Badge className="absolute top-2 right-1 rounded-full bg-fuchsia-800 text-center w-4 h-4 flex p-1 ">
-            5
-          </Badge>
+          <HiMiniShoppingCart
+            onClick={() => navigate("/checkout")}
+            size={22}
+            className="text-pink-600"
+          />
+          {cartValue.length < 1 ? (
+            ""
+          ) : (
+            <Badge className="absolute top-0 right-[-10px] rounded-full bg-fuchsia-800 text-center w-4 h-4 flex p-1 ">
+              {cartValue.length}
+            </Badge>
+          )}
         </div>
       </div>
       {!ismobile &&
