@@ -22,10 +22,11 @@ const ProductPage = () => {
   return (
     <div className="flex w-full flex-col gap-3 md:px-24 p-3  md:mt-32 mt-11 items-center">
       <div className="w-full flex md:flex-row flex-col  md:justify-between  justify-center  h-full">
-        <div className="flex justify-between  gap-2">
+        <div className="flex md:justify-start md:w-[50%]  gap-2">
           <ProductGallary
             productDetails={productDetails}
             setSelectedImage={setSelectedImage}
+            selectedImage={selectedImage}
           />
           <Product
             productDetails={productDetails}

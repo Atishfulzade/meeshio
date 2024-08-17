@@ -4,18 +4,22 @@ import { Button } from "../components/ui/button";
 import { HiMiniShoppingCart } from "react-icons/hi2";
 import { FaAngleDoubleRight } from "react-icons/fa";
 import { Separator } from "@radix-ui/react-separator";
+import { Loader } from "lucide-react";
 
-const Product = ({ selectedImage }) => {
+const Product = ({ selectedImage, productDetails }) => {
+  if (!productDetails) {
+    return <Loader />;
+  }
   return (
     <div className="flex flex-col gap-5 md:w-[43%]">
       <div className="md:w-[400px]  md:h-[400px]  lg:h-[550px] lg:w-[550px] overflow-hidden rounded-md border">
         <img
-          src={selectedImage}
+          src={selectedImage || productDetails?.images[0]}
           alt=""
           className="h-full w-full object-contain"
         />
       </div>
-      <div className="flex w-full gap-2 justify-between">
+      <div className="flex md:w-[550px] gap-2 justify-between">
         <Button
           variant="outline"
           className="border-fuchsia-800 font-mier-bold font-semibold h-12 text-lg text-fuchsia-800 w-1/2"
