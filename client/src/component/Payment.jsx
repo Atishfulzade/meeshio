@@ -263,13 +263,12 @@ const Payment = ({
           </div>
           <div className="flex text-lg justify-between">
             <h4>Discount</h4>
-            <span>-{discountPercentage}%</span>
-            <span>-₹ {discountedPrice}</span>
+            <span>-₹ {(discountPercentage * totalPrice).toFixed(2)}</span>
           </div>
           <Separator orientation="horizontal" />
           <div className="flex justify-between text-lg font-mier">
             <h4>Total Amount</h4>
-            <span>₹ {totalPrice - discountedPrice}</span>
+            <span>₹ {discountedPrice.toFixed(2)}</span>
           </div>
           <Button
             onClick={nextStep}

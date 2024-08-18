@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { IoMenu } from "react-icons/io5";
 import { appstore, meeshoLogo, playstore, product2 } from "../assets";
 import { ImHeart } from "react-icons/im";
@@ -7,8 +7,7 @@ import { Button } from "../components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { FaRegUser } from "react-icons/fa6";
 import { HiOutlineShoppingBag } from "react-icons/hi2";
-import { PiShoppingCart } from "react-icons/pi";
-import { PiDeviceMobile } from "react-icons/pi";
+import { PiShoppingCart, PiDeviceMobile } from "react-icons/pi";
 import { useDispatch, useSelector } from "react-redux";
 import { Badge } from "@/components/ui/badge";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -23,23 +22,35 @@ import SearchBar from "./SearchBar";
 import { setIsLoggedIn } from "../redux_store/logInSlice";
 import { signOut } from "firebase/auth";
 import { auth } from "../../firebaseConfig";
+import { useToast } from "@/components/ui/use-toast"; // Import useToast
+
 const Header = () => {
   const ismobile = useSelector((state) => state.identifyMobile.isMobile);
   const isLoggedIn = useSelector((state) => state.loggedIn.isLoggedIn);
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { toast } = useToast(); // Use the toast hook
 
   const cartValue = useSelector((state) => state.userInfo.cart);
+
   const userSignOut = async () => {
     try {
       await signOut(auth); // Wait for the sign out to complete
       dispatch(setIsLoggedIn(false)); // Dispatch the logout action
-      alert("User signed out"); // Show a sign-out alert
+      toast({
+        title: "Signed Out",
+        description: "You have been successfully signed out.",
+        variant: "success",
+      });
       navigate("/"); // Navigate to the homepage
     } catch (error) {
       console.error("Error signing out:", error); // Handle potential sign-out errors
-      alert("Failed to sign out. Please try again.");
+      toast({
+        title: "Sign Out Failed",
+        description: "Failed to sign out. Please try again.",
+        variant: "error",
+      });
     }
   };
 
@@ -160,7 +171,14 @@ const Header = () => {
                         </div>
                       )}
                       <Separator variant="horizantal" className="my-2" />
-                      <Link className="flex gap-3 items-center h-10 text-[18px]">
+                      <Link
+                        to={
+                          isLoggedIn
+                            ? navigate("/orders")
+                            : navigate("/user/authenticate")
+                        }
+                        className="flex gap-3 items-center h-10 text-[18px]"
+                      >
                         <HiOutlineShoppingBag /> My orders
                       </Link>
                       <Separator variant="horizantal" />

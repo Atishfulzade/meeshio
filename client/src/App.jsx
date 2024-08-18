@@ -16,6 +16,7 @@ const DashBoard = lazy(() => import("./pages/DashBoard"));
 const PaymentPage = lazy(() => import("./pages/PaymentPage"));
 const CartPage = lazy(() => import("./pages/CartPage"));
 const MobileHome = lazy(() => import("./component/MobileHome"));
+const OrdersPage = lazy(() => import("./pages/OrdersPage"));
 
 function App() {
   const dispatch = useDispatch();
@@ -58,8 +59,9 @@ function App() {
           <Route path="*" element={<ErrorPage />} />
           <Route path="category" element={<CategoryPage />} />
           <Route path="payment" element={<PaymentPage />} />
-          <Route path="checkout" element={<CartPage />} />
           <Route path="supplier/login" element={<SignInForm />} />
+          <Route path="checkout" element={<CartPage />} />
+          <Route path="orders" element={<OrdersPage />} />
           <Route path="supplier/dashboard" element={<DashBoard />} />
           <Route path="delete_account" element={<SignInForm />} />
         </Route>

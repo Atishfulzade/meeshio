@@ -8,6 +8,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { updateCart, removeFromCart } from "../redux_store/userInfoSlice";
 import { useNavigate } from "react-router-dom";
 import { Separator } from "@radix-ui/react-separator";
+import { useToast } from "../components/ui/use-toast"; // Import useToast
 
 const Cart = ({
   nextStep,
@@ -19,7 +20,7 @@ const Cart = ({
   const cart = useSelector((state) => state.userInfo.cart);
   const navigate = useNavigate();
   const isLoggedIn = useSelector((state) => state.loggedIn.isLoggedIn);
-  // Calculate total price
+  const { toast } = useToast(); // Initialize toast
 
   // Function to handle increasing the quantity
   const increaseCount = (index) => {
@@ -45,10 +46,15 @@ const Cart = ({
   const removeItem = (index) => {
     const updatedCart = cart.filter((_, idx) => idx !== index);
     dispatch(updateCart(updatedCart));
+    toast({
+      title: "Item Removed",
+      description: "The item has been removed from your cart.",
+      status: "success",
+    });
   };
 
   return (
-    <div className="mt-5 md:h-[86vh] md:px-24 gap-10 px-0 justify-center md:gap-3 md:flex-row flex-col  flex">
+    <div className="mt-5 md:h-[86vh] md:px-24 gap-10 px-0 justify-center md:gap-3 md:flex-row flex-col flex">
       {cart.length === 0 ? (
         <div className="text-3xl text-center h-[20vh] font-mier-demi text-fuchsia-700 mt-10">
           Your Cart is Empty
@@ -136,7 +142,7 @@ const Cart = ({
             <h3 className="text-xl font-mier-bold my-1 text-left">
               Product Details ({cart.length}) products
             </h3>
-            <div className="flex-col flex rounded-md font-mier-demi   text-slate-600 border gap-3 p-3">
+            <div className="flex-col flex rounded-md font-mier-demi text-slate-600 border gap-3 p-3">
               <div className="flex text-lg justify-between">
                 <h4>Total Product price</h4>
                 <span>{cart.length} Quantity</span>
@@ -162,9 +168,18 @@ const Cart = ({
               <Button
                 onClick={() => {
                   if (isLoggedIn) {
+                    toast({
+                      title: "Proceeding to Checkout",
+                      description: "You are being redirected to the next step.",
+                      status: "success",
+                    });
                     nextStep();
                   } else {
-                    alert("Please log in");
+                    toast({
+                      title: "Login Required",
+                      description: "Please log in to proceed.",
+                      status: "error",
+                    });
                     navigate("/user/authenticate");
                   }
                 }}
