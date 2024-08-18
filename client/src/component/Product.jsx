@@ -3,7 +3,7 @@ import { Button } from "../components/ui/button";
 import { HiMiniShoppingCart } from "react-icons/hi2";
 import { FaAngleDoubleRight } from "react-icons/fa";
 import { Separator } from "@radix-ui/react-separator";
-import { Loader } from "lucide-react";
+import Loader from "./Loader";
 import { useDispatch, useSelector } from "react-redux";
 import { updateCart } from "/src/redux_store/userInfoSlice.js"; // Make sure the path is correct
 import { useToast } from "@/components/ui/use-toast";

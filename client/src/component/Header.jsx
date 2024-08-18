@@ -1,12 +1,11 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { IoMenu } from "react-icons/io5";
-import { appstore, meeshoLogo, playstore, product2 } from "../assets";
+import { appstore, avatar, meeshoLogo, playstore } from "../assets";
 import { ImHeart } from "react-icons/im";
 import { HiMiniShoppingCart } from "react-icons/hi2";
 import { Button } from "../components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { FaRegUser } from "react-icons/fa6";
-import { HiOutlineShoppingBag } from "react-icons/hi2";
 import { PiShoppingCart, PiDeviceMobile } from "react-icons/pi";
 import { useDispatch, useSelector } from "react-redux";
 import { Badge } from "@/components/ui/badge";
@@ -20,32 +19,54 @@ import { Link } from "react-router-dom";
 import Navbar_second from "./Navbar_second";
 import SearchBar from "./SearchBar";
 import { setIsLoggedIn } from "../redux_store/logInSlice";
-import { signOut } from "firebase/auth";
+import { signOut, onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../firebaseConfig";
-import { useToast } from "@/components/ui/use-toast"; // Import useToast
+import { useToast } from "@/components/ui/use-toast";
+import { HiOutlineShoppingBag } from "react-icons/hi";
 
 const Header = () => {
+  const [user, setUser] = useState(null); // State to store user info
   const ismobile = useSelector((state) => state.identifyMobile.isMobile);
   const isLoggedIn = useSelector((state) => state.loggedIn.isLoggedIn);
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { toast } = useToast(); // Use the toast hook
+  const { toast } = useToast();
 
   const cartValue = useSelector((state) => state.userInfo.cart);
 
+  // Fetch user details from Firebase Auth
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      if (currentUser) {
+        setUser({
+          displayName: currentUser.displayName,
+          photoURL: currentUser.photoURL,
+          email: currentUser.email,
+        });
+        dispatch(setIsLoggedIn(true));
+      } else {
+        setUser(null);
+        dispatch(setIsLoggedIn(false));
+      }
+    });
+
+    return () => unsubscribe(); // Cleanup the listener
+  }, [dispatch]);
+
   const userSignOut = async () => {
     try {
-      await signOut(auth); // Wait for the sign out to complete
-      dispatch(setIsLoggedIn(false)); // Dispatch the logout action
+      await signOut(auth);
+      dispatch(setIsLoggedIn(false));
+      setUser(null);
       toast({
         title: "Signed Out",
         description: "You have been successfully signed out.",
         variant: "success",
       });
-      navigate("/"); // Navigate to the homepage
+      navigate("/");
     } catch (error) {
-      console.error("Error signing out:", error); // Handle potential sign-out errors
+      console.error("Error signing out:", error);
       toast({
         title: "Sign Out Failed",
         description: "Failed to sign out. Please try again.",
@@ -139,25 +160,27 @@ const Header = () => {
                     </Button>
                   </HoverCardTrigger>
                   <HoverCardContent className="w-fit mt-[5px]">
-                    <div className="flex relative    justify-between flex-col space-x-3 gap-1 ">
-                      {isLoggedIn ? (
+                    <div className="flex relative justify-between flex-col space-x-3 gap-1 ">
+                      {user ? (
                         <div className="flex flex-col">
                           <h4 className="text-lg font-semibold text-left">
-                            Hello Atish
+                            Hello, {user.displayName}
                           </h4>
                           <div className="flex gap-1 font-medium items-center">
                             <img
-                              src={product2}
-                              alt=""
+                              src={user.photoURL || avatar}
+                              alt="User Avatar"
                               className="h-10 w-10 border rounded-full"
                             />
-                            <h5 className="text-sm">+91 7028415550</h5>
+                            <h5 className="text-sm">
+                              {user.displayName || user.email}
+                            </h5>
                           </div>
                         </div>
                       ) : (
                         <div className="flex flex-col">
                           <h4 className="text-lg font-semibold text-left">
-                            Hello user
+                            Hello, user
                           </h4>
                           <p className="text-sm my-2">
                             To access your Meesho account
@@ -179,7 +202,7 @@ const Header = () => {
                         Delete account
                       </Link>
                       <Separator variant="horizantal" />
-                      {isLoggedIn ? (
+                      {user ? (
                         <Link
                           className="flex gap-3 items-center h-10 text-[18px]"
                           to={"/"}
@@ -205,7 +228,7 @@ const Header = () => {
                 {cartValue.length < 1 ? (
                   ""
                 ) : (
-                  <Badge className="absolute top-0 right-[-10px] rounded-full bg-fuchsia-800 text-center w-4 h-4 flex p-1 ">
+                  <Badge className="bg-fuchsia-600 text-white text-xs absolute top-[0px] right-0">
                     {cartValue.length}
                   </Badge>
                 )}
@@ -213,26 +236,8 @@ const Header = () => {
             )}
           </div>
         )}
-        <div className="flex gap-5 md:hidden">
-          <ImHeart size={22} className="text-red-600" />
-          <HiMiniShoppingCart
-            onClick={() => navigate("/checkout")}
-            size={22}
-            className="text-pink-600"
-          />
-          {cartValue.length < 1 ? (
-            ""
-          ) : (
-            <Badge className="absolute top-2 right-[5px] rounded-full bg-fuchsia-800 text-center w-4 h-4 flex p-1 ">
-              {cartValue.length}
-            </Badge>
-          )}
-        </div>
       </div>
-      {!ismobile &&
-        location.pathname !== "/user/authenticate" &&
-        location.pathname !== "/checkout" && <Navbar_second />}
-      <Separator orientation="vertical" />
+      <Navbar_second />
     </div>
   );
 };

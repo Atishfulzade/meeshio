@@ -3,7 +3,7 @@ import Sidebar from "./Sidebar";
 import { useSelector } from "react-redux";
 import Cards from "./Cards";
 import { getData } from "../utils/fetchData";
-
+import Loader from "./Loader";
 const CardDisplay = () => {
   const ismobile = useSelector((state) => state.identifyMobile.isMobile);
   const [products, setProducts] = useState([]);
@@ -62,7 +62,9 @@ const CardDisplay = () => {
         {products.length > 0 ? (
           <Cards width={"w-[80%]"} products={filterProduct} />
         ) : (
-          <p>Loading...</p>
+          <div className="flex h-full w-full justify-center items-center">
+            <Loader />
+          </div>
         )}
       </div>
     </div>

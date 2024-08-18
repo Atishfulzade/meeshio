@@ -42,12 +42,14 @@ import footwear from "./footwear.webp";
 import securePayment from "./securePayment.png";
 import upi from "./upi.png";
 import cardPayment from "./cardPayment.png";
+import avatar from "./user.png";
 export {
   meeshoLogo,
   cardPayment,
   upi,
   style1,
   style2,
+  avatar,
   assessories,
   footwear,
   electronics,

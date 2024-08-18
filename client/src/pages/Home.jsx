@@ -42,22 +42,22 @@ const Home = () => {
     <div
       className={`${
         ismobile ? "hidden" : "flex"
-      }  gap-10 flex-col px-24   overflow-hidden`}
+      }  gap-10 flex-col px-24 md:px-8  overflow-hidden`}
     >
-      <div className="flex  gap-10 flex-col px-24 pt-16 mt-28 ">
+      <div className="flex  gap-10 flex-col md:px-10 lg:px-24 pt-16 mt-28 ">
         <div className="flex relative w-full  bg-slate-100 rounded-md overflow-hidden">
           <div className="flex flex-col justify-between w-1/2 p-9">
-            <h1 className=" whitespace-nowrap leading-tight font-mier-bold text-[44px] text-slate-700 font-semibold">
+            <h1 className=" whitespace-nowrap lg:leading-tight md:leading-6 font-mier-bold md:text-2xl lg:text-[44px] text-slate-700 font-semibold">
               Lowest Prices
               <br />
               Best Quality Shopping
             </h1>
-            <div className="flex bg-white justify-around items-center rounded-sm w-full h-16  p-3">
-              <div className="flex gap-3 leading-5 text-[15px] p-2 font-mier-bold justify-center items-center h-full">
+            <div className="flex bg-white md:mt-5 justify-around items-center rounded-sm w-full h-16  p-3">
+              <div className="flex gap-3 leading-5 lg:text-[15px] md:text-xs p-2 font-mier-bold justify-center items-center h-full">
                 <img
                   src={free_delivery_jamun}
                   alt="Free delivery icon"
-                  className="rounded-full h-8 w-8 overflow-hidden bg-black"
+                  className="rounded-full lg:h-8 lg:w-8 md:h-6 md:w-6 overflow-hidden bg-black"
                 />
                 Free
                 <br />
@@ -98,14 +98,14 @@ const Home = () => {
           </h1>
           <span className="h-[1px] w-64 bg-fuchsia-700" />
         </div>
-        <div className="w-fit relative">
+        <div className="w-full relative ">
           <img
             src={category_banner}
             alt="Category banner"
             className="rounded-sm w-full"
           />
-          <div className="absolute bottom-10 mx-auto left-4 flex w-full items-end object-contain gap-5">
-            <img src={categories1} alt="Category 1" className="w-full" />
+          <div className="absolute bottom-5 p-4  justify-between flex w-full items-end ">
+            <img src={categories1} alt="Category 1" className="w-[520px]" />
             <img
               src={categories2}
               alt="Category 2"
@@ -118,36 +118,48 @@ const Home = () => {
             />
           </div>
         </div>
-        <div className="w-fit relative rounded overflow-hidden">
+        <div className="w-full relative rounded overflow-hidden">
           <img
             src={essentialBanner}
             alt="Essential products banner"
-            className="rounded-sm"
+            className="rounded-sm w-full"
           />
           <img
             src={view_all_btn}
             alt="View all button"
             className="absolute cursor-pointer left-24 top-[50%]"
           />
-          <div className="absolute bottom-12 justify-end right-14 flex w-full  gap-5">
+          <div className="absolute bottom-12 justify-end right-14 flex w-full  gap-10">
             <div className="flex flex-col">
-              <img src={essential1} alt="Essential product 1" />
+              <img
+                src={essential1}
+                alt="Essential product 1"
+                className="w-52"
+              />
               <img
                 src={home_decor}
                 alt="Home decor"
-                className="cursor-pointer"
+                className="cursor-pointer w-52"
               />
             </div>
             <div className="flex flex-col">
-              <img src={essential2} alt="Essential product 2" />
+              <img
+                src={essential2}
+                alt="Essential product 2"
+                className="w-52"
+              />
               <img
                 src={kitchen_appliences}
                 alt="Kitchen appliances"
-                className="cursor-pointer"
+                className="cursor-pointer w-52"
               />
             </div>
             <div className="flex flex-col">
-              <img src={essential3} alt="Essential product 3" />
+              <img
+                src={essential3}
+                alt="Essential product 3"
+                className="w-52"
+              />
               <img
                 src={health_care}
                 alt="Health care products"
@@ -156,45 +168,49 @@ const Home = () => {
             </div>
           </div>
         </div>
-        <div className="w-fit relative rounded-sm">
+        <div className="w-full relative rounded-sm">
           <img
             src={style_banner}
             alt="Style products banner"
-            className="rounded-sm"
+            className="rounded-sm w-full"
           />
           <img
             src={view_all_btn}
             alt="View all button"
             className="absolute cursor-pointer left-24 top-[50%]"
           />
-          <div className="absolute bottom-12 justify-end right-14 flex w-full  gap-5">
+          <div className="absolute bottom-12 justify-end right-14 flex w-full  gap-10">
             <div className="flex flex-col">
-              <img src={style1} alt="Style product 1" />
+              <img src={style1} alt="Style product 1" className="w-52" />
               <img
                 src={assessories}
                 alt="Accessories"
-                className="cursor-pointer"
+                className="cursor-pointer w-52"
               />
             </div>
             <div className="flex flex-col">
-              <img src={style2} alt="Style product 2" />
-              <img src={footwear} alt="Footwear" className="cursor-pointer" />
+              <img src={style2} alt="Style product 2 " className="w-52" />
+              <img
+                src={footwear}
+                alt="Footwear"
+                className="cursor-pointer w-52"
+              />
             </div>
             <div className="flex flex-col">
-              <img src={style3} alt="Style product 3" />
+              <img src={style3} alt="Style product 3" className="w-52" />
               <img
                 src={electronics}
                 alt="Electronics"
-                className="cursor-pointer"
+                className="cursor-pointer w-52"
               />
             </div>
           </div>
         </div>
-        <div className="flex relative rounded-sm">
+        <div className="flex w-full relative rounded-sm h-96">
           <img
             src={download_banner}
             alt="Download banner"
-            className="rounded-sm"
+            className="rounded-sm w-full "
           />
           <div className="flex absolute flex-col gap-8 top-10 justify-center right-10 items-end">
             <h3 className="font-mier-book text-3xl text-blue-500">
@@ -217,11 +233,11 @@ const Home = () => {
             </div>
           </div>
         </div>
-        <div className="relative">
+        <div className="relative w-full">
           <img
             src={supply_banner}
             alt="Supplier banner"
-            className="rounded-sm"
+            className="rounded-sm w-full"
           />
           <div className="flex flex-col gap-3 absolute top-6 left-8 text-white">
             <h1 className="text-4xl font-mier-bold font-semibold">
