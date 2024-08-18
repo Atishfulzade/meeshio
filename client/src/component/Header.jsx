@@ -171,14 +171,7 @@ const Header = () => {
                         </div>
                       )}
                       <Separator variant="horizantal" className="my-2" />
-                      <Link
-                        to={
-                          isLoggedIn
-                            ? navigate("/orders")
-                            : navigate("/user/authenticate")
-                        }
-                        className="flex gap-3 items-center h-10 text-[18px]"
-                      >
+                      <Link className="flex gap-3 items-center h-10 text-[18px]">
                         <HiOutlineShoppingBag /> My orders
                       </Link>
                       <Separator variant="horizantal" />

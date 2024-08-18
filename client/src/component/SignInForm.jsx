@@ -40,6 +40,8 @@ const SignInForm = () => {
           dispatch(
             setUserInfo({ fullName: values.fullName, email: values.email })
           );
+          navigate("/");
+
           toast({
             title: "Registration Successful",
             description: "You have been successfully registered.",

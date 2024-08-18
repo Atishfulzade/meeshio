@@ -21,7 +21,7 @@ const ProductCard = ({ details }) => {
         loading="lazy"
         className="w-full h-[61%] object-contain"
       />
-      <div className="flex flex-col p-2 md:p-3 gap-1">
+      <div className="flex flex-col p-2 md:p-3 gap-1 overflow-hidden">
         <h3 className="font-mier-demi line-clamp-1 p-0 text-sm md:text-lg font-medium text-slate-800">
           {details?.title}
         </h3>
