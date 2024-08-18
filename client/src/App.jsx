@@ -3,7 +3,6 @@ import { Routes, Route } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setIsMobile } from "./redux_store/identifyMobile";
 import Loader from "./component/Loader";
-
 // Lazy load components
 const Home = lazy(() => import("./pages/Home"));
 const ProductPage = lazy(() => import("./pages/ProductPage"));

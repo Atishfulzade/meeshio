@@ -58,10 +58,7 @@ const Cart = ({ nextStep }) => {
             <h3 className="text-xl font-mier">Product Details</h3>
             <div className="flex flex-col gap-2 h-full p-2 md:p-0">
               {cart.map((item, index) => (
-                <div
-                  key={index}
-                  className="flex flex-col justify-between border md:w-[600px] min-w-[300px] rounded-md md:h-52"
-                >
+                <div className="flex flex-col justify-between border md:w-[600px] min-w-[300px] rounded-md md:h-52">
                   <div className="flex p-3">
                     <img
                       className="h-20 w-20 object-contain rounded-md border"
@@ -129,9 +126,23 @@ const Cart = ({ nextStep }) => {
                   </div>
                 </div>
               ))}
+              <div className="flex flex-col justify-between border md:w-[600px] min-w-[300px] rounded-md h-fit">
+                <div className="flex p-3">
+                  <div className="flex flex-col w-full gap-1 ps-3">
+                    <h3 className="text-xl font-mier-demi text-slate-800 leading-5 flex-wrap line-clamp-2">
+                      Payment Method
+                    </h3>
+                    <p className="line-clamp-1 font-mier-book ">UPI</p>
+                    <div className="flex font-mier-demi w-full flex-col md:flex-row md:gap-4">
+                      <span className="whitespace-nowrap">adress</span>
+                      <span>•Selected Size: Free</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-          <div className="flex flex-col md:w-96 w-full justify-center items-center ">
+          <div className="flex flex-col md:w-96 w-full   ">
             <h3 className="text-xl font-mier-bold my-1 text-left">
               Product Details ({cart.length}) products
             </h3>
@@ -149,19 +160,12 @@ const Cart = ({ nextStep }) => {
                 <h4 className=" ">Order Total</h4>
                 <span>₹ {discountedPrice.toFixed(2)}</span>
               </div>
-              <div className="flex text-lg bg-green-200 p-2 text-green-700 rounded-md justify-center items-center gap-2 font-mier-demi">
-                <RiDiscountPercentLine />
-                Yay! Your total discount is ₹
-                {(discountPercentage * totalPrice).toFixed(2)}
-              </div>
-              <p className="text-xs font-mier-demi">
-                Clicking on 'Continue' will not deduct any money
-              </p>
+
               <Button
                 onClick={nextStep}
                 className="flex text-lg bg-fuchsia-700 hover:bg-fuchsia-800 p-2 text-white rounded-md justify-center items-center gap-2 font-mier-demi"
               >
-                Continue
+                Place Order
               </Button>
             </div>
           </div>

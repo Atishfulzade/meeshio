@@ -6,10 +6,14 @@ import { Separator } from "@radix-ui/react-separator";
 import { Loader } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { updateCart } from "/src/redux_store/userInfoSlice.js"; // Make sure the path is correct
+import { useToast } from "@/components/ui/use-toast";
+import { useNavigate } from "react-router-dom";
 
 const Product = ({ selectedImage, productDetails }) => {
   const dispatch = useDispatch();
   const cart = useSelector((state) => state.userInfo.cart);
+  const { toast } = useToast();
+  const navigate = useNavigate();
 
   // Retrieve cart from localStorage when the component mounts
   useEffect(() => {
@@ -29,7 +33,21 @@ const Product = ({ selectedImage, productDetails }) => {
     // Store the updated cart in localStorage
     localStorage.setItem("cart", JSON.stringify(updatedCart));
 
-    alert("Product added to cart");
+    toast({
+      title: "Product Added",
+      description: "Product has been added to your cart.",
+      variant: "success",
+    });
+  };
+
+  const buyNow = () => {
+    // Redirect to checkout page or handle buy now logic
+    navigate("/checkout");
+    toast({
+      title: "Redirecting",
+      description: "You are being redirected to checkout.",
+      variant: "info",
+    });
   };
 
   if (!productDetails) {
@@ -54,7 +72,10 @@ const Product = ({ selectedImage, productDetails }) => {
           <HiMiniShoppingCart size={20} className="mr-2" />
           Add to cart
         </Button>
-        <Button className="bg-fuchsia-800 font-mier-bold font-semibold text-lg h-12 w-1/2">
+        <Button
+          onClick={buyNow}
+          className="bg-fuchsia-800 font-mier-bold font-semibold text-lg h-12 w-1/2"
+        >
           <FaAngleDoubleRight size={20} className="mr-2" />
           Buy Now
         </Button>

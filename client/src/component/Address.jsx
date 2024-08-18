@@ -17,9 +17,17 @@ import { Label } from "@/components/ui/label";
 import { Button } from "../components/ui/button";
 import { useSelector } from "react-redux";
 
-const Address = ({ nextStep, prevStep }) => {
+const Address = ({
+  nextStep,
+  totalPrice,
+  discountPercentage,
+  discountedPrice,
+  prevStep,
+}) => {
   const isMobile = useSelector((state) => state.identifyMobile.isMobile);
   // Dummy address data
+  const cart = useSelector((state) => state.userInfo.cart);
+
   const addressDetail = [
     {
       id: 1,
@@ -150,15 +158,18 @@ const Address = ({ nextStep, prevStep }) => {
         <h3 className="text-xl font-mier my-1">Product Details (2) products</h3>
         <div className="flex-col flex rounded-md font-mier-demi text-slate-600 border gap-3 p-3">
           <div className="flex text-lg justify-between">
-            <h4>Total Product price</h4> <span>2 Quantity</span>
-            <span>₹ 846</span>
+            <h4>Total Product price</h4>
+            <span>{cart.length} Quantity</span>
+            <span>₹ {totalPrice.toFixed(2)}</span>
           </div>
           <div className="flex text-lg justify-between text-green-600 font-mier-demi">
-            <h4>Total Discounts</h4> <span>- ₹86</span>
+            <h4 className=" ">Total Discounts</h4>
+            <span>₹ {(discountPercentage * totalPrice).toFixed(2)}</span>
           </div>
           <Separator />
           <div className="flex text-lg justify-between font-mier-demi">
-            <h4>Order Total</h4> <span>₹ 846</span>
+            <h4 className=" ">Order Total</h4>
+            <span>₹ {discountedPrice.toFixed(2)}</span>
           </div>
         </div>
       </div>

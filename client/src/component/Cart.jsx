@@ -6,19 +6,20 @@ import { RiDiscountPercentLine } from "react-icons/ri";
 import { Button } from "../components/ui/button";
 import { useSelector, useDispatch } from "react-redux";
 import { updateCart, removeFromCart } from "../redux_store/userInfoSlice";
+import { useNavigate } from "react-router-dom";
+import { Separator } from "@radix-ui/react-separator";
 
-const Cart = ({ nextStep }) => {
+const Cart = ({
+  nextStep,
+  totalPrice,
+  discountPercentage,
+  discountedPrice,
+}) => {
   const dispatch = useDispatch();
   const cart = useSelector((state) => state.userInfo.cart);
-
+  const navigate = useNavigate();
+  const isLoggedIn = useSelector((state) => state.loggedIn.isLoggedIn);
   // Calculate total price
-  const totalPrice = cart.reduce(
-    (acc, item) => acc + (item.price || 0) * (item.quantity || 1),
-    0
-  );
-
-  const discountPercentage = 0.2;
-  const discountedPrice = totalPrice * (1 - discountPercentage);
 
   // Function to handle increasing the quantity
   const increaseCount = (index) => {
@@ -55,7 +56,7 @@ const Cart = ({ nextStep }) => {
       ) : (
         <>
           <div className="flex flex-col gap-2">
-            <h3 className="text-xl font-mier">Product Details</h3>
+            <h3 className="text-xl font-mier ms-2">Product Details</h3>
             <div className="flex flex-col gap-2 h-full p-2 md:p-0">
               {cart.map((item, index) => (
                 <div
@@ -131,7 +132,7 @@ const Cart = ({ nextStep }) => {
               ))}
             </div>
           </div>
-          <div className="flex flex-col md:w-96 w-full justify-center items-center ">
+          <div className="flex flex-col md:w-96 w-full p-3 md:p-0">
             <h3 className="text-xl font-mier-bold my-1 text-left">
               Product Details ({cart.length}) products
             </h3>
@@ -145,7 +146,8 @@ const Cart = ({ nextStep }) => {
                 <h4 className=" ">Total Discounts</h4>
                 <span>₹ {(discountPercentage * totalPrice).toFixed(2)}</span>
               </div>
-              <div className="flex text-lg justify-between font-mier-demi">
+
+              <div className="flex border-t-2 text-lg justify-between font-mier-demi">
                 <h4 className=" ">Order Total</h4>
                 <span>₹ {discountedPrice.toFixed(2)}</span>
               </div>
@@ -158,7 +160,14 @@ const Cart = ({ nextStep }) => {
                 Clicking on 'Continue' will not deduct any money
               </p>
               <Button
-                onClick={nextStep}
+                onClick={() => {
+                  if (isLoggedIn) {
+                    nextStep();
+                  } else {
+                    alert("Please log in");
+                    navigate("/user/authenticate");
+                  }
+                }}
                 className="flex text-lg bg-fuchsia-700 hover:bg-fuchsia-800 p-2 text-white rounded-md justify-center items-center gap-2 font-mier-demi"
               >
                 Continue

@@ -3,9 +3,18 @@ import Cart from "./Cart";
 import Address from "./Address";
 import Payment from "./Payment";
 import Summary from "./Summary";
+import { useSelector } from "react-redux";
 
 const Stepper = ({ steps }) => {
   const [currentStep, setCurrentStep] = useState(0);
+  const cart = useSelector((state) => state.userInfo.cart);
+  const totalPrice = cart.reduce(
+    (acc, item) => acc + (item.price || 0) * (item.quantity || 1),
+    0
+  );
+
+  const discountPercentage = 0.2;
+  const discountedPrice = totalPrice * (1 - discountPercentage);
 
   const nextStep = () => {
     if (currentStep < steps.length - 1) {
@@ -22,13 +31,43 @@ const Stepper = ({ steps }) => {
   const renderStepContent = (step) => {
     switch (step) {
       case 0:
-        return <Cart prevStep={prevStep} nextStep={nextStep} />;
+        return (
+          <Cart
+            nextStep={nextStep}
+            totalPrice={totalPrice}
+            discountPercentage={discountPercentage}
+            discountedPrice={discountedPrice}
+          />
+        );
       case 1:
-        return <Address prevStep={prevStep} nextStep={nextStep} />;
+        return (
+          <Address
+            prevStep={prevStep}
+            nextStep={nextStep}
+            totalPrice={totalPrice}
+            discountPercentage={discountPercentage}
+            discountedPrice={discountedPrice}
+          />
+        );
       case 2:
-        return <Payment prevStep={prevStep} nextStep={nextStep} />;
+        return (
+          <Payment
+            prevStep={prevStep}
+            nextStep={nextStep}
+            totalPrice={totalPrice}
+            discountPercentage={discountPercentage}
+            discountedPrice={discountedPrice}
+          />
+        );
       case 3:
-        return <Summary prevStep={prevStep} />;
+        return (
+          <Summary
+            prevStep={prevStep}
+            totalPrice={totalPrice}
+            discountPercentage={discountPercentage}
+            discountedPrice={discountedPrice}
+          />
+        );
       default:
         return <Cart />;
     }

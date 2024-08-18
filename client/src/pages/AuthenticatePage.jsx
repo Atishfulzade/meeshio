@@ -4,10 +4,16 @@ import { useLocation } from "react-router-dom";
 
 const AuthenticatePage = () => {
   const location = useLocation();
-  console.log(location);
 
   return (
-    <div className="flex justify-center items-center h-screen w-full bg-[url('./assets/bg.svg')] backdrop-blur bg-white fill-background">
+    <div
+      className="flex justify-center items-center h-screen w-full bg-white"
+      style={{
+        backgroundImage: "url('./assets/bg.svg')",
+        backgroundSize: "cover",
+        backdropFilter: "blur(10px)",
+      }}
+    >
       <SignInForm />
     </div>
   );
