@@ -10,6 +10,7 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from "firebase/auth";
+import { saveUserData, fetchUserData } from "../utils/firestoreData";
 import { useDispatch } from "react-redux";
 import { setUserInfo } from "../redux_store/userInfoSlice";
 import { setIsLoggedIn } from "../redux_store/logInSlice";
@@ -32,15 +33,23 @@ const SignInForm = () => {
     onSubmit: async (values) => {
       try {
         if (isRegistering) {
-          await createUserWithEmailAndPassword(
+          // Register user and save user data to Firestore
+          const { user } = await createUserWithEmailAndPassword(
             auth,
             values.email,
             values.password
           );
-          dispatch(
-            setUserInfo({ fullName: values.fullName, email: values.email })
-          );
-          navigate("/");
+          const userData = {
+            uid: user.uid,
+            fullName: values.fullName,
+            email: values.email,
+          };
+
+          await saveUserData(user.uid, userData);
+
+          // Update Redux store
+          dispatch(setUserInfo(userData));
+          dispatch(setIsLoggedIn(true));
 
           toast({
             title: "Registration Successful",
@@ -49,18 +58,36 @@ const SignInForm = () => {
               <ToastAction altText="Goto schedule to undo">Undo</ToastAction>
             ),
           });
+
+          navigate("/");
         } else {
-          await signInWithEmailAndPassword(auth, values.email, values.password);
-          toast({
-            title: "Login Successful",
-            description: "You have successfully logged in.",
-            action: (
-              <ToastAction altText="Goto schedule to undo">Undo</ToastAction>
-            ),
-          });
+          // Login user and fetch user data from Firestore
+          const { user } = await signInWithEmailAndPassword(
+            auth,
+            values.email,
+            values.password
+          );
+
+          const userData = await fetchUserData(user.uid);
+
+          if (userData) {
+            // Only update Redux store if userData is valid
+            dispatch(setUserInfo(userData));
+            dispatch(setIsLoggedIn(true));
+
+            toast({
+              title: "Login Successful",
+              description: "You have successfully logged in.",
+              action: (
+                <ToastAction altText="Goto schedule to undo">Undo</ToastAction>
+              ),
+            });
+
+            navigate("/");
+          } else {
+            setErrorMessage("User data not found.");
+          }
         }
-        dispatch(setIsLoggedIn(true));
-        navigate("/");
       } catch (error) {
         setErrorMessage(error.message);
         toast({

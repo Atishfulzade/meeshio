@@ -7,8 +7,8 @@ import { Button } from "../components/ui/button";
 import { useSelector, useDispatch } from "react-redux";
 import { updateCart, removeFromCart } from "../redux_store/userInfoSlice";
 import { useNavigate } from "react-router-dom";
-import { Separator } from "@radix-ui/react-separator";
 import { useToast } from "../components/ui/use-toast"; // Import useToast
+import { saveCartToFirebase } from "../utils/firestoreData"; // Firebase function
 
 const Cart = ({
   nextStep,
@@ -18,34 +18,48 @@ const Cart = ({
 }) => {
   const dispatch = useDispatch();
   const cart = useSelector((state) => state.userInfo.cart);
+  const userId = useSelector((state) => state.userInfo.uid); // Ensure we have the userId
   const navigate = useNavigate();
   const isLoggedIn = useSelector((state) => state.loggedIn.isLoggedIn);
   const { toast } = useToast(); // Initialize toast
 
   // Function to handle increasing the quantity
-  const increaseCount = (index) => {
+  const increaseCount = async (index) => {
     const updatedCart = cart.map((item, idx) =>
       idx === index && (item.quantity || 1) < 10
         ? { ...item, quantity: (item.quantity || 1) + 1 }
         : item
     );
     dispatch(updateCart(updatedCart));
+
+    if (userId) {
+      await saveCartToFirebase(userId, updatedCart);
+    }
   };
 
   // Function to handle decreasing the quantity
-  const decreaseCount = (index) => {
+  const decreaseCount = async (index) => {
     const updatedCart = cart.map((item, idx) =>
       idx === index && (item.quantity || 1) > 1
         ? { ...item, quantity: (item.quantity || 1) - 1 }
         : item
     );
     dispatch(updateCart(updatedCart));
+
+    if (userId) {
+      await saveCartToFirebase(userId, updatedCart);
+    }
   };
 
   // Function to handle removing an item from the cart
-  const removeItem = (index) => {
+  const removeItem = async (index) => {
     const updatedCart = cart.filter((_, idx) => idx !== index);
     dispatch(updateCart(updatedCart));
+
+    if (userId) {
+      await saveCartToFirebase(userId, updatedCart);
+    }
+
     toast({
       title: "Item Removed",
       description: "The item has been removed from your cart.",

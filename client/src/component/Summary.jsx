@@ -2,13 +2,15 @@ import React from "react";
 import { IoClose } from "react-icons/io5";
 import { FaRegEdit } from "react-icons/fa";
 import { HiPlus, HiMinusSm } from "react-icons/hi";
-import { RiDiscountPercentLine } from "react-icons/ri";
 import { Button } from "../components/ui/button";
 import { useSelector, useDispatch } from "react-redux";
-import { updateCart, removeFromCart } from "../redux_store/userInfoSlice";
-
+import { updateCart } from "../redux_store/userInfoSlice";
+import { toast } from "../components/ui/use-toast";
+import { ToastAction } from "@/components/ui/toast";
+import { useNavigate } from "react-router-dom";
 const Cart = ({ nextStep }) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const cart = useSelector((state) => state.userInfo.cart);
 
   // Calculate total price
@@ -44,6 +46,25 @@ const Cart = ({ nextStep }) => {
   const removeItem = (index) => {
     const updatedCart = cart.filter((_, idx) => idx !== index);
     dispatch(updateCart(updatedCart));
+  };
+
+  // Function to handle placing the order
+  const handlePlaceOrder = () => {
+    // Show success toast
+    toast({
+      title: "Order placed successfully",
+      description: "Your order has been placed keeping track of your order",
+
+      action: <ToastAction altText="Try again">close</ToastAction>,
+    });
+
+    // Clear the cart after the order is placed
+    dispatch(updateCart([])); // Empty the cart
+    navigate("/");
+    // Optional: Move to the next step in checkout
+    if (nextStep) {
+      nextStep();
+    }
   };
 
   return (
@@ -126,27 +147,13 @@ const Cart = ({ nextStep }) => {
                   </div>
                 </div>
               ))}
-              <div className="flex flex-col justify-between border md:w-[600px] min-w-[300px] rounded-md h-fit">
-                <div className="flex p-3">
-                  <div className="flex flex-col w-full gap-1 ps-3">
-                    <h3 className="text-xl font-mier-demi text-slate-800 leading-5 flex-wrap line-clamp-2">
-                      Payment Method
-                    </h3>
-                    <p className="line-clamp-1 font-mier-book ">UPI</p>
-                    <div className="flex font-mier-demi w-full flex-col md:flex-row md:gap-4">
-                      <span className="whitespace-nowrap">adress</span>
-                      <span>•Selected Size: Free</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
-          <div className="flex flex-col md:w-96 w-full   ">
+          <div className="flex flex-col md:w-96 w-full">
             <h3 className="text-xl font-mier-bold my-1 text-left">
               Product Details ({cart.length}) products
             </h3>
-            <div className="flex-col flex rounded-md font-mier-demi   text-slate-600 border gap-3 p-3">
+            <div className="flex-col flex rounded-md font-mier-demi text-slate-600 border gap-3 p-3">
               <div className="flex text-lg justify-between">
                 <h4>Total Product price</h4>
                 <span>{cart.length} Quantity</span>
@@ -162,7 +169,7 @@ const Cart = ({ nextStep }) => {
               </div>
 
               <Button
-                onClick={nextStep}
+                onClick={handlePlaceOrder} // Updated to call handlePlaceOrder
                 className="flex text-lg bg-fuchsia-700 hover:bg-fuchsia-800 p-2 text-white rounded-md justify-center items-center gap-2 font-mier-demi"
               >
                 Place Order

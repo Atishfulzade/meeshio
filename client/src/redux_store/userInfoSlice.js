@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
+  uid: "",
   fullName: "",
   profileURL: "",
   email: "",
@@ -13,14 +14,15 @@ export const userInfoSlice = createSlice({
   initialState,
   reducers: {
     setUserInfo: (state, action) => {
-      const { fullName, profileURL, email, savedCard } = action.payload;
+      const { uid, fullName, profileURL, email, savedCard } =
+        action.payload || {};
+      state.uid = uid || state.uid;
       state.fullName = fullName || state.fullName;
       state.profileURL = profileURL || state.profileURL;
       state.email = email || state.email;
       state.savedCard = savedCard || state.savedCard;
     },
 
-    // Add product to cart with quantity initialization
     addProductToCart: (state, action) => {
       const product = action.payload;
       const existingProductIndex = state.cart.findIndex(
@@ -28,11 +30,9 @@ export const userInfoSlice = createSlice({
       );
 
       if (existingProductIndex !== -1) {
-        // If product exists, increment quantity
         state.cart[existingProductIndex].quantity =
           (state.cart[existingProductIndex].quantity || 1) + 1;
       } else {
-        // If product doesn't exist, add it with quantity 1
         state.cart.push({
           ...product,
           quantity: 1,
@@ -41,6 +41,7 @@ export const userInfoSlice = createSlice({
 
       localStorage.setItem("cart", JSON.stringify(state.cart));
     },
+
     updateCart: (state, action) => {
       state.cart = action.payload.map((item) => ({
         ...item,
@@ -48,19 +49,20 @@ export const userInfoSlice = createSlice({
       }));
       localStorage.setItem("cart", JSON.stringify(state.cart));
     },
+
     removeFromCart: (state, action) => {
       state.cart = state.cart.filter((item, index) => index !== action.payload);
       localStorage.setItem("cart", JSON.stringify(state.cart)); // Sync with localStorage
     },
 
     clearUserInfo: (state) => {
+      state.uid = "";
       state.fullName = "";
       state.profileURL = "";
       state.email = "";
       state.savedCard = [];
       state.cart = [];
 
-      // Clear the data from localStorage
       localStorage.removeItem("cart");
       localStorage.removeItem("userInfo");
     },
