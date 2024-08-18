@@ -7,8 +7,8 @@ import Footer from "./Footer";
 const Layout = () => {
   return (
     <div>
-      <Toaster />
       <Header />
+      <Toaster />
       <Outlet />
       <Footer />
     </div>
