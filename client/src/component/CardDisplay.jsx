@@ -52,15 +52,15 @@ const CardDisplay = () => {
   console.log("Products:", products);
 
   return (
-    <div className="flex w-full flex-col justify-between mt-[57px]">
-      <h4>Products for You</h4>
+    <div className="flex w-full flex-col justify-between pt-3">
+      <h4 className="text-xl my-2 font-mier-bold">Products for You</h4>
       <div className="flex justify-between ">
         {!ismobile && (
           <Sidebar products={products} setFilterProduct={setFilterProduct} />
         )}
         {/* Conditionally render Cards when products are available */}
         {products.length > 0 ? (
-          <Cards width={"w-[80%]"} products={filterProduct} />
+          <Cards width={"w-[80%] "} products={filterProduct} />
         ) : (
           <div className="flex h-full w-full justify-center items-center">
             <Loader />

@@ -40,229 +40,220 @@ const Home = () => {
 
   return (
     <div
-      className={`${
-        ismobile ? "hidden" : "flex"
-      }  gap-10 flex-col px-24 md:px-8  overflow-hidden`}
+      className={
+        ismobile
+          ? "hidden"
+          : "flex pt-32 flex-col px-10 lg:px-24  mx-auto w-full overflow-hidden"
+      }
     >
-      <div className="flex  gap-10 flex-col md:px-10 lg:px-24 pt-16 mt-28 ">
-        <div className="flex relative w-full  bg-slate-100 rounded-md overflow-hidden">
-          <div className="flex flex-col justify-between w-1/2 p-9">
-            <h1 className=" whitespace-nowrap lg:leading-tight md:leading-6 font-mier-bold md:text-2xl lg:text-[44px] text-slate-700 font-semibold">
+      <div className="flex flex-col md:px-24 gap-6 justify-center items-center ">
+        <div className="flex   w-full rounded-sm overflow-hidden">
+          <div className="flex flex-col w-1/2 py-4 px-3 lg:p-8 justify-between bg-slate-200 ">
+            <h1 className="md:text-2xl lg:text-5xl font-mier-book font-semibold text-fuchsia-700">
               Lowest Prices
               <br />
               Best Quality Shopping
             </h1>
-            <div className="flex bg-white md:mt-5 justify-around items-center rounded-sm w-full h-16  p-3">
-              <div className="flex gap-3 leading-5 lg:text-[15px] md:text-xs p-2 font-mier-bold justify-center items-center h-full">
+            <div className="flex justify-around bg-white p-3 rounded-sm">
+              <div className="flex items-center font-mier-demi lg:gap-3 leading-4 text-xs lg:text-sm  gap-1">
                 <img
                   src={free_delivery_jamun}
                   alt="Free delivery icon"
-                  className="rounded-full lg:h-8 lg:w-8 md:h-6 md:w-6 overflow-hidden bg-black"
+                  className="w-6 h-6 lg:h-8 lg:w-8 rounded-full border"
                 />
                 Free
                 <br />
                 delivery
               </div>
               <Separator orientation="vertical" />
-              <div className="flex  gap-3 leading-5 text-[15px] p-2 font-mier-bold justify-center items-center h-full">
+              <div className="flex items-center font-mier-demi leading-4 lg:gap-3 text-xs lg:text-sm  gap-1">
                 <img
                   src={code_jamun}
                   alt="Cash on delivery icon"
-                  className="rounded-full h-8 w-8 overflow-hidden bg-black"
+                  className="w-6 h-6 lg:h-8 lg:w-8 rounded-full border"
                 />
                 Cash on
                 <br />
                 Delivery
               </div>
               <Separator orientation="vertical" />
-              <div className="flex  gap-3 leading-5 text-[15px] p-2 font-mier-bold justify-center items-center h-full">
+              <div className="flex items-center font-mier-demi leading-4 lg:gap-3 text-xs lg:text-sm  gap-1">
                 <img
                   src={easy_return_jamun}
                   alt="Easy returns icon"
-                  className="rounded-full h-8 w-8 overflow-hidden bg-black"
+                  className="w-6 h-6 lg:h-8 lg:w-8 rounded-full border"
                 />
-                Easy <br /> Returns
+                Easy
+                <br /> Returns
               </div>
             </div>
-            <div className="flex w-fit font-semibold hover:bg-fuchsia-900 transition-all cursor-pointer px-5 py-3 text-white font-mier-bold items-center gap-2 rounded bg-fuchsia-800">
-              <img src={playstore_small} alt="Play Store icon" />
+            <div className="flex items-center gap-2 bg-fuchsia-700 w-fit rounded-sm text-white font-mier-book text-xs lg:text-lg lg:py-4 lg:px-5 py-2 px-3">
+              <img
+                src={playstore_small}
+                alt="Play Store icon"
+                className="w-4 lg:w-6"
+              />
               Download the Meesho App
             </div>
           </div>
           <img src={ad_banner} alt="Advertisement banner" className="w-1/2" />
         </div>
-        <div className="flex  justify-center items-center gap-6  ">
-          <span className="h-[1px] w-64 bg-fuchsia-700" />
-          <h1 className="font-mier-bold font-semibold text-slate-800 text-4xl whitespace-nowrap">
+        <div className="flex  justify-center items-center w-full">
+          <span className="h-[1px] w-full bg-slate-500" />
+          <h1 className="text-xl lg:text-3xl text-slate-700  mx-2 font-mier-demi whitespace-nowrap">
             Top Categories to choose from
           </h1>
-          <span className="h-[1px] w-64 bg-fuchsia-700" />
+          <span className="h-[1px] w-full bg-slate-500" />
         </div>
-        <div className="w-full relative ">
-          <img
-            src={category_banner}
-            alt="Category banner"
-            className="rounded-sm w-full"
-          />
-          <div className="absolute bottom-5 p-4  justify-between flex w-full items-end ">
-            <img src={categories1} alt="Category 1" className="w-[520px]" />
+        <div className="relative w-full h-fit rounded-sm overflow-hidden">
+          <img src={category_banner} alt="Category banner" className="w-full" />
+          <div className="absolute justify-between top-16 right-3 lg:right-4 left-3 flex h-full items-baseline gap-3">
             <img
-              src={categories2}
-              alt="Category 2"
-              className="object-scale-down "
+              src={categories1}
+              alt="Category 1"
+              className="w-64 lg:w-[27rem]"
             />
+            <img src={categories2} alt="Category 2" className="w-52 lg:w-80" />
             <img
               src={categories3}
               alt="Category 3"
-              className="object-contain"
+              className="w-52   lg:w-80"
             />
           </div>
         </div>
-        <div className="w-full relative rounded overflow-hidden">
+        <div className="relative flex w-full flex-col rounded-sm overflow-hidden">
           <img
             src={essentialBanner}
             alt="Essential products banner"
-            className="rounded-sm w-full"
+            className="w-full"
           />
           <img
             src={view_all_btn}
             alt="View all button"
-            className="absolute cursor-pointer left-24 top-[50%]"
+            className="absolute left-10 w-32 top-40 lg:w-52 lg:top-60 lg:left-20"
           />
-          <div className="absolute bottom-12 justify-end right-14 flex w-full  gap-10">
-            <div className="flex flex-col">
+          <div className="absolute bottom-3 lg:bottom-10 flex right-5 top-3 items-end justify-end gap-5">
+            <div className="flex flex-col ">
               <img
                 src={essential1}
                 alt="Essential product 1"
-                className="w-52"
+                className="w-36 lg:w-52"
               />
-              <img
-                src={home_decor}
-                alt="Home decor"
-                className="cursor-pointer w-52"
-              />
+              <img src={home_decor} alt="Home decor" className="w-36 lg:w-52" />
             </div>
-            <div className="flex flex-col">
+            <div>
               <img
                 src={essential2}
                 alt="Essential product 2"
-                className="w-52"
+                className="w-36 lg:w-52"
               />
               <img
                 src={kitchen_appliences}
                 alt="Kitchen appliances"
-                className="cursor-pointer w-52"
+                className="w-36 lg:w-52"
               />
             </div>
-            <div className="flex flex-col">
+            <div>
               <img
                 src={essential3}
                 alt="Essential product 3"
-                className="w-52"
+                className="w-36 lg:w-52"
               />
               <img
                 src={health_care}
                 alt="Health care products"
-                className="cursor-pointer"
+                className="w-36 lg:w-52"
               />
             </div>
           </div>
         </div>
-        <div className="w-full relative rounded-sm">
-          <img
-            src={style_banner}
-            alt="Style products banner"
-            className="rounded-sm w-full"
-          />
+        <div className="relative flex w-full flex-col rounded-sm overflow-hidden">
+          <img src={style_banner} alt="Style products banner" />
           <img
             src={view_all_btn}
             alt="View all button"
-            className="absolute cursor-pointer left-24 top-[50%]"
+            className="absolute left-10 w-32 top-40 lg:w-52 lg:top-60 lg:left-20"
           />
-          <div className="absolute bottom-12 justify-end right-14 flex w-full  gap-10">
-            <div className="flex flex-col">
-              <img src={style1} alt="Style product 1" className="w-52" />
+          <div className="absolute bottom-3 lg:bottom-10 flex right-5 top-3 items-end justify-end gap-5">
+            <div className="flex flex-col ">
+              <img
+                src={style1}
+                alt="Style product 1"
+                className="w-36 lg:w-52"
+              />
               <img
                 src={assessories}
                 alt="Accessories"
-                className="cursor-pointer w-52"
+                className="w-36 lg:w-52"
               />
             </div>
-            <div className="flex flex-col">
-              <img src={style2} alt="Style product 2 " className="w-52" />
+            <div>
               <img
-                src={footwear}
-                alt="Footwear"
-                className="cursor-pointer w-52"
+                src={style2}
+                alt="Style product 2"
+                className="w-36 lg:w-52"
               />
+              <img src={footwear} alt="Footwear" className="w-36 lg:w-52" />
             </div>
-            <div className="flex flex-col">
-              <img src={style3} alt="Style product 3" className="w-52" />
+            <div>
+              <img
+                src={style3}
+                alt="Style product 3"
+                className="w-36 lg:w-52"
+              />
               <img
                 src={electronics}
                 alt="Electronics"
-                className="cursor-pointer w-52"
+                className="w-36 lg:w-52"
               />
             </div>
           </div>
         </div>
-        <div className="flex w-full relative rounded-sm h-96">
-          <img
-            src={download_banner}
-            alt="Download banner"
-            className="rounded-sm w-full "
-          />
-          <div className="flex absolute flex-col gap-8 top-10 justify-center right-10 items-end">
-            <h3 className="font-mier-book text-3xl text-blue-500">
+        <div className="relative w-full rounded-sm overflow-hidden">
+          <img src={download_banner} alt="Download banner" />
+          <div className=" absolute  justify-end flex top-5 lg:top-10 flex-col items-end right-5">
+            <h3 className="text-3xl lg:text-5xl font-mier-bold text-fuchsia-700">
               Become a Reseller and
             </h3>
-            <h1 className="font-mier-bold text-5xl font-semibold text-fuchsia-600 text-end">
+            <h1 className="text-sm font-mier-book mt-2  lg:text-xl">
               Start your Online Business <br /> with Zero Investment
             </h1>
-            <div className="flex gap-2 mt-4">
-              <div className="w-44 p-1 bg-black rounded-md">
+            <div className="flex gap-2 lg:gap-4 mt-8">
+              <div className="w-32 h-12 lg:w-48 lg:h-16 bg-black rounded-md overflow-hidden p-2 ">
                 <img src={playstore} alt="Play Store button" />
               </div>
-              <div className="w-44 p-1 bg-black rounded-md">
-                <img
-                  src={appstore}
-                  alt="App Store button"
-                  className="rounded-sm"
-                />
+              <div className="w-32 h-12 lg:w-48 lg:h-16 bg-black rounded-md overflow-hidden p-2 ">
+                <img src={appstore} alt="App Store button" />
               </div>
             </div>
           </div>
         </div>
-        <div className="relative w-full">
-          <img
-            src={supply_banner}
-            alt="Supplier banner"
-            className="rounded-sm w-full"
-          />
-          <div className="flex flex-col gap-3 absolute top-6 left-8 text-white">
-            <h1 className="text-4xl font-mier-bold font-semibold">
+        <div className="relative w-full rounded-sm overflow-hidden h-full ">
+          <img src={supply_banner} alt="Supplier banner" className="w-full" />
+          <div className="absolute top-8 bottom-8 flex flex-col justify-around left-6 text-white">
+            <h1 className="text-xl lg:text-4xl">
               Register as a Meesho Supplier
             </h1>
-            <p className="font-mier-book">
+            <p className="text-sm font-mier-book lg:text-xl text-slate-300">
               Sell your products to crores of customers at 0% commission
             </p>
-            <div className="flex  gap-3 justify-between items-center h-8 mt-8">
-              <div className="flex items-center gap-2 font-mier-bold font-semibold">
+            <div className="flex mt-4 gap-1 font-mier-book">
+              <div className="flex items-center gap-1 lg:text-sm text-xs">
                 <MdCheckCircle fill="green" size={20} />
                 Grow your Business 10x
               </div>
               <Separator orientation="vertical" />
-              <div className="flex items-center gap-2 font-mier-bold font-semibold">
+              <div className="flex items-center gap-1 lg:text-sm text-xs">
                 <MdCheckCircle fill="green" size={20} />
                 Grow your Business 10x
               </div>
               <Separator orientation="vertical" />
-              <div className="flex items-center gap-2 font-mier-bold font-semibold">
+              <div className="flex items-center gap-1 lg:text-sm text-xs">
                 <MdCheckCircle fill="green" size={20} />
                 Grow your Business 10x
               </div>
             </div>
-            <Button className="w-fit bg-white hover:bg-slate-100 text-slate-800 font-mier-bold font-semibold mt-5">
+            <Button className="bg-white w-fit mt-4 lg:text-sm text-slate-900 font-mier-bold  px-3 py-3  hover:bg-slate-300">
               Sign up Now
             </Button>
           </div>

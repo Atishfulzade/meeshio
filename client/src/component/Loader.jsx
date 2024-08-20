@@ -1,5 +1,5 @@
 import React from "react";
-import img from "../../public/favicon.jpg";
+import img from "/favicon.jpg";
 const Loader = () => {
   return (
     <div className="flex h-screen w-full  justify-center items-center bg-white backdrop-blur ">

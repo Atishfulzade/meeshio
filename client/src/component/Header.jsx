@@ -237,7 +237,7 @@ const Header = () => {
           </div>
         )}
       </div>
-      <Navbar_second />
+      {location.pathname !== "/checkout" && <Navbar_second />}
     </div>
   );
 };
