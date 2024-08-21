@@ -22,7 +22,6 @@ const SignInForm = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [isRegistering, setIsRegistering] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
 
   const formik = useFormik({
     initialValues: {
@@ -68,10 +67,11 @@ const SignInForm = () => {
             values.password
           );
 
+          // Fetch user data from Firestore based on authenticated user's UID
           const userData = await fetchUserData(user.uid);
 
           if (userData) {
-            // Only update Redux store if userData is valid
+            // Update Redux store
             dispatch(setUserInfo(userData));
             dispatch(setIsLoggedIn(true));
 
@@ -85,17 +85,37 @@ const SignInForm = () => {
 
             navigate("/");
           } else {
-            setErrorMessage("User data not found.");
+            toast({
+              title: "Error",
+              description: "User data not found in Firestore.",
+              variant: "destructive",
+              action: <ToastAction altText="Try again">Try again</ToastAction>,
+            });
           }
         }
       } catch (error) {
-        setErrorMessage(error.message);
-        toast({
-          title: "Error",
-          description: error.message,
-          variant: "destructive",
-          action: <ToastAction altText="Try again">Try again</ToastAction>,
-        });
+        if (error.code === "auth/user-not-found") {
+          toast({
+            title: "Error",
+            description: "User not found. Please check your credentials.",
+            variant: "destructive",
+            action: <ToastAction altText="Try again">Try again</ToastAction>,
+          });
+        } else if (error.code === "auth/wrong-password") {
+          toast({
+            title: "Error",
+            description: "Incorrect password. Please try again.",
+            variant: "destructive",
+            action: <ToastAction altText="Try again">Try again</ToastAction>,
+          });
+        } else {
+          toast({
+            title: "Error",
+            description: error.message,
+            variant: "destructive",
+            action: <ToastAction altText="Try again">Try again</ToastAction>,
+          });
+        }
       }
     },
   });
@@ -107,9 +127,6 @@ const SignInForm = () => {
         onSubmit={formik.handleSubmit}
         className="flex flex-col gap-4 p-3 mb-2 mt-6 justify-start w-full"
       >
-        {errorMessage && (
-          <p className="text-red-500 text-center">{errorMessage}</p>
-        )}
         {isRegistering && (
           <Input
             type="text"
@@ -118,6 +135,7 @@ const SignInForm = () => {
             value={formik.values.fullName}
             onChange={formik.handleChange}
             className="p-2 border rounded w-full"
+            required
           />
         )}
         <Input
@@ -127,6 +145,7 @@ const SignInForm = () => {
           value={formik.values.email}
           onChange={formik.handleChange}
           className="p-2 border rounded w-full"
+          required
         />
         <Input
           type="password"
@@ -135,6 +154,7 @@ const SignInForm = () => {
           onChange={formik.handleChange}
           placeholder="Enter your password"
           className="p-2 border rounded w-full"
+          required
         />
         <Button type="submit" className="bg-fuchsia-800 hover:bg-fuchsia-900">
           {isRegistering ? "Register" : "Login"}

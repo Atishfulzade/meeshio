@@ -74,31 +74,39 @@ const Stepper = ({ steps }) => {
   };
 
   return (
-    <div className="w-full flex flex-col items-center mt-20 md:mt-0">
-      <div className="flex justify-between items-center mb-4 w-full">
-        {steps.map((step, index) => (
-          <div key={index} className="flex-1 flex flex-col items-center">
-            <div
-              className={`w-7 h-7 flex items-center justify-center rounded-full ${
-                currentStep === index
-                  ? "bg-fuchsia-600 text-white"
-                  : "bg-slate-200 text-slate-700"
-              }`}
-            >
-              {index + 1}
-            </div>
-            <div>{step}</div>
+    <>
+      {cart.length === 0 ? (
+        <div className="text-3xl font-mier-demi text-fuchsia-700 mt-10">
+          Your Cart is Empty
+        </div>
+      ) : (
+        <div className="w-full flex flex-col items-center mt-20 md:mt-0">
+          <div className="flex justify-between items-center mb-4 w-full">
+            {steps.map((step, index) => (
+              <div key={index} className="flex-1 flex flex-col items-center">
+                <div
+                  className={`w-7 h-7 flex items-center justify-center rounded-full ${
+                    currentStep === index
+                      ? "bg-fuchsia-600 text-white"
+                      : "bg-slate-200 text-slate-700"
+                  }`}
+                >
+                  {index + 1}
+                </div>
+                <div>{step}</div>
 
-            {index < steps.length && (
-              <div className="h-1 bg-fuchsia-700 flex-grow w-full mx-2"></div>
-            )}
+                {index < steps.length && (
+                  <div className="h-1 bg-fuchsia-700 flex-grow w-full mx-2"></div>
+                )}
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
 
-      {/* Render the content for the current step */}
-      <div className="w-full">{renderStepContent(currentStep)}</div>
-    </div>
+          {/* Render the content for the current step */}
+          <div className="w-full">{renderStepContent(currentStep)}</div>
+        </div>
+      )}
+    </>
   );
 };
 

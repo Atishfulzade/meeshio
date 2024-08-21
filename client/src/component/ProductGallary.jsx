@@ -7,7 +7,7 @@ const ProductGallary = ({
   selectedImage,
 }) => {
   return (
-    <div className="md:w-20 w-8 h-8 flex-shrink-0 md:h-full flex gap-1 flex-col ">
+    <div className="lg:w-20 w-8 h-8 md:w-10 md:h-10 flex-shrink-0 lg:h-full flex gap-1 flex-col ">
       {productDetails?.images.map((image, i) => (
         <img
           key={i}

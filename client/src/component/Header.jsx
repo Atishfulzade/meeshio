@@ -10,6 +10,8 @@ import { PiShoppingCart, PiDeviceMobile } from "react-icons/pi";
 import { useDispatch, useSelector } from "react-redux";
 import { Badge } from "@/components/ui/badge";
 import { useLocation, useNavigate } from "react-router-dom";
+import { IoLogOutOutline } from "react-icons/io5";
+
 import {
   HoverCard,
   HoverCardContent,
@@ -83,7 +85,7 @@ const Header = () => {
           <img
             src={meeshoLogo}
             alt="Meesho logo"
-            className="w-24 mb-1 md:w-[165px]"
+            className="w-24 mb-1 lg:w-[165px] md:w-60"
           />
         </div>
         {!ismobile && location.pathname !== "/checkout" && (
@@ -141,11 +143,11 @@ const Header = () => {
             <Separator orientation="vertical" />
             <Link
               variant="link"
-              className="text-slate-800 text-[17px] font-normal font-mier-book"
+              className="md:hidden lg:block text-slate-800 text-[17px] font-normal font-mier-book"
             >
               Newsroom
             </Link>
-            <Separator orientation="vertical" />
+            <Separator orientation="vertical" className="md:hidden lg:block" />
 
             {location.pathname !== "/user/authenticate" && (
               <div className="flex justify-between w-32 relative items-center h-full ">
@@ -208,7 +210,7 @@ const Header = () => {
                           to={"/"}
                           onClick={userSignOut}
                         >
-                          Log Out
+                          <IoLogOutOutline size={22} /> Log Out
                         </Link>
                       ) : (
                         ""
@@ -228,7 +230,7 @@ const Header = () => {
                 {cartValue.length < 1 ? (
                   ""
                 ) : (
-                  <Badge className="bg-fuchsia-600 text-white text-xs absolute top-[0px] right-0">
+                  <Badge className="bg-fuchsia-600 text-white h-5 w-5 text-xs flex justify-center absolute top-[-5px] right-0 lg:right-[-12px]">
                     {cartValue.length}
                   </Badge>
                 )}
@@ -236,8 +238,36 @@ const Header = () => {
             )}
           </div>
         )}
+        {ismobile && location.pathname !== "/checkout" && (
+          <div className=" flex gap-6">
+            <Link
+              to={"/checkout"}
+              variant="link"
+              className="text-slate-800 font-mier-book text-[17px] font-normal justify-center items-center flex flex-col h-full"
+            >
+              <ImHeart size={20} fill="red" />
+              Cart
+            </Link>
+
+            <Link
+              to={"/checkout"}
+              variant="link"
+              className="text-slate-800 font-mier-book text-[17px] font-normal justify-center items-center flex flex-col h-full"
+            >
+              <HiMiniShoppingCart size={20} />
+              Cart
+            </Link>
+            {cartValue.length < 1 ? (
+              ""
+            ) : (
+              <Badge className="bg-fuchsia-600 text-white md:h-5 right-0 top-1 h-4 w-4 md:w-5 text-xs flex justify-center absolute md:top-[-5px] md:right-0 lg:right-[-12px]">
+                {cartValue.length}
+              </Badge>
+            )}
+          </div>
+        )}
       </div>
-      {location.pathname !== "/checkout" && <Navbar_second />}
+      {location.pathname !== "/checkout" && !ismobile && <Navbar_second />}
     </div>
   );
 };

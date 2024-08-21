@@ -59,7 +59,7 @@ const Address = ({
   };
 
   return (
-    <div className="mt-5 md:h-[86vh] w-full md:px-24  px-0 justify-center md:gap-3 md:flex-row flex-col  flex">
+    <div className="mt-5 lg:h-[86vh] w-full lg:px-24  px-0 justify-center lg:gap-3 lg:flex-row flex-col  flex">
       <div className="flex flex-col md:gap-2 w-full md:w-1/2">
         <span
           onClick={prevStep}
@@ -154,7 +154,7 @@ const Address = ({
         </div>
       </div>
       {!isMobile && <Separator orientation="vertical" />}
-      <div className="flex flex-col md:w-96 w-full p-2 md:p-0">
+      <div className="flex flex-col md:w-96 w-full p-2 lg:p-0">
         <h3 className="text-xl font-mier my-1">Product Details (2) products</h3>
         <div className="flex-col flex rounded-md font-mier-demi text-slate-600 border gap-3 p-3">
           <div className="flex text-lg justify-between">

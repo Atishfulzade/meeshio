@@ -237,18 +237,18 @@ const Home = () => {
             <p className="text-sm font-mier-book lg:text-xl text-slate-300">
               Sell your products to crores of customers at 0% commission
             </p>
-            <div className="flex mt-4 gap-1 font-mier-book">
-              <div className="flex items-center gap-1 lg:text-sm text-xs">
+            <div className="flex mt-4 gap-2 lg:gap-8 w-full font-mier-book">
+              <div className="flex items-center gap-1 lg:text-lg text-xs">
                 <MdCheckCircle fill="green" size={20} />
                 Grow your Business 10x
               </div>
               <Separator orientation="vertical" />
-              <div className="flex items-center gap-1 lg:text-sm text-xs">
+              <div className="flex items-center gap-1 lg:text-lg text-xs">
                 <MdCheckCircle fill="green" size={20} />
                 Grow your Business 10x
               </div>
               <Separator orientation="vertical" />
-              <div className="flex items-center gap-1 lg:text-sm text-xs">
+              <div className="flex items-center gap-1 lg:text-lg text-xs">
                 <MdCheckCircle fill="green" size={20} />
                 Grow your Business 10x
               </div>

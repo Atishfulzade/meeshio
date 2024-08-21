@@ -14,8 +14,8 @@ const Navbar_second = () => {
   const ismobile = useSelector((state) => state.identifyMobile.isMobile);
 
   return (
-    <div className="w-full h-12">
-      <div className="hidden md:flex w-full h-full items-center justify-between md:px-20">
+    <div className="hidden w-full h-12">
+      <div className=" md:flex w-full h-full items-center justify-between md:px-20">
         {navbar_second.map((item, itemIndex) => (
           <HoverCard key={itemIndex}>
             <HoverCardTrigger asChild>

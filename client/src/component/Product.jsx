@@ -56,14 +56,14 @@ const Product = ({ selectedImage, productDetails }) => {
 
   return (
     <div className="flex flex-col gap-5 md:w-[43%]">
-      <div className="md:w-[400px] md:h-[400px] lg:h-[550px] lg:w-[550px] overflow-hidden rounded-md border">
+      <div className="md:w-[360px] md:h-[360px] lg:h-[550px] lg:w-[550px] overflow-hidden rounded-md border">
         <img
           src={selectedImage || productDetails?.images[0]}
           alt={productDetails?.title}
           className="h-full w-full object-contain"
         />
       </div>
-      <div className="flex md:w-[550px] gap-2 justify-between">
+      <div className="flex lg:w-[550px] md:w-[360px] gap-2 justify-between">
         <Button
           onClick={addCart}
           variant="outline"

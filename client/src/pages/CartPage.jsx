@@ -7,7 +7,7 @@ const CartPage = () => {
 
   return (
     <div className="md:mt-20  md:px-24">
-      <Stepper steps={steps} />;
+      <Stepper steps={steps} />
     </div>
   );
 };
