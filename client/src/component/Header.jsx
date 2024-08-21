@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { IoMenu } from "react-icons/io5";
+import { IoClose, IoMenu } from "react-icons/io5";
 import { appstore, avatar, meeshoLogo, playstore } from "../assets";
 import { ImHeart } from "react-icons/im";
 import { HiMiniShoppingCart } from "react-icons/hi2";
@@ -25,6 +25,12 @@ import { signOut, onAuthStateChanged } from "firebase/auth";
 import { auth } from "../../firebaseConfig";
 import { useToast } from "@/components/ui/use-toast";
 import { HiOutlineShoppingBag } from "react-icons/hi";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogTrigger,
+} from "@radix-ui/react-dialog";
 
 const Header = () => {
   const [user, setUser] = useState(null); // State to store user info
@@ -36,7 +42,7 @@ const Header = () => {
   const { toast } = useToast();
 
   const cartValue = useSelector((state) => state.userInfo.cart);
-
+  const [isOpen, setIsOpen] = useState(false);
   // Fetch user details from Firebase Auth
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -81,7 +87,37 @@ const Header = () => {
     <div className="w-full bg-white fixed top-0 left-0 z-30 flex flex-col ">
       <div className="flex w-full gap-3 justify-between items-center  h-14 md:h-[70px] md:border-b-2 px-3 md:px-24 md:py-2  py-2">
         <div className="flex gap-3   justify-between items-center">
-          <IoMenu size={24} className="text-slate-800 md:hidden" />
+          <Dialog open={isOpen} onOpenChange={setIsOpen}>
+            <DialogTrigger asChild>
+              <IoMenu
+                onClick={() => setIsOpen(true)}
+                size={24}
+                className="text-slate-800 md:hidden"
+              />
+            </DialogTrigger>
+
+            <DialogContent
+              aria-describedby="description"
+              className="fixed  z-40  left-0 top-0 h-full w-full transition-all bg-white shadow-lg transform transition-transform duration-300"
+            >
+              <div className="p-4 flex justify-between items-center">
+                <h2 className="text-lg font-bold">
+                  <img src={meeshoLogo} alt="logo" className="w-20" />
+                </h2>
+                <DialogClose asChild>
+                  <IoClose onClick={() => setIsOpen(false)} size={24} />
+                </DialogClose>{" "}
+              </div>
+              <div className="p-4">
+                <ul className="flex flex-col gap-4">
+                  <li>Home</li>
+                  <li>Shop</li>
+                  <li>About</li>
+                  <li>Contact</li>
+                </ul>
+              </div>
+            </DialogContent>
+          </Dialog>
           <img
             src={meeshoLogo}
             alt="Meesho logo"

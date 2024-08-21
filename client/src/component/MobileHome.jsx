@@ -3,7 +3,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Thumbs, Autoplay } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/thumbs";
-import { mobile_poster, product1, product2 } from "../assets"; // Ensure product1 is properly imported and optimized
+import { mobile_poster, product1, product2 } from "../assets"; // Make sure assets are correctly imported
 import SearchBar from "./SearchBar";
 import { Button } from "@/components/ui/button";
 import { TbArrowsSort } from "react-icons/tb";
@@ -14,13 +14,13 @@ import {
   Drawer,
   DrawerClose,
   DrawerContent,
-  DrawerDescription,
   DrawerFooter,
   DrawerHeader,
   DrawerTitle,
+  DrawerDescription,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import { Separator } from "../components/ui/separator";
+import { Separator } from "@/components/ui/separator";
 import CardDisplay from "./CardDisplay";
 import { deals, filterData, slide } from "../utils/constant";
 
@@ -33,16 +33,17 @@ const MobileHome = () => {
       <div className="p-3">
         <SearchBar />
       </div>
+
+      {/* Swiper for larger images */}
       <div className="p-2 relative">
-        {/* Main Swiper for larger images */}
         <Swiper
           spaceBetween={10}
           slidesPerView={1}
-          autoplay={{ delay: 3000, disableOnInteraction: false }} // Autoplay after 3 seconds
-          thumbs={{ swiper: thumbsSwiper }} // Connect the thumbs swiper
-          modules={[Thumbs, Autoplay]} // Include Autoplay module
+          autoplay={{ delay: 3000, disableOnInteraction: false }}
+          thumbs={{ swiper: thumbsSwiper }}
+          modules={[Thumbs, Autoplay]}
           className="h-[150px] w-full"
-          onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)} // Track active slide
+          onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)}
         >
           {slide.map((slides, index) => (
             <SwiperSlide key={index}>
@@ -55,7 +56,7 @@ const MobileHome = () => {
           ))}
         </Swiper>
 
-        {/* Dot Progress Indicators */}
+        {/* Dot Indicators */}
         <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
           {slide.map((_, index) => (
             <div
@@ -69,18 +70,20 @@ const MobileHome = () => {
 
         {/* Thumbnail Swiper */}
         <Swiper
-          onSwiper={setThumbsSwiper} // Set the state with the thumbnail swiper instance
+          onSwiper={setThumbsSwiper}
           spaceBetween={10}
-          slidesPerView={4} // Show 4 thumbnails at a time
+          slidesPerView={4}
           watchSlidesProgress
           className="mt-5"
-        ></Swiper>
+        />
       </div>
+
+      {/* Daily Deals Section */}
       <div className="flex flex-col p-3 gap-2 w-full">
         <h3 className="font-mier-demi">Daily Deals</h3>
         <div className="flex h-28 overflow-x-auto w-full gap-2">
-          {deals.map((deal) => (
-            <div className="flex-shrink-0 w-28 h-full">
+          {deals.map((deal, index) => (
+            <div key={index} className="flex-shrink-0 w-28 h-full">
               <img
                 src={deal}
                 alt=""
@@ -90,213 +93,65 @@ const MobileHome = () => {
           ))}
         </div>
       </div>
+
+      {/* Category Section */}
       <div className="flex flex-col p-3 gap-2 w-full">
         <h3 className="font-mier-demi">Category</h3>
         <div className="flex h-16 overflow-x-auto w-full gap-2">
-          {filterData.map((category) => (
-            <div className="flex-shrink-0 cursor-pointer border w-12 rounded-full overflow-hidden h-12 ">
+          {filterData.map((category, index) => (
+            <div
+              key={index}
+              className="flex-shrink-0 cursor-pointer border w-12 h-12 rounded-full overflow-hidden"
+            >
               <img
                 src={category.img}
-                alt=""
-                className="w-full h-full  object-contain border  rounded-full"
+                alt={category.name}
+                className="w-full h-full object-contain border rounded-full"
               />
             </div>
           ))}
         </div>
-        <div className="">
-          <img src={mobile_poster} alt="" />
-        </div>
+        <img src={mobile_poster} alt="Mobile Poster" className="w-full mt-3" />
       </div>
 
-      <div className="flex flex-col">
-        <div className="flex border-2 sticky top-0 justify-around z-30 bg-white">
-          <Drawer>
-            <DrawerTrigger asChild>
-              <div className="flex text-sm w-[25%] justify-center py-3 border font-mier-demi gap-1 items-center">
-                <TbArrowsSort /> Sort
-              </div>
-            </DrawerTrigger>
-            <DrawerContent>
-              <div className="mx-auto w-full max-w-sm">
-                <DrawerHeader>
-                  <DrawerTitle>Move Goal</DrawerTitle>
-                  <DrawerDescription>
-                    Set your daily activity goal.
-                  </DrawerDescription>
-                </DrawerHeader>
-                <div className="p-4 pb-0">
-                  <div className="flex items-center justify-center space-x-2">
-                    hollo
-                    <div className="flex-1 text-center">
-                      <div className="text-7xl font-bold tracking-tighter">
-                        goal
-                      </div>
-                      <div className="text-[0.70rem] uppercase text-muted-foreground">
-                        Calories/day
-                      </div>
-                    </div>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      className="h-8 w-8 shrink-0 rounded-full"
-                      onClick={() => onClick(10)}
-                    >
-                      <span className="sr-only">Increase</span>
-                    </Button>
-                  </div>
-                  <div className="mt-3 h-[120px]">hello world</div>
+      {/* Filter, Sort, Category, and Gender Options */}
+      <div className="flex border-2 sticky top-0 justify-around z-30 bg-white">
+        {[
+          { label: "Sort", icon: <TbArrowsSort /> },
+          { label: "Category", icon: <FaAngleDown /> },
+          { label: "Gender", icon: <FaAngleDown /> },
+          { label: "Filter", icon: <IoFilter /> },
+        ].map((option, index) => (
+          <React.Fragment key={index}>
+            <Drawer>
+              <DrawerTrigger asChild>
+                <div className="flex text-sm w-[25%] justify-center py-3 border font-mier-demi gap-1 items-center">
+                  {option.icon} {option.label}
                 </div>
-                <DrawerFooter>
-                  <Button>Submit</Button>
-                  <DrawerClose asChild>
-                    <Button variant="outline">Cancel</Button>
-                  </DrawerClose>
-                </DrawerFooter>
-              </div>
-            </DrawerContent>
-          </Drawer>
-          <Separator orientation="vertical" />
-          <Drawer>
-            <DrawerTrigger asChild>
-              <div className="flex text-sm w-[25%] justify-center py-3 border font-mier-demi gap-1 items-center">
-                Category <FaAngleDown />
-              </div>
-            </DrawerTrigger>
-            <DrawerContent>
-              <div className="mx-auto w-full max-w-sm">
-                <DrawerHeader>
-                  <DrawerTitle>Move Goal</DrawerTitle>
-                  <DrawerDescription>
-                    Set your daily activity goal.
-                  </DrawerDescription>
-                </DrawerHeader>
-                <div className="p-4 pb-0">
-                  <div className="flex items-center justify-center space-x-2">
-                    hollo
-                    <div className="flex-1 text-center">
-                      <div className="text-7xl font-bold tracking-tighter">
-                        goal
-                      </div>
-                      <div className="text-[0.70rem] uppercase text-muted-foreground">
-                        Calories/day
-                      </div>
-                    </div>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      className="h-8 w-8 shrink-0 rounded-full"
-                      onClick={() => onClick(10)}
-                    >
-                      <span className="sr-only">Increase</span>
-                    </Button>
-                  </div>
-                  <div className="mt-3 h-[120px]">hello world</div>
+              </DrawerTrigger>
+              <DrawerContent>
+                <div className="mx-auto w-full max-w-sm">
+                  <DrawerHeader>
+                    <DrawerTitle>{option.label}</DrawerTitle>
+                    <DrawerDescription>Set your preferences.</DrawerDescription>
+                  </DrawerHeader>
+                  <div className="p-4">Content for {option.label}</div>
+                  <DrawerFooter>
+                    <Button>Submit</Button>
+                    <DrawerClose asChild>
+                      <Button variant="outline">Cancel</Button>
+                    </DrawerClose>
+                  </DrawerFooter>
                 </div>
-                <DrawerFooter>
-                  <Button>Submit</Button>
-                  <DrawerClose asChild>
-                    <Button variant="outline">Cancel</Button>
-                  </DrawerClose>
-                </DrawerFooter>
-              </div>
-            </DrawerContent>
-          </Drawer>
-          <Separator orientation="vertical" />
-          <Drawer>
-            <DrawerTrigger asChild>
-              <div className="flex text-sm w-[25%] justify-center py-3 border font-mier-demi gap-1 items-center">
-                Gender <FaAngleDown />
-              </div>
-            </DrawerTrigger>
-            <DrawerContent>
-              <div className="mx-auto w-full max-w-sm">
-                <DrawerHeader>
-                  <DrawerTitle>Move Goal</DrawerTitle>
-                  <DrawerDescription>
-                    Set your daily activity goal.
-                  </DrawerDescription>
-                </DrawerHeader>
-                <div className="p-4 pb-0">
-                  <div className="flex items-center justify-center space-x-2">
-                    hollo
-                    <div className="flex-1 text-center">
-                      <div className="text-7xl font-bold tracking-tighter">
-                        goal
-                      </div>
-                      <div className="text-[0.70rem] uppercase text-muted-foreground">
-                        Calories/day
-                      </div>
-                    </div>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      className="h-8 w-8 shrink-0 rounded-full"
-                      onClick={() => onClick(10)}
-                    >
-                      <span className="sr-only">Increase</span>
-                    </Button>
-                  </div>
-                  <div className="mt-3 h-[120px]">hello world</div>
-                </div>
-                <DrawerFooter>
-                  <Button>Submit</Button>
-                  <DrawerClose asChild>
-                    <Button variant="outline">Cancel</Button>
-                  </DrawerClose>
-                </DrawerFooter>
-              </div>
-            </DrawerContent>
-          </Drawer>
-          <Separator orientation="vertical" />
-          <Drawer>
-            <DrawerTrigger asChild>
-              <div className="flex text-sm w-[25%] justify-center py-3 border font-mier-demi gap-1 items-center">
-                <IoFilter /> Filter
-              </div>
-            </DrawerTrigger>
-            <DrawerContent>
-              <div className="mx-auto w-full max-w-sm">
-                <DrawerHeader>
-                  <DrawerTitle>Move Goal</DrawerTitle>
-                  <DrawerDescription>
-                    Set your daily activity goal.
-                  </DrawerDescription>
-                </DrawerHeader>
-                <div className="p-4 pb-0">
-                  <div className="flex items-center justify-center space-x-2">
-                    hollo
-                    <div className="flex-1 text-center">
-                      <div className="text-7xl font-bold tracking-tighter">
-                        goal
-                      </div>
-                      <div className="text-[0.70rem] uppercase text-muted-foreground">
-                        Calories/day
-                      </div>
-                    </div>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      className="h-8 w-8 shrink-0 rounded-full"
-                      onClick={() => onClick(10)}
-                    >
-                      <span className="sr-only">Increase</span>
-                    </Button>
-                  </div>
-                  <div className="mt-3 h-[120px]">hello world</div>
-                </div>
-                <DrawerFooter>
-                  <Button>Submit</Button>
-                  <DrawerClose asChild>
-                    <Button variant="outline">Cancel</Button>
-                  </DrawerClose>
-                </DrawerFooter>
-              </div>
-            </DrawerContent>
-          </Drawer>
-        </div>
-
-        <CardDisplay />
+              </DrawerContent>
+            </Drawer>
+            {index < 3 && <Separator orientation="vertical" />}
+          </React.Fragment>
+        ))}
       </div>
+
+      {/* Card Display Section */}
+      <CardDisplay />
     </div>
   );
 };
