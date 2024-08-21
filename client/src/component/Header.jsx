@@ -98,7 +98,7 @@ const Header = () => {
 
             <DialogContent
               aria-describedby="description"
-              className="fixed  z-40  left-0 top-0 h-full w-full transition-all bg-white shadow-lg transform transition-transform duration-300"
+              className="fixed  z-40  left-0 top-0 h-full w-full transition-all bg-white shadow-lgduration-300"
             >
               <div className="p-4 flex justify-between items-center">
                 <h2 className="text-lg font-bold">
