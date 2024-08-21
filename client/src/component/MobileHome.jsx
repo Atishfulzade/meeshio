@@ -3,9 +3,8 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Thumbs, Autoplay } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/thumbs";
-import { product1, product2, product3 } from "../assets"; // Ensure product1 is properly imported and optimized
+import { mobile_poster, product1, product2 } from "../assets"; // Ensure product1 is properly imported and optimized
 import SearchBar from "./SearchBar";
-import Cards from "./Cards";
 import { Button } from "@/components/ui/button";
 import { TbArrowsSort } from "react-icons/tb";
 import { FaAngleDown } from "react-icons/fa6";
@@ -23,12 +22,11 @@ import {
 } from "@/components/ui/drawer";
 import { Separator } from "../components/ui/separator";
 import CardDisplay from "./CardDisplay";
+import { deals, filterData, slide } from "../utils/constant";
 
 const MobileHome = () => {
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
   const [activeIndex, setActiveIndex] = useState(0);
-
-  const slides = [product1, product1, product1, product1]; // Array of your slide images
 
   return (
     <div className="mt-12">
@@ -46,10 +44,10 @@ const MobileHome = () => {
           className="h-[150px] w-full"
           onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)} // Track active slide
         >
-          {slides.map((slide, index) => (
+          {slide.map((slides, index) => (
             <SwiperSlide key={index}>
               <img
-                src={slide}
+                src={slides}
                 alt={`Product ${index + 1}`}
                 className="object-cover h-full w-full"
               />
@@ -59,7 +57,7 @@ const MobileHome = () => {
 
         {/* Dot Progress Indicators */}
         <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
-          {slides.map((_, index) => (
+          {slide.map((_, index) => (
             <div
               key={index}
               className={`w-3 h-1 rounded-full transition-all duration-300 ${
@@ -81,34 +79,32 @@ const MobileHome = () => {
       <div className="flex flex-col p-3 gap-2 w-full">
         <h3 className="font-mier-demi">Daily Deals</h3>
         <div className="flex h-28 overflow-x-auto w-full gap-2">
-          <div className="flex-shrink-0 w-28 h-full">
-            <img
-              src={product1}
-              alt=""
-              className="w-full h-full object-cover border border-slate-600 rounded-lg"
-            />
-          </div>
-          <div className="flex-shrink-0 w-28 h-full">
-            <img
-              src={product1}
-              alt=""
-              className="w-full h-full object-cover border border-slate-600 rounded-lg"
-            />
-          </div>
-          <div className="flex-shrink-0 w-28 h-full">
-            <img
-              src={product1}
-              alt=""
-              className="w-full h-full object-cover border border-slate-600 rounded-lg"
-            />
-          </div>
-          <div className="flex-shrink-0 w-28 h-full">
-            <img
-              src={product1}
-              alt=""
-              className="w-full h-full object-cover border border-slate-600 rounded-lg"
-            />
-          </div>
+          {deals.map((deal) => (
+            <div className="flex-shrink-0 w-28 h-full">
+              <img
+                src={deal}
+                alt=""
+                className="w-full h-full object-cover border border-slate-600 rounded-lg"
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="flex flex-col p-3 gap-2 w-full">
+        <h3 className="font-mier-demi">Category</h3>
+        <div className="flex h-16 overflow-x-auto w-full gap-2">
+          {filterData.map((category) => (
+            <div className="flex-shrink-0 cursor-pointer border w-12 rounded-full overflow-hidden h-12 ">
+              <img
+                src={category.img}
+                alt=""
+                className="w-full h-full  object-contain border  rounded-full"
+              />
+            </div>
+          ))}
+        </div>
+        <div className="">
+          <img src={mobile_poster} alt="" />
         </div>
       </div>
 

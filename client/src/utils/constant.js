@@ -1,3 +1,59 @@
+import {
+  deal1,
+  deal2,
+  deal3,
+  deal4,
+  deal5,
+  deal6,
+  deal7,
+  deal8,
+  deal9,
+  deal10,
+  deal11,
+  deal12,
+  deal13,
+  deal14,
+  deal15,
+  deal16,
+  deal17,
+  deal18,
+  deal19,
+  deal20,
+  deal21,
+  deal22,
+  deal23,
+  slider1,
+  slider10,
+  slider11,
+  slider12,
+  slider13,
+  slider14,
+  slider15,
+  slider16,
+  slider17,
+  slider18,
+  slider19,
+  slider2,
+  slider20,
+  slider3,
+  slider4,
+  slider5,
+  slider6,
+  slider7,
+  slider8,
+  slider9,
+  slide1,
+  slide2,
+  slide3,
+  slide4,
+  slide5,
+  slide6,
+  slide7,
+  slide8,
+  slide9,
+  slide10,
+} from "../assets";
+
 const navbar_second = [
   {
     title: "Women Ethnic",
@@ -475,6 +531,7 @@ const navbar_second = [
 const filterData = [
   {
     title: "Category",
+    img: slider1,
     subCategory: [
       {
         title: "Clothes",
@@ -630,6 +687,7 @@ const filterData = [
   },
   {
     title: "Gender",
+    img: slider2,
     subCategory: [
       {
         title: "Electronics",
@@ -641,6 +699,7 @@ const filterData = [
   },
   {
     title: "Color",
+    img: slider3,
     subCategory: [
       {
         title: "Electronics",
@@ -652,6 +711,7 @@ const filterData = [
   },
   {
     title: "Fabric",
+    img: slider4,
     subCategory: [
       {
         title: "Electronics",
@@ -663,6 +723,7 @@ const filterData = [
   },
   {
     title: "Size",
+    img: slider5,
     subCategory: [
       {
         title: "Electronics",
@@ -674,6 +735,7 @@ const filterData = [
   },
   {
     title: "Price",
+    img: slider6,
     subCategory: [
       {
         title: "Electronics",
@@ -685,6 +747,7 @@ const filterData = [
   },
   {
     title: "Rating",
+    img: slider7,
     subCategory: [
       {
         title: "Electronics",
@@ -696,6 +759,7 @@ const filterData = [
   },
   {
     title: "Combo",
+    img: slider8,
     subCategory: [
       {
         title: "Electronics",
@@ -707,6 +771,7 @@ const filterData = [
   },
   {
     title: "Discount",
+    img: slider9,
     subCategory: [
       {
         title: "Electronics",
@@ -718,6 +783,7 @@ const filterData = [
   },
   {
     title: "Ocasion",
+    img: slider10,
     subCategory: [
       {
         title: "Electronics",
@@ -729,6 +795,7 @@ const filterData = [
   },
   {
     title: "Smartcoins",
+    img: slider11,
     subCategory: [
       {
         title: "Electronics",
@@ -740,6 +807,7 @@ const filterData = [
   },
   {
     title: "Pattern",
+    img: slider12,
     subCategory: [
       {
         title: "Electronics",
@@ -751,6 +819,7 @@ const filterData = [
   },
   {
     title: "Sleeve",
+    img: slider13,
     subCategory: [
       {
         title: "Electronics",
@@ -762,6 +831,7 @@ const filterData = [
   },
   {
     title: "Fit",
+    img: slider14,
     subCategory: [
       {
         title: "Electronics",
@@ -773,6 +843,7 @@ const filterData = [
   },
   {
     title: "Meesho gold",
+    img: slider15,
     subCategory: [
       {
         title: "Electronics",
@@ -784,6 +855,7 @@ const filterData = [
   },
   {
     title: "Meesho Mall",
+    img: slider16,
     subCategory: [
       {
         title: "Electronics",
@@ -795,6 +867,7 @@ const filterData = [
   },
   {
     title: "Fit/Shape",
+    img: slider17,
     subCategory: [
       {
         title: "Electronics",
@@ -806,6 +879,7 @@ const filterData = [
   },
   {
     title: "Top Length",
+    img: slider18,
     subCategory: [
       {
         title: "Electronics",
@@ -817,6 +891,7 @@ const filterData = [
   },
   {
     title: "Neck",
+    img: slider19,
     subCategory: [
       {
         title: "Electronics",
@@ -828,6 +903,7 @@ const filterData = [
   },
   {
     title: "Surface Styling",
+    img: slider20,
     subCategory: [
       {
         title: "Electronics",
@@ -849,4 +925,40 @@ const filterData = [
     ],
   },
 ];
-export { navbar_second, filterData };
+const deals = [
+  deal2,
+  deal3,
+  deal4,
+
+  deal6,
+  deal7,
+
+  deal9,
+  deal10,
+  deal11,
+
+  deal13,
+  deal14,
+  deal15,
+  deal16,
+  deal17,
+  deal18,
+  deal19,
+  deal20,
+  deal21,
+  deal22,
+  deal23,
+];
+const slide = [
+  slide1,
+  slide2,
+  slide3,
+  slide4,
+  slide5,
+  slide6,
+  slide7,
+  slide8,
+  slide9,
+  slide10,
+];
+export { navbar_second, filterData, deals, slide };

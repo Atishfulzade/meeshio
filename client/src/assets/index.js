@@ -43,6 +43,61 @@ import securePayment from "./securePayment.png";
 import upi from "./upi.png";
 import cardPayment from "./cardPayment.png";
 import avatar from "./user.png";
+import mobile_poster from "./mobile_poster.webp";
+import slider1 from "./mobile_slider-1.webp";
+import slider2 from "./mobile_slider-2.webp";
+import slider3 from "./mobile_slider-3.webp";
+import slider4 from "./mobile_slider-4.webp";
+import slider5 from "./mobile_slider-5.webp";
+import slider6 from "./mobile_slider-6.webp";
+import slider7 from "./mobile_slider-7.webp";
+import slider8 from "./mobile_slider-8.webp";
+import slider9 from "./mobile_slider-9.webp";
+import slider10 from "./mobile_slider-10.webp";
+import slider11 from "./mobile_slider-11.webp";
+import slider12 from "./mobile_slider-12.webp";
+import slider13 from "./mobile_slider-13.webp";
+import slider14 from "./mobile_slider-14.webp";
+import slider15 from "./mobile_slider-15.webp";
+import slider16 from "./mobile_slider-16.webp";
+import slider17 from "./mobile_slider-17.webp";
+import slider18 from "./mobile_slider-18.webp";
+import slider19 from "./mobile_slider-10.webp";
+import slider20 from "./mobile_slider-20.webp";
+import deal1 from "./deal1.webp";
+import deal2 from "./deal2.webp";
+import deal3 from "./deal3.webp";
+import deal4 from "./deal4.webp";
+import deal5 from "./deal5.webp";
+import deal6 from "./deal6.webp";
+import deal7 from "./deal7.webp";
+import deal8 from "./deal8.webp";
+import deal9 from "./deal9.webp";
+import deal10 from "./deal10.webp";
+import deal11 from "./deal11.webp";
+import deal12 from "./deal12.webp";
+import deal13 from "./deal13.webp";
+import deal14 from "./deal14.webp";
+import deal15 from "./deal15.webp";
+import deal16 from "./deal16.webp";
+import deal17 from "./deal17.webp";
+import deal18 from "./deal18.webp";
+import deal19 from "./deal19.webp";
+import deal20 from "./deal20.webp";
+import deal21 from "./deal21.webp";
+import deal22 from "./deal22.webp";
+import deal23 from "./deal23.webp";
+import slide1 from "./slide1.webp";
+import slide2 from "./slide2.webp";
+import slide3 from "./slide3.webp";
+import slide4 from "./slide4.webp";
+import slide5 from "./slide5.webp";
+import slide6 from "./slide6.webp";
+import slide7 from "./slide7.webp";
+import slide8 from "./slide8.webp";
+import slide9 from "./slide9.webp";
+import slide10 from "./slide10.webp";
+
 export {
   meeshoLogo,
   cardPayment,
@@ -89,4 +144,58 @@ export {
   categories3,
   appstore,
   view_all_btn,
+  mobile_poster,
+  slider1,
+  slider2,
+  slider3,
+  slider4,
+  slider5,
+  slider6,
+  slider7,
+  slider8,
+  slider9,
+  slider10,
+  slider11,
+  slider12,
+  slider13,
+  slider14,
+  slider15,
+  slider16,
+  slider17,
+  slider18,
+  slider19,
+  slider20,
+  deal1,
+  deal2,
+  deal3,
+  deal4,
+  deal5,
+  deal6,
+  deal7,
+  deal8,
+  deal9,
+  deal10,
+  deal11,
+  deal12,
+  deal13,
+  deal14,
+  deal15,
+  deal16,
+  deal17,
+  deal18,
+  deal19,
+  deal20,
+  deal21,
+  deal22,
+  deal23,
+  slide1,
+  slide2,
+  slide3,
+  slide4,
+  slide5,
+  slide6,
+  slide7,
+  slide8,
+  slide9,
+  slide10,
 };
