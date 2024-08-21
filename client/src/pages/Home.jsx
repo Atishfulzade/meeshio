@@ -43,13 +43,13 @@ const Home = () => {
       className={
         ismobile
           ? "hidden"
-          : "flex pt-32 flex-col px-10 lg:px-24  mx-auto w-full overflow-hidden"
+          : "flex pt-32 flex-col px-10 lg:px-24  mx-auto w-full md:mt-6 overflow-hidden"
       }
     >
-      <div className="flex flex-col md:px-24 gap-6 justify-center items-center ">
+      <div className="flex flex-col md:px-24 gap-10 justify-center items-center ">
         <div className="flex   w-full rounded-sm overflow-hidden">
           <div className="flex flex-col w-1/2 py-4 px-3 lg:p-8 justify-between bg-slate-200 ">
-            <h1 className="md:text-2xl lg:text-5xl font-mier-book font-semibold text-fuchsia-700">
+            <h1 className="md:text-2xl lg:text-5xl font-mier-book font-semibold text-slate-700">
               Lowest Prices
               <br />
               Best Quality Shopping
@@ -99,11 +99,11 @@ const Home = () => {
           <img src={ad_banner} alt="Advertisement banner" className="w-1/2" />
         </div>
         <div className="flex  justify-center items-center w-full">
-          <span className="h-[1px] w-full bg-slate-500" />
-          <h1 className="text-xl lg:text-3xl text-slate-700  mx-2 font-mier-demi whitespace-nowrap">
+          <span className="h-[1px] w-full bg-fuchsia-700" />
+          <h1 className="text-xl lg:text-4xl text-slate-700  mx-10 font-mier-bold  whitespace-nowrap">
             Top Categories to choose from
           </h1>
-          <span className="h-[1px] w-full bg-slate-500" />
+          <span className="h-[1px] w-full bg-fuchsia-700" />
         </div>
         <div className="relative w-full h-fit rounded-sm overflow-hidden">
           <img src={category_banner} alt="Category banner" className="w-full" />
