@@ -230,7 +230,7 @@ const Header = () => {
                 {cartValue.length < 1 ? (
                   ""
                 ) : (
-                  <Badge className="bg-fuchsia-600 text-white h-5 w-5 text-xs flex justify-center absolute top-[-5px] right-0 lg:right-[-12px]">
+                  <Badge className="bg-fuchsia-200 text-fuchsia-800 h-5 w-5 text-xs flex justify-center absolute top-[-5px] right-0 lg:right-[-12px]">
                     {cartValue.length}
                   </Badge>
                 )}
@@ -260,7 +260,7 @@ const Header = () => {
             {cartValue.length < 1 ? (
               ""
             ) : (
-              <Badge className="bg-fuchsia-600 text-white md:h-5 right-0 top-1 h-4 w-4 md:w-5 text-xs flex justify-center absolute md:top-[-5px] md:right-0 lg:right-[-12px]">
+              <Badge className="bg-fuchsia-200 text-fuchsia-700 md:h-5 right-0 top-1 h-4 w-4 md:w-5 text-xs flex justify-center absolute md:top-[-5px] md:right-0 lg:right-[-12px]">
                 {cartValue.length}
               </Badge>
             )}
