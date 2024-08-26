@@ -36,6 +36,7 @@ const Header = () => {
   const [user, setUser] = useState(null); // State to store user info
   const ismobile = useSelector((state) => state.identifyMobile.isMobile);
   const isLoggedIn = useSelector((state) => state.loggedIn.isLoggedIn);
+  const [searchInput, setSearchInput] = useState(""); // State to store
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -125,7 +126,11 @@ const Header = () => {
           />
         </div>
         {!ismobile && location.pathname !== "/checkout" && (
-          <SearchBar width={"w-96"} />
+          <SearchBar
+            width={"w-96"}
+            searchInput={searchInput}
+            setSearchInput={setSearchInput}
+          />
         )}
 
         {location.pathname !== "/checkout" && (
