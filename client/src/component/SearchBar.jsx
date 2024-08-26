@@ -3,7 +3,6 @@ import { IoIosClose } from "react-icons/io";
 import { IoSearchOutline } from "react-icons/io5";
 import { Input } from "@/components/ui/input";
 import SearchResult from "./SearchResult";
-import axios from "axios";
 import { getData } from "../utils/fetchData";
 
 const SearchBar = ({ width, searchInput, setSearchInput }) => {
@@ -20,7 +19,7 @@ const SearchBar = ({ width, searchInput, setSearchInput }) => {
   }, []);
 
   useEffect(() => {
-    if (searchInput.length > 0) {
+    if (searchInput?.length > 0) {
       const filtered = results?.filter((item) =>
         item.title.toLowerCase().includes(searchInput.toLowerCase())
       );

@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useRef, useState, useCallback } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Thumbs, Autoplay } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/thumbs";
-import { mobile_poster, product1, product2 } from "../assets"; // Make sure assets are correctly imported
+import { mobile_poster, product1, product2 } from "../assets";
 import SearchBar from "./SearchBar";
+
 import { Button } from "@/components/ui/button";
 import { TbArrowsSort } from "react-icons/tb";
 import { FaAngleDown } from "react-icons/fa6";
@@ -24,14 +25,29 @@ import { Separator } from "@/components/ui/separator";
 import CardDisplay from "./CardDisplay";
 import { deals, filterData, slide } from "../utils/constant";
 
+// Memoize the SearchBar component
+const MemoizedSearchBar = React.memo(SearchBar);
+
 const MobileHome = () => {
+  const slideref = useRef(null);
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [searchInput, setSearchInput] = useState("");
+
+  // Memoize callback for slide change to prevent unnecessary re-renders
+  const handleSlideChange = useCallback((swiper) => {
+    setActiveIndex(swiper.activeIndex);
+  }, []);
 
   return (
     <div className="mt-12">
+      {/* Search Bar outside the main content to avoid re-rendering */}
       <div className="p-3">
-        <SearchBar />
+        <MemoizedSearchBar
+          ref={slideref}
+          searchInput={searchInput}
+          setSearchInput={setSearchInput}
+        />
       </div>
 
       {/* Swiper for larger images */}
@@ -43,7 +59,7 @@ const MobileHome = () => {
           thumbs={{ swiper: thumbsSwiper }}
           modules={[Thumbs, Autoplay]}
           className="h-[150px] w-full"
-          onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)}
+          onSlideChange={handleSlideChange}
         >
           {slide.map((slides, index) => (
             <SwiperSlide key={index}>

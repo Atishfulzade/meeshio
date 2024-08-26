@@ -8,7 +8,6 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Button } from "../components/ui/button";
 import { navbar_second } from "../utils/constant";
-import SearchBar from "./SearchBar";
 import { useSelector } from "react-redux";
 const Navbar_second = () => {
   const ismobile = useSelector((state) => state.identifyMobile.isMobile);
