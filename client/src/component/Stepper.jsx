@@ -76,7 +76,7 @@ const Stepper = ({ steps }) => {
   return (
     <>
       {cart.length === 0 ? (
-        <div className="text-3xl font-mier-demi text-fuchsia-700 mt-10">
+        <div className="text-3xl text-center my-auto font-mier-demi h-32 text-fuchsia-700 mt-10">
           Your Cart is Empty
         </div>
       ) : (
