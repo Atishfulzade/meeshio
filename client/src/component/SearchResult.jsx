@@ -2,7 +2,7 @@ import React from "react";
 
 const SearchResult = ({ filteredResults }) => {
   return (
-    <div className="w-full h-96 bg-white z-50 border rounded-sm absolute top-16 p-4 left-0 overflow-y-auto">
+    <div className="w-full  h-96 bg-white z-50 border rounded-sm absolute top-28 md:top-16 p-4 left-0 overflow-y-auto">
       {filteredResults?.length > 0 ? (
         filteredResults.map((item, index) => (
           <div

@@ -1,13 +1,15 @@
-import React from "react";
+import React, { forwardRef } from "react";
 import { useSelector } from "react-redux";
 import ProductCard from "./ProductCard";
-const Cards = ({ width, products }) => {
-  const ismobile = useSelector((state) => state.identifyMobile.isMobile);
+
+const Cards = forwardRef(({ products, width }, ref) => {
+  const isMobile = useSelector((state) => state.identifyMobile.isMobile);
 
   return (
     <div
+      ref={ref} // Forwarded ref applied here
       className={`flex flex-wrap h-fit justify-center ${
-        ismobile ? "gap-0 w-full" : `gap-2 ${width}`
+        isMobile ? "gap-0 w-full " : `gap-5 ${width}`
       }`}
     >
       {products?.map((details, j) => (
@@ -15,6 +17,6 @@ const Cards = ({ width, products }) => {
       ))}
     </div>
   );
-};
+});
 
 export default Cards;

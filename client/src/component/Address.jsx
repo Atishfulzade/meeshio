@@ -24,10 +24,13 @@ const Address = ({
   discountedPrice,
   prevStep,
 }) => {
+  // Access state to determine if the device is mobile
   const isMobile = useSelector((state) => state.identifyMobile.isMobile);
-  // Dummy address data
+
+  // Access user's cart from Redux store
   const cart = useSelector((state) => state.userInfo.cart);
 
+  // Dummy address data for demonstration
   const addressDetail = [
     {
       id: 1,
@@ -45,13 +48,15 @@ const Address = ({
     },
   ];
 
-  // State to store selected address
+  // State to store selected address ID
   const [selectedAddress, setSelectedAddress] = useState(null);
 
+  // Handles the selection of an address
   const handleSelectAddress = (value) => {
     setSelectedAddress(value);
   };
 
+  // Proceeds to the next step only if an address is selected
   const proceedWithSelectedAddress = () => {
     if (selectedAddress) {
       nextStep();
@@ -59,16 +64,20 @@ const Address = ({
   };
 
   return (
-    <div className="mt-5 lg:h-[86vh] w-full lg:px-24  px-0 justify-center lg:gap-3 lg:flex-row flex-col  flex">
+    <div className="mt-5 lg:h-[86vh] w-full lg:px-24 px-0 justify-center lg:gap-3 lg:flex-row flex-col flex">
+      {/* Address Section */}
       <div className="flex flex-col md:gap-2 w-full md:w-1/2">
+        {/* Back button */}
         <span
           onClick={prevStep}
           className="absolute md:top-24 top-16 md:left-10 left-3 border p-2 rounded-full cursor-pointer"
         >
           <IoMdArrowBack />
         </span>
-        <div className="flex md:justify-between justify-center  md:flex-row flex-col p-3 md:p-0">
-          <h3 className="text-xl  my-2 font-mier-bold">Address Details</h3>
+
+        {/* Header and Add New Address Button */}
+        <div className="flex md:justify-between justify-center md:flex-row flex-col p-3 md:p-0">
+          <h3 className="text-xl my-2 font-mier-bold">Address Details</h3>
           <Dialog>
             <DialogTrigger asChild>
               <Button className="bg-fuchsia-700 hover:bg-fuchsia-800">
@@ -79,8 +88,7 @@ const Address = ({
               <DialogHeader>
                 <DialogTitle>Add new address</DialogTitle>
                 <DialogDescription>
-                  Make changes to your profile here. Click save when you're
-                  done.
+                  Enter the details for your new address below.
                 </DialogDescription>
               </DialogHeader>
               <div className="grid gap-4 md:py-4">
@@ -90,7 +98,7 @@ const Address = ({
                   </Label>
                   <Input
                     id="name"
-                    defaultValue="Pedro Duarte"
+                    placeholder="Enter your name"
                     className="col-span-3"
                   />
                 </div>
@@ -100,7 +108,7 @@ const Address = ({
                   </Label>
                   <Input
                     id="username"
-                    defaultValue="@peduarte"
+                    placeholder="Enter your username"
                     className="col-span-3"
                   />
                 </div>
@@ -111,7 +119,9 @@ const Address = ({
             </DialogContent>
           </Dialog>
         </div>
-        <div className="flex flex-col mt-20 gap-2 md:h-full ">
+
+        {/* Address List */}
+        <div className="flex flex-col mt-20 gap-2 md:h-full">
           <div className="p-3">
             <RadioGroup
               value={selectedAddress}
@@ -139,6 +149,8 @@ const Address = ({
                 </div>
               ))}
             </RadioGroup>
+
+            {/* Proceed Button */}
             <Button
               className={`mt-4 ${
                 selectedAddress
@@ -153,22 +165,32 @@ const Address = ({
           </div>
         </div>
       </div>
+
+      {/* Vertical separator for non-mobile view */}
       {!isMobile && <Separator orientation="vertical" />}
+
+      {/* Product Details Section */}
       <div className="flex flex-col md:w-96 w-full p-2 lg:p-0">
         <h3 className="text-xl font-mier my-1">Product Details (2) products</h3>
         <div className="flex-col flex rounded-md font-mier-demi text-slate-600 border gap-3 p-3">
+          {/* Total Product Price */}
           <div className="flex text-lg justify-between">
             <h4>Total Product price</h4>
             <span>{cart.length} Quantity</span>
             <span>₹ {totalPrice.toFixed(2)}</span>
           </div>
+
+          {/* Total Discounts */}
           <div className="flex text-lg justify-between text-green-600 font-mier-demi">
-            <h4 className=" ">Total Discounts</h4>
+            <h4>Total Discounts</h4>
             <span>₹ {(discountPercentage * totalPrice).toFixed(2)}</span>
           </div>
+
           <Separator />
+
+          {/* Order Total */}
           <div className="flex text-lg justify-between font-mier-demi">
-            <h4 className=" ">Order Total</h4>
+            <h4>Order Total</h4>
             <span>₹ {discountedPrice.toFixed(2)}</span>
           </div>
         </div>

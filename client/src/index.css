@@ -121,3 +121,7 @@
   transition: all 0.3s ease;
   background-color: fuchsia;
 }
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}

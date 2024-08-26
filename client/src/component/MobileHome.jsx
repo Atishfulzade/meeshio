@@ -3,7 +3,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Thumbs, Autoplay } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/thumbs";
-import { mobile_poster, product1, product2 } from "../assets";
+import { mobile_poster } from "../assets";
 import SearchBar from "./SearchBar";
 
 import { Button } from "@/components/ui/button";
@@ -29,7 +29,6 @@ import { deals, filterData, slide } from "../utils/constant";
 const MemoizedSearchBar = React.memo(SearchBar);
 
 const MobileHome = () => {
-  const slideref = useRef(null);
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [searchInput, setSearchInput] = useState("");
@@ -44,7 +43,6 @@ const MobileHome = () => {
       {/* Search Bar outside the main content to avoid re-rendering */}
       <div className="p-3">
         <MemoizedSearchBar
-          ref={slideref}
           searchInput={searchInput}
           setSearchInput={setSearchInput}
         />
@@ -73,7 +71,7 @@ const MobileHome = () => {
         </Swiper>
 
         {/* Dot Indicators */}
-        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+        <div className="absolute bottom-4 left-1/2  transform -translate-x-1/2 flex space-x-2">
           {slide.map((_, index) => (
             <div
               key={index}
@@ -97,7 +95,7 @@ const MobileHome = () => {
       {/* Daily Deals Section */}
       <div className="flex flex-col p-3 gap-2 w-full">
         <h3 className="font-mier-demi">Daily Deals</h3>
-        <div className="flex h-28 overflow-x-auto w-full gap-2">
+        <div className="flex h-28 overflow-x-auto w-full no-scrollbar gap-2">
           {deals.map((deal, index) => (
             <div key={index} className="flex-shrink-0 w-28 h-full">
               <img
@@ -113,7 +111,7 @@ const MobileHome = () => {
       {/* Category Section */}
       <div className="flex flex-col p-3 gap-2 w-full">
         <h3 className="font-mier-demi">Category</h3>
-        <div className="flex h-16 overflow-x-auto w-full gap-2">
+        <div className="flex h-16 overflow-x-auto no-scrollbar w-full gap-2">
           {filterData.map((category, index) => (
             <div
               key={index}
@@ -167,7 +165,7 @@ const MobileHome = () => {
       </div>
 
       {/* Card Display Section */}
-      <CardDisplay />
+      <CardDisplay heading="Products for You" />
     </div>
   );
 };
