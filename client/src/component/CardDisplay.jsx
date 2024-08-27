@@ -97,8 +97,12 @@ const CardDisplay = ({ heading }) => {
         )}
 
         {visibleProducts.length > 0 ? (
-          <div className="flex flex-col  w-full">
-            <Cards ref={cardRef} width={"w-full"} products={visibleProducts} />
+          <div className="flex flex-col  w-[100%] ">
+            <Cards
+              ref={cardRef}
+              width={"w-[100%]"}
+              products={visibleProducts}
+            />
             {/* Load more trigger */}
             <div ref={observerRef} className="h-10 w-full "></div>
           </div>

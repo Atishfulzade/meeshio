@@ -12,7 +12,7 @@ const ProductCard = ({ details }) => {
       className={`border cursor-pointer ${
         ismobile
           ? "h-80 w-1/2 mx-auto rounded-none border-collapse"
-          : "lg:h-96 lg:w-[250px] h-72 w-44 rounded-md "
+          : "lg:h-[360px] lg:w-[220px] h-72 w-40 rounded-md "
       }`}
     >
       <img
@@ -21,8 +21,8 @@ const ProductCard = ({ details }) => {
         loading="lazy"
         className="w-full h-[61%] object-contain"
       />
-      <div className="flex flex-col p-1 lg:p-3 gap-0 lg:gap-1 overflow-hidden">
-        <h3 className="font-mier-demi line-clamp-1 p-0 text-sm lg:text-lg font-medium text-slate-800">
+      <div className="flex flex-col p-1 lg:p-2 gap-0 lg:gap-1 overflow-hidden">
+        <h3 className="font-mier-book line-clamp-1 p-0 text-sm lg:text-lg font-medium text-slate-600">
           {details?.title}
         </h3>
         <div className="flex font-mier items-center gap-2 text-slate-700 text-xs h-fit">
