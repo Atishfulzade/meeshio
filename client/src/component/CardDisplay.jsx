@@ -79,7 +79,7 @@ const CardDisplay = ({ heading }) => {
         observer.unobserve(observerRef.current); // Clean up observer on unmount
       }
     };
-  }, []);
+  }, [filteredProducts]); // Only re-run when filteredProducts changes
 
   const loadMoreItems = () => {
     if (itemsToShow < filteredProducts.length) {
@@ -97,14 +97,14 @@ const CardDisplay = ({ heading }) => {
         )}
 
         {visibleProducts.length > 0 ? (
-          <div className="flex flex-col  w-[100%] ">
+          <div className="flex flex-col w-[100%] ">
             <Cards
               ref={cardRef}
               width={"w-[100%]"}
               products={visibleProducts}
             />
             {/* Load more trigger */}
-            <div ref={observerRef} className="h-10 w-full "></div>
+            <div ref={observerRef} className="h-10 w-full"></div>
           </div>
         ) : (
           <div className="flex h-full w-full justify-center items-center">

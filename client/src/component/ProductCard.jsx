@@ -1,5 +1,4 @@
 import React from "react";
-import { product1, product2, product3 } from "../assets";
 import { FaStar } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -12,7 +11,7 @@ const ProductCard = ({ details }) => {
       className={`border cursor-pointer ${
         ismobile
           ? "h-80 w-1/2 mx-auto rounded-none border-collapse"
-          : "lg:h-[360px] lg:w-[220px] h-72 w-40 rounded-md "
+          : "lg:h-[360px] lg:w-[220px] h-72 w-40 rounded-md overflow-hidden "
       }`}
     >
       <img
