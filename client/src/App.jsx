@@ -3,6 +3,10 @@ import { Routes, Route } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setIsMobile } from "./redux_store/identifyMobile";
 import Loader from "./component/Loader";
+import SupplierPortal from "./pages/supplierAuth";
+import SupplierRegistration from "./pages/SupplierRegistration";
+import UserProfile from "./pages/UserProfile";
+
 // Lazy load components
 const Home = lazy(() => import("./pages/Home"));
 const ProductPage = lazy(() => import("./pages/ProductPage"));
@@ -18,7 +22,21 @@ const CartPage = lazy(() => import("./pages/CartPage"));
 const MobileHome = lazy(() => import("./component/MobileHome"));
 const OrdersPage = lazy(() => import("./pages/OrdersPage"));
 
+// Utility function for debouncing
+function debounce(func, wait) {
+  let timeout;
+  return function (...args) {
+    const later = () => {
+      clearTimeout(timeout);
+      func(...args);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+}
+
 function App() {
+  const isLoggedIn = useSelector((state) => state.loggedIn.isLoggedIn);
   const dispatch = useDispatch();
   const isMobile = useSelector((state) => state.identifyMobile.isMobile);
 
@@ -36,18 +54,6 @@ function App() {
     };
   }, [updateIsMobile]);
 
-  function debounce(func, wait) {
-    let timeout;
-    return function (...args) {
-      const later = () => {
-        clearTimeout(timeout);
-        func(...args);
-      };
-      clearTimeout(timeout);
-      timeout = setTimeout(later, wait);
-    };
-  }
-
   return (
     <Suspense fallback={<Loader />}>
       <Routes>
@@ -64,6 +70,10 @@ function App() {
           <Route path="orders" element={<OrdersPage />} />
           <Route path="supplier/dashboard" element={<DashBoard />} />
           <Route path="delete_account" element={<SignInForm />} />
+          <Route path="supplier" element={<SupplierPortal />} />
+          <Route path="supplier/auth" element={<SupplierRegistration />} />
+          {/* Conditionally render UserProfile route based on login status */}
+          {isLoggedIn && <Route path="profile" element={<UserProfile />} />}
         </Route>
       </Routes>
     </Suspense>

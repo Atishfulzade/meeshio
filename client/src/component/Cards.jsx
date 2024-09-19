@@ -4,7 +4,6 @@ import ProductCard from "./ProductCard";
 
 const Cards = forwardRef(({ products, width }, ref) => {
   const isMobile = useSelector((state) => state.identifyMobile.isMobile);
-  console.log(products);
 
   return (
     <div
@@ -13,8 +12,8 @@ const Cards = forwardRef(({ products, width }, ref) => {
         isMobile ? "gap-0 w-full " : `gap-5 ${width}`
       }`}
     >
-      {products?.map((details, j) => (
-        <ProductCard key={j} details={details} />
+      {products?.map((details) => (
+        <ProductCard key={details._id} details={details} />
       ))}
     </div>
   );

@@ -5,117 +5,104 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Link } from "react-router-dom";
 import { useFormik } from "formik";
-import { auth } from "../../firebaseConfig";
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-} from "firebase/auth";
-import { saveUserData, fetchUserData } from "../utils/firestoreData";
 import { useDispatch } from "react-redux";
 import { setUserInfo } from "../redux_store/userInfoSlice";
 import { setIsLoggedIn } from "../redux_store/logInSlice";
-import { ToastAction } from "@/components/ui/toast";
 import { useToast } from "@/components/ui/use-toast";
+import { sendData } from "../utils/fetchData";
+import * as Yup from "yup";
 
 const SignInForm = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [isRegistering, setIsRegistering] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const validationSchema = Yup.object({
+    email: Yup.string()
+      .email("Invalid email address")
+      .required("Email is required"),
+    password: Yup.string()
+      .min(6, "Password must be at least 6 characters")
+      .required("Password is required"),
+    firstname: Yup.string().when("isRegistering", {
+      is: true,
+      then: Yup.string().required("First name is required"),
+    }),
+    lastname: Yup.string().when("isRegistering", {
+      is: true,
+      then: Yup.string().required("Last name is required"),
+    }),
+  });
 
   const formik = useFormik({
     initialValues: {
-      fullName: "",
+      firstname: "",
+      lastname: "",
       email: "",
       password: "",
     },
+    validationSchema,
     onSubmit: async (values) => {
+      setIsLoading(true);
       try {
+        let response;
         if (isRegistering) {
-          // Register user and save user data to Firestore
-          const { user } = await createUserWithEmailAndPassword(
-            auth,
-            values.email,
-            values.password
-          );
-          const userData = {
-            uid: user.uid,
-            fullName: values.fullName,
-            email: values.email,
-          };
-
-          await saveUserData(user.uid, userData);
-
-          // Update Redux store
-          dispatch(setUserInfo(userData));
-          dispatch(setIsLoggedIn(true));
-
-          toast({
-            title: "Registration Successful",
-            description: "You have been successfully registered.",
-            action: (
-              <ToastAction altText="Goto schedule to undo">Undo</ToastAction>
-            ),
-          });
-
-          navigate("/");
-        } else {
-          // Login user and fetch user data from Firestore
-          const { user } = await signInWithEmailAndPassword(
-            auth,
-            values.email,
-            values.password
-          );
-
-          // Fetch user data from Firestore based on authenticated user's UID
-          const userData = await fetchUserData(user.uid);
-
-          if (userData) {
-            // Update Redux store
-            dispatch(setUserInfo(userData));
-            dispatch(setIsLoggedIn(true));
-
+          // Registration logic
+          response = await sendData("user/auth/register", values);
+          if (response?.message && response?.token) {
             toast({
-              title: "Login Successful",
-              description: "You have successfully logged in.",
-              action: (
-                <ToastAction altText="Goto schedule to undo">Undo</ToastAction>
-              ),
+              title: "Registration Successful",
+              description: response.message,
+              appearance: "success",
             });
+            localStorage.setItem("token", response?.token);
+            setIsRegistering(false);
+            dispatch(setIsLoggedIn(true));
+            console.log(response);
 
+            dispatch(setUserInfo(response?.user));
             navigate("/");
           } else {
+            throw new Error(response.response?.data || "Registration failed");
+          }
+        } else {
+          // Login logic
+          response = await sendData("user/auth/login", {
+            email: values.email,
+            password: values.password,
+          });
+          if (response?.message && response.token) {
+            console.log(response);
+
+            dispatch(setUserInfo(response.user));
+            dispatch(setIsLoggedIn(true));
             toast({
-              title: "Error",
-              description: "User data not found in Firestore.",
-              variant: "destructive",
-              action: <ToastAction altText="Try again">Try again</ToastAction>,
+              title: "Login Successful",
+              description: response.message,
+              appearance: "success",
             });
+            localStorage.setItem("token", response.token);
+            dispatch(setIsLoggedIn(true));
+            dispatch(setUserInfo(response?.user));
+            navigate("/");
+          } else {
+            throw new Error(
+              error.response?.data?.message || "Invalid login credentials"
+            );
           }
         }
       } catch (error) {
-        if (error.code === "auth/user-not-found") {
-          toast({
-            title: "Error",
-            description: "User not found. Please check your credentials.",
-            variant: "destructive",
-            action: <ToastAction altText="Try again">Try again</ToastAction>,
-          });
-        } else if (error.code === "auth/wrong-password") {
-          toast({
-            title: "Error",
-            description: "Incorrect password. Please try again.",
-            variant: "destructive",
-            action: <ToastAction altText="Try again">Try again</ToastAction>,
-          });
-        } else {
-          toast({
-            title: "Error",
-            description: error.message,
-            variant: "destructive",
-            action: <ToastAction altText="Try again">Try again</ToastAction>,
-          });
-        }
+        toast({
+          title: "Error",
+          description:
+            error.response?.data?.message ||
+            "Something went wrong. Please try again.",
+          appearance: "error",
+        });
+      } finally {
+        setIsLoading(false);
       }
     },
   });
@@ -128,36 +115,94 @@ const SignInForm = () => {
         className="flex flex-col gap-4 p-3 mb-2 mt-6 justify-start w-full"
       >
         {isRegistering && (
-          <Input
-            type="text"
-            name="fullName"
-            placeholder="Enter Full Name"
-            value={formik.values.fullName}
-            onChange={formik.handleChange}
-            className="p-2 border rounded w-full"
-            required
-          />
+          <>
+            <div>
+              {formik.touched.username && formik.errors.username ? (
+                <div className="text-red-500 text-sm">
+                  {formik.errors.username}
+                </div>
+              ) : null}
+            </div>
+            <div>
+              <Input
+                type="text"
+                name="firstname"
+                placeholder="Enter first name"
+                value={formik.values.firstname}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                className="p-2 border rounded w-full"
+                disabled={isLoading}
+              />
+              {formik.touched.firstname && formik.errors.firstname ? (
+                <div className="text-red-500 text-sm">
+                  {formik.errors.firstname}
+                </div>
+              ) : null}
+            </div>
+            <div>
+              <Input
+                type="text"
+                name="lastname"
+                placeholder="Enter last name"
+                value={formik.values.lastname}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                className="p-2 border rounded w-full"
+                disabled={isLoading}
+              />
+              {formik.touched.lastname && formik.errors.lastname ? (
+                <div className="text-red-500 text-sm">
+                  {formik.errors.lastname}
+                </div>
+              ) : null}
+            </div>
+          </>
         )}
-        <Input
-          type="email"
-          name="email"
-          placeholder="Enter email"
-          value={formik.values.email}
-          onChange={formik.handleChange}
-          className="p-2 border rounded w-full"
-          required
-        />
-        <Input
-          type="password"
-          name="password"
-          value={formik.values.password}
-          onChange={formik.handleChange}
-          placeholder="Enter your password"
-          className="p-2 border rounded w-full"
-          required
-        />
-        <Button type="submit" className="bg-fuchsia-800 hover:bg-fuchsia-900">
-          {isRegistering ? "Register" : "Login"}
+        <div>
+          <Input
+            type="email"
+            name="email"
+            placeholder="Enter email"
+            value={formik.values.email}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            className="p-2 border rounded w-full"
+            disabled={isLoading}
+          />
+          {formik.touched.email && formik.errors.email ? (
+            <div className="text-red-500 text-sm">{formik.errors.email}</div>
+          ) : null}
+        </div>
+        <div>
+          <Input
+            type="password"
+            name="password"
+            placeholder={
+              isRegistering ? "Create a password" : "Enter your password"
+            }
+            value={formik.values.password}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            className="p-2 border rounded w-full"
+            disabled={isLoading}
+          />
+          {formik.touched.password && formik.errors.password ? (
+            <div className="text-red-500 text-sm">{formik.errors.password}</div>
+          ) : null}
+        </div>
+        <Button
+          type="submit"
+          className="bg-fuchsia-800 hover:bg-fuchsia-900"
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <span className="loader">Loading...</span>
+          ) : isRegistering ? (
+            "Register"
+          ) : (
+            "Login"
+          )}
         </Button>
         <div>
           {isRegistering ? (

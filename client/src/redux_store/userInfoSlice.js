@@ -1,12 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  uid: "",
-  fullName: "",
-  profileURL: "",
+  id: "",
+  firstname: "",
+  lastname: "",
+  profileImage: "",
   email: "",
-  savedCard: [],
-  cart: JSON.parse(localStorage.getItem("cart")) || [], // Initialize from localStorage
+  cart: [], // No need to initialize from localStorage, redux-persist will handle it
 };
 
 export const userInfoSlice = createSlice({
@@ -14,13 +14,13 @@ export const userInfoSlice = createSlice({
   initialState,
   reducers: {
     setUserInfo: (state, action) => {
-      const { uid, fullName, profileURL, email, savedCard } =
+      const { id, firstname, lastname, profileImage, email } =
         action.payload || {};
-      state.uid = uid || state.uid;
-      state.fullName = fullName || state.fullName;
-      state.profileURL = profileURL || state.profileURL;
+      state.id = id || state.id;
+      state.firstname = firstname || state.firstname;
+      state.lastname = lastname || state.lastname;
+      state.profileImage = profileImage || state.profileImage;
       state.email = email || state.email;
-      state.savedCard = savedCard || state.savedCard;
     },
 
     addProductToCart: (state, action) => {
@@ -38,33 +38,26 @@ export const userInfoSlice = createSlice({
           quantity: 1,
         });
       }
-
-      localStorage.setItem("cart", JSON.stringify(state.cart));
     },
 
     updateCart: (state, action) => {
       state.cart = action.payload.map((item) => ({
         ...item,
-        quantity: item.quantity || 1, // Ensure quantity is initialized
+        quantity: item.quantity || 1,
       }));
-      localStorage.setItem("cart", JSON.stringify(state.cart));
     },
 
     removeFromCart: (state, action) => {
       state.cart = state.cart.filter((item, index) => index !== action.payload);
-      localStorage.setItem("cart", JSON.stringify(state.cart)); // Sync with localStorage
     },
 
     clearUserInfo: (state) => {
-      state.uid = "";
-      state.fullName = "";
-      state.profileURL = "";
+      state.id = "";
+      state.firstname = "";
+      state.lastname = "";
+      state.profileImage = "";
       state.email = "";
-      state.savedCard = [];
       state.cart = [];
-
-      localStorage.removeItem("cart");
-      localStorage.removeItem("userInfo");
     },
   },
 });

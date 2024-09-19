@@ -21,8 +21,6 @@ import { Link } from "react-router-dom";
 import Navbar_second from "./Navbar_second";
 import SearchBar from "./SearchBar";
 import { setIsLoggedIn } from "../redux_store/logInSlice";
-import { signOut, onAuthStateChanged } from "firebase/auth";
-import { auth } from "../../firebaseConfig";
 import { useToast } from "@/components/ui/use-toast";
 import { HiOutlineShoppingBag } from "react-icons/hi";
 import {
@@ -31,6 +29,7 @@ import {
   DialogContent,
   DialogTrigger,
 } from "@radix-ui/react-dialog";
+import { sendData } from "../utils/fetchData";
 
 const Header = () => {
   const [user, setUser] = useState(null); // State to store user info
@@ -41,49 +40,32 @@ const Header = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { toast } = useToast();
-
+  const firstname = useSelector((state) => state.userInfo.firstname);
+  const profileImage = useSelector((state) => state.userInfo.profileImage);
+  const lastname = useSelector((state) => state.userInfo.lastname);
+  const email = useSelector((state) => state.userInfo.email);
   const cartValue = useSelector((state) => state.userInfo.cart);
   const [isOpen, setIsOpen] = useState(false);
-  // Fetch user details from Firebase Auth
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      if (currentUser) {
-        setUser({
-          displayName: currentUser.displayName,
-          photoURL: currentUser.photoURL,
-          email: currentUser.email,
-        });
-        dispatch(setIsLoggedIn(true));
-      } else {
-        setUser(null);
-        dispatch(setIsLoggedIn(false));
-      }
-    });
-
-    return () => unsubscribe(); // Cleanup the listener
-  }, [dispatch]);
-
-  const userSignOut = async () => {
+  const logoutUser = async () => {
     try {
-      await signOut(auth);
-      dispatch(setIsLoggedIn(false));
-      setUser(null);
-      toast({
-        title: "Signed Out",
-        description: "You have been successfully signed out.",
-        variant: "success",
-      });
+      const logOut = await sendData("user/auth/logout");
+      localStorage.removeItem("token");
       navigate("/");
+      dispatch(setIsLoggedIn(false));
+
+      return toast({
+        title: logOut?.message,
+        description: "You have been successfully logged out",
+        status: "success",
+      });
     } catch (error) {
-      console.error("Error signing out:", error);
-      toast({
-        title: "Sign Out Failed",
-        description: "Failed to sign out. Please try again.",
-        variant: "error",
+      return toast({
+        title: "Failed to Log Out",
+        description: "An error occurred while trying to log out",
+        status: "error",
       });
     }
   };
-
   return (
     <div className="w-full bg-white fixed top-0 left-0 z-30 flex flex-col ">
       <div className="flex w-full gap-3 justify-between items-center  h-14 md:h-[70px] md:border-b-2 px-3 md:px-24 md:py-2  py-2">
@@ -177,6 +159,7 @@ const Header = () => {
 
             <Link
               variant="link"
+              to={"/supplier"}
               className="text-slate-800 text-[17px] font-normal font-mier-book"
             >
               Become a supplier
@@ -204,36 +187,42 @@ const Header = () => {
                   </HoverCardTrigger>
                   <HoverCardContent className="w-fit mt-[5px]">
                     <div className="flex relative justify-between flex-col space-x-3 gap-1 ">
-                      {user ? (
+                      {isLoggedIn ? (
                         <div className="flex flex-col">
                           <h4 className="text-lg font-semibold text-left">
-                            Hello, {user.displayName}
+                            Hello, {firstname}
                           </h4>
                           <div className="flex gap-1 font-medium items-center">
                             <img
-                              src={user.photoURL || avatar}
+                              src={profileImage || avatar}
                               alt="User Avatar"
-                              className="h-10 w-10 border rounded-full"
+                              className="h-10 w-10 border cursor-pointer rounded-full"
+                              onClick={() =>
+                                isLoggedIn ? navigate("/profile") : ""
+                              }
                             />
-                            <h5 className="text-sm">
-                              {user.displayName || user.email}
-                            </h5>
+                            <div className="flex flex-col">
+                              <h3>{firstname + " " + lastname}</h3>
+                              <h5 className="text-xs">{email}</h5>
+                            </div>
                           </div>
                         </div>
                       ) : (
                         <div className="flex flex-col">
                           <h4 className="text-lg font-semibold text-left">
-                            Hello, user
+                            Hello, User
                           </h4>
                           <p className="text-sm my-2">
                             To access your Meesho account
                           </p>
-                          <Button
-                            onClick={() => navigate("/user/authenticate")}
-                            className="py-5 text-[16px] bg-fuchsia-600 hover:bg-fuchsia-700"
-                          >
-                            Sign up
-                          </Button>
+                          {!isLoggedIn && (
+                            <Button
+                              onClick={() => navigate("/user/authenticate")}
+                              className="py-5 text-[16px] bg-fuchsia-600 hover:bg-fuchsia-700"
+                            >
+                              Sign up
+                            </Button>
+                          )}
                         </div>
                       )}
                       <Separator variant="horizantal" className="my-2" />
@@ -245,14 +234,13 @@ const Header = () => {
                         Delete account
                       </Link>
                       <Separator variant="horizantal" />
-                      {user ? (
-                        <Link
-                          className="flex gap-3 items-center h-10 text-[18px]"
-                          to={"/"}
-                          onClick={userSignOut}
+                      {isLoggedIn ? (
+                        <p
+                          className="flex gap-3 items-center cursor-pointer h-10 text-[18px]"
+                          onClick={logoutUser}
                         >
                           <IoLogOutOutline size={22} /> Log Out
-                        </Link>
+                        </p>
                       ) : (
                         ""
                       )}

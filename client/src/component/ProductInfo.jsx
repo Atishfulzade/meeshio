@@ -6,18 +6,20 @@ import { Progress } from "@/components/ui/progress";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 
 const ProductInfo = ({ productDetails }) => {
+  console.log(productDetails);
+
   return (
     <div className="h-full md:w-[50%] mt-8 md:mt-0 flex flex-col gap-3">
       {/* Product Title and Price */}
       <Card className="rounded-md border md:gap-2 md:p-3">
         <CardHeader className="p-2">
           <h3 className="font-mier-demi font-semibold  text-lg line-clamp-2 text-slate-500">
-            {productDetails?.title}
+            {productDetails?.name}
           </h3>
         </CardHeader>
         <CardContent className="flex flex-col gap-2 p-2">
           <h3 className="text-3xl text-slate-700 font-mier-book font-medium">
-            ₹{productDetails?.price}
+            ₹{productDetails?.min_product_price}
           </h3>
           <div className="flex items-center gap-2 text-xs md:text-sm text-slate-600">
             <span className="bg-green-600 text-white px-3 py-1 rounded-full flex items-center gap-1">
@@ -55,7 +57,7 @@ const ProductInfo = ({ productDetails }) => {
         </CardHeader>
         <CardContent className="text-pretty">
           <p>
-            Name:{productDetails?.title} <br />
+            Name:{productDetails?.description} <br />
             Material: Plastic <br />
             Type: Nozzle Cock <br />
             Installation Type: Single Handle Installation Type <br />

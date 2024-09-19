@@ -1,5 +1,4 @@
 import React from "react";
-import { product1 } from "../assets";
 
 const ProductGallary = ({
   productDetails,
@@ -8,7 +7,7 @@ const ProductGallary = ({
 }) => {
   return (
     <div className="lg:w-20 w-8 h-8 md:w-10 md:h-10 flex-shrink-0 lg:h-full flex gap-1 flex-col ">
-      {productDetails?.images.map((image, i) => (
+      {productDetails?.product_images?.map((image, i) => (
         <img
           key={i}
           src={image}

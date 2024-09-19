@@ -5,13 +5,15 @@ import { FaAngleDoubleRight } from "react-icons/fa";
 import { Separator } from "@radix-ui/react-separator";
 import Loader from "./Loader";
 import { useDispatch, useSelector } from "react-redux";
-import { updateCart } from "/src/redux_store/userInfoSlice.js"; // Make sure the path is correct
+import { updateCart } from "/src/redux_store/userInfoSlice.js"; // Ensure the path is correct
 import { useToast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
+import { sendData } from "../utils/fetchData";
 
 const Product = ({ selectedImage, productDetails }) => {
   const dispatch = useDispatch();
   const cart = useSelector((state) => state.userInfo.cart);
+  const userId = useSelector((state) => state.userInfo.id); // Get the user ID from Redux
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -23,31 +25,54 @@ const Product = ({ selectedImage, productDetails }) => {
     }
   }, [dispatch]);
 
-  const addCart = () => {
-    // Add the product to the existing cart
-    const updatedCart = [...cart, productDetails];
+  const addCart = async () => {
+    try {
+      // Check if the product is already in the cart
+      const existingProductIndex = cart.findIndex(
+        (item) => item.id === productDetails.id
+      );
 
-    // Dispatch the updated cart to Redux
-    dispatch(updateCart(updatedCart));
+      let updatedCart;
 
-    // Store the updated cart in localStorage
-    localStorage.setItem("cart", JSON.stringify(updatedCart));
+      if (existingProductIndex !== -1) {
+        // Update quantity if product already exists in cart
+        updatedCart = cart.map((item, index) =>
+          index === existingProductIndex
+            ? { ...item, quantity: item.quantity + 1 }
+            : item
+        );
+      } else {
+        // Add new product to cart
+        updatedCart = [...cart, { ...productDetails, quantity: 1 }];
+      }
 
-    toast({
-      title: "Product Added",
-      description: "Product has been added to your cart.",
-      variant: "success",
-    });
+      // Dispatch the updated cart to Redux
+      dispatch(updateCart(updatedCart));
+
+      // Store the updated cart in localStorage
+      localStorage.setItem("cart", JSON.stringify(updatedCart));
+      // Update the cart on the server
+      console.log(updateCart);
+
+      // await sendData("cart", updatedCart);
+
+      toast({
+        title: "Product Added",
+        description: "Product has been added to your cart.",
+        variant: "success",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to add product to cart.",
+        variant: "destructive",
+      });
+    }
   };
 
   const buyNow = () => {
     // Redirect to checkout page or handle buy now logic
     navigate("/checkout");
-    toast({
-      title: "Redirecting",
-      description: "You are being redirected to checkout.",
-      variant: "info",
-    });
   };
 
   if (!productDetails) {
@@ -58,8 +83,8 @@ const Product = ({ selectedImage, productDetails }) => {
     <div className="flex flex-col gap-5 md:w-[43%]">
       <div className="md:w-[360px] md:h-[360px] lg:h-[550px] lg:w-[550px] overflow-hidden rounded-md border">
         <img
-          src={selectedImage || productDetails?.images[0]}
-          alt={productDetails?.title}
+          src={selectedImage || productDetails?.product_images?.[0]}
+          alt={productDetails?.name}
           className="h-full w-full object-contain"
         />
       </div>

@@ -1,27 +1,43 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { IoClose } from "react-icons/io5";
 import { FaRegEdit } from "react-icons/fa";
 import { HiPlus, HiMinusSm } from "react-icons/hi";
 import { RiDiscountPercentLine } from "react-icons/ri";
 import { Button } from "../components/ui/button";
 import { useSelector, useDispatch } from "react-redux";
-import { updateCart, removeFromCart } from "../redux_store/userInfoSlice";
+import { updateCart } from "../redux_store/userInfoSlice";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "../components/ui/use-toast"; // Import useToast
-import { saveCartToFirebase } from "../utils/firestoreData"; // Firebase function
 
-const Cart = ({
-  nextStep,
-  totalPrice,
-  discountPercentage,
-  discountedPrice,
-}) => {
+const Cart = ({ nextStep }) => {
   const dispatch = useDispatch();
   const cart = useSelector((state) => state.userInfo.cart);
   const userId = useSelector((state) => state.userInfo.uid); // Ensure we have the userId
   const navigate = useNavigate();
   const isLoggedIn = useSelector((state) => state.loggedIn.isLoggedIn);
   const { toast } = useToast(); // Initialize toast
+
+  const [totalPrice, setTotalPrice] = useState(0);
+  const [discountPercentage, setDiscountPercentage] = useState(0);
+  const [discountedPrice, setDiscountedPrice] = useState(0);
+
+  useEffect(() => {
+    // Recalculate prices when the cart changes
+    const calculatePrices = () => {
+      const newTotalPrice = cart.reduce(
+        (acc, item) => acc + item.min_product_price * (item.quantity || 1),
+        0
+      );
+      const discount = 0.1; // Example: 10% discount
+      const newDiscountedPrice = newTotalPrice * (1 - discount);
+
+      setTotalPrice(newTotalPrice);
+      setDiscountPercentage(discount);
+      setDiscountedPrice(newDiscountedPrice);
+    };
+
+    calculatePrices();
+  }, [cart]);
 
   // Function to handle increasing the quantity
   const increaseCount = async (index) => {
@@ -81,28 +97,28 @@ const Cart = ({
               {cart.map((item, index) => (
                 <div
                   key={index}
-                  className="flex flex-col justify-between border md:w-[600px] min-w-[300px] rounded-md md:h-52"
+                  className="flex flex-col justify-between border md:w-[600px] min-w-[300px] rounded-md h-fit"
                 >
                   <div className="flex p-3">
                     <img
                       className="h-20 w-20 object-contain rounded-md border"
-                      src={item?.images[0]}
-                      alt={item?.title}
+                      src={item?.product_images[0]}
+                      alt={item?.name}
                     />
                     <div className="flex flex-col w-full gap-1 ps-3">
                       <h3 className="text-xl font-mier-demi text-slate-800 leading-5 flex-wrap line-clamp-2">
-                        {item?.title}
+                        {item?.name}
                       </h3>
                       <p className="line-clamp-1 font-mier-book text-xs">
                         {item?.description}
                       </p>
                       <div className="flex font-mier-demi w-full flex-col md:flex-row md:gap-4">
                         <span className="whitespace-nowrap">
-                          Price: ₹{item?.price}
+                          Price: ₹{item?.min_product_price}
                         </span>
-                        <span>•Selected Size: Free</span>
+                        <span>• Selected Size: Free</span>
                         <div className="flex gap-2">
-                          •Quantity:
+                          • Quantity:
                           <div className="flex select-none flex-shrink-0 text-sm overflow-hidden justify-around items-center border h-8 w-32 rounded-md">
                             <HiMinusSm
                               onClick={() => decreaseCount(index)}

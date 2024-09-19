@@ -1,19 +1,21 @@
+// components/SearchResult.jsx
 import React from "react";
 
-const SearchResult = ({ filteredResults }) => {
+const SearchResult = ({ results }) => {
   return (
-    <div className="w-full  h-96 bg-white z-50 border rounded-sm absolute top-28 md:top-16 p-4 left-0 overflow-y-auto">
-      {filteredResults?.length > 0 ? (
-        filteredResults.map((item, index) => (
+    <div className="absolute bg-white border border-slate-300 rounded-md shadow-lg mt-32 w-full z-10">
+      {results.length > 0 ? (
+        results.map((result) => (
           <div
-            key={index}
-            className="flex items-center px-4 py-2 hover:bg-gray-100 cursor-pointer"
+            key={result.id}
+            className="p-2 border-b border-slate-200 hover:bg-gray-100"
           >
-            {item.title}
+            <p className="text-sm font-medium">{result.title}</p>
+            <p className="text-xs text-gray-500">{result.description}</p>
           </div>
         ))
       ) : (
-        <div className="px-4 py-2">No results found</div>
+        <div className="p-2 m">No results found</div>
       )}
     </div>
   );
