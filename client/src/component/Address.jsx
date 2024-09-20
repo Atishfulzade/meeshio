@@ -1,21 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Separator } from "../components/ui/separator";
 import { IoMdArrowBack } from "react-icons/io";
-import { HiPlus } from "react-icons/hi";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "../components/ui/button";
 import { useSelector } from "react-redux";
+import { getData } from "../utils/fetchData";
 
 const Address = ({
   nextStep,
@@ -24,39 +14,31 @@ const Address = ({
   discountedPrice,
   prevStep,
 }) => {
-  // Access state to determine if the device is mobile
   const isMobile = useSelector((state) => state.identifyMobile.isMobile);
-
-  // Access user's cart from Redux store
   const cart = useSelector((state) => state.userInfo.cart);
+  const userId = localStorage.getItem("userId"); // Use the correct userId from localStorage
 
-  // Dummy address data for demonstration
-  const addressDetail = [
-    {
-      id: 1,
-      name: "Atish Fulzade",
-      contact: "7028415550",
-      alternateContact: "7028415511",
-      address: "Deulgaon Mali, India",
-    },
-    {
-      id: 2,
-      name: "John Doe",
-      contact: "9876543210",
-      alternateContact: "9123456789",
-      address: "Aurangabad, India",
-    },
-  ];
-
-  // State to store selected address ID
+  const [addressDetail, setAddressDetail] = useState([]);
   const [selectedAddress, setSelectedAddress] = useState(null);
 
-  // Handles the selection of an address
+  // Fetch address data
+  useEffect(() => {
+    const fetchAddresses = async () => {
+      try {
+        const response = await getData(`user/profile`); // Adjust endpoint as necessary
+        setAddressDetail(response.data?.address || []); // Adjust based on your API response structure
+      } catch (error) {
+        console.error("Error fetching addresses:", error);
+      }
+    };
+
+    fetchAddresses();
+  }, [userId]);
+
   const handleSelectAddress = (value) => {
     setSelectedAddress(value);
   };
 
-  // Proceeds to the next step only if an address is selected
   const proceedWithSelectedAddress = () => {
     if (selectedAddress) {
       nextStep();
@@ -75,80 +57,42 @@ const Address = ({
           <IoMdArrowBack />
         </span>
 
-        {/* Header and Add New Address Button */}
-        <div className="flex md:justify-between justify-center md:flex-row flex-col p-3 md:p-0">
-          <h3 className="text-xl my-2 font-mier-bold">Address Details</h3>
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button className="bg-fuchsia-700 hover:bg-fuchsia-800">
-                <HiPlus /> Add new address
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
-              <DialogHeader>
-                <DialogTitle>Add new address</DialogTitle>
-                <DialogDescription>
-                  Enter the details for your new address below.
-                </DialogDescription>
-              </DialogHeader>
-              <div className="grid gap-4 md:py-4">
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="name" className="text-right">
-                    Name
-                  </Label>
-                  <Input
-                    id="name"
-                    placeholder="Enter your name"
-                    className="col-span-3"
-                  />
-                </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="username" className="text-right">
-                    Username
-                  </Label>
-                  <Input
-                    id="username"
-                    placeholder="Enter your username"
-                    className="col-span-3"
-                  />
-                </div>
-              </div>
-              <DialogFooter>
-                <Button type="submit">Save changes</Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-        </div>
+        {/* Header */}
+        <h3 className="text-xl my-2 font-mier-bold">Address Details</h3>
 
         {/* Address List */}
         <div className="flex flex-col mt-20 gap-2 md:h-full">
           <div className="p-3">
-            <RadioGroup
-              value={selectedAddress}
-              onValueChange={handleSelectAddress}
-            >
-              {addressDetail.map((address) => (
-                <div
-                  key={address.id}
-                  className="flex border flex-col p-3 md:w-[400px] w-full rounded-md gap-1 bg-slate-200 h-fit space-x-2 my-2"
-                >
-                  <div className="flex items-start">
-                    <RadioGroupItem
-                      value={address.id.toString()}
-                      id={`address-${address.id}`}
-                    />
-                    <Label
-                      htmlFor={`address-${address.id}`}
-                      className="text-lg flex flex-col font-mier-book ml-2"
-                    >
-                      {address.name} <br />
-                      {address.address} <br />
-                      {address.contact}
-                    </Label>
+            {addressDetail.length > 0 ? (
+              <RadioGroup
+                value={selectedAddress}
+                onValueChange={handleSelectAddress}
+              >
+                {addressDetail.map((address) => (
+                  <div
+                    key={address._id}
+                    className="flex border flex-col p-3 md:w-[400px] w-full rounded-md gap-1 bg-slate-200 h-fit space-x-2 my-2"
+                  >
+                    <div className="flex items-start">
+                      <RadioGroupItem
+                        value={address._id}
+                        id={`address-${address._id}`}
+                      />
+                      <Label
+                        htmlFor={`address-${address._id}`}
+                        className="text-lg flex flex-col font-mier-book ml-2"
+                      >
+                        {address.street}, {address.city}, {address.state},{" "}
+                        {address.zipCode} <br />
+                        Contact: {address.contactNumber}
+                      </Label>
+                    </div>
                   </div>
-                </div>
-              ))}
-            </RadioGroup>
+                ))}
+              </RadioGroup>
+            ) : (
+              <p>No addresses available.</p>
+            )}
 
             {/* Proceed Button */}
             <Button
@@ -171,24 +115,20 @@ const Address = ({
 
       {/* Product Details Section */}
       <div className="flex flex-col md:w-96 w-full p-2 lg:p-0">
-        <h3 className="text-xl font-mier my-1">Product Details (2) products</h3>
+        <h3 className="text-xl font-mier my-1">
+          Product Details ({cart.length}) products
+        </h3>
         <div className="flex-col flex rounded-md font-mier-demi text-slate-600 border gap-3 p-3">
-          {/* Total Product Price */}
           <div className="flex text-lg justify-between">
             <h4>Total Product price</h4>
             <span>{cart.length} Quantity</span>
             <span>₹ {totalPrice.toFixed(2)}</span>
           </div>
-
-          {/* Total Discounts */}
           <div className="flex text-lg justify-between text-green-600 font-mier-demi">
             <h4>Total Discounts</h4>
             <span>₹ {(discountPercentage * totalPrice).toFixed(2)}</span>
           </div>
-
           <Separator />
-
-          {/* Order Total */}
           <div className="flex text-lg justify-between font-mier-demi">
             <h4>Order Total</h4>
             <span>₹ {discountedPrice.toFixed(2)}</span>

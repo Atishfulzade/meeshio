@@ -8,17 +8,21 @@ import SupplierHeader from "./SupplierHeader";
 
 const Layout = () => {
   const location = useLocation();
+
+  // Check if the current path matches specific routes
+  const isSupplierDashboard = location.pathname === "/supplier/dashboard";
+  const isProfile = location.pathname === "/profile";
+
   return (
     <div>
-      {location.pathname == "/supplier/dashboard" ? (
+      {isSupplierDashboard || location.pathname.startsWith("/supplier") ? (
         <SupplierHeader />
       ) : (
         <Header />
       )}
       <Toaster />
       <Outlet />
-      {location.pathname !== "/profile" ||
-        ("/supplier/dashboard" && <Footer />)}
+      {!isProfile && !isSupplierDashboard && <Footer />}
     </div>
   );
 };

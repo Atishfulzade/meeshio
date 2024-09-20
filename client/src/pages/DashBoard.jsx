@@ -26,40 +26,30 @@ import {
   SelectValue,
 } from "../components/ui/select";
 import { sendData, getData, deleteData } from "../utils/fetchData";
+import { useToast } from "@/components/ui/use-toast"; // Adjust the import path as necessary
 
 const DashBoard = () => {
   const [products, setProducts] = useState([]);
-  const [supplier, setSupplier] = useState(null);
+  const [supplierInfo, setSupplierInfo] = useState(null);
+  const [categories, setCategories] = useState([]);
+  const [imageError, setImageError] = useState("");
+  const [categoryName, setCategoryName] = useState("");
+  const [categoryImage, setCategoryImage] = useState(null);
   const [productInfo, setProductInfo] = useState({
     name: "",
-    category_id: "",
+    category_name: "",
     min_catalog_price: "",
     min_product_price: "",
     description: "",
     full_details: "",
     product_images: [],
+    supplier: localStorage.getItem("supplier"),
   });
-  const [categories, setCategories] = useState([]);
-  const [imageError, setImageError] = useState("");
-  const [categoryName, setCategoryName] = useState("");
-  const [categoryImage, setCategoryImage] = useState(null);
+  const [imageURL, setImageURL] = useState(""); // State to store the signed image URL
 
-  // Fetch supplier data
-  useEffect(() => {
-    const fetchSupplier = async () => {
-      try {
-        const supplierId = JSON.parse(localStorage.getItem("supplier"))._id;
-        const res = await getData(`supplier/${supplierId}`);
-        setSupplier(res);
-      } catch (error) {
-        console.error("Error fetching supplier:", error);
-      }
-    };
+  const { toast } = useToast(); // Initialize toast
 
-    fetchSupplier();
-  }, []);
-
-  // Fetch categories
+  // Fetch categories and supplier info
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -69,21 +59,55 @@ const DashBoard = () => {
         console.error("Error fetching categories:", error);
       }
     };
+
+    const fetchSupplier = async () => {
+      try {
+        const res = await getData(
+          `supplier/profile/${localStorage.getItem("supplier")}`
+        );
+        setSupplierInfo(res);
+      } catch (error) {
+        console.error("Error fetching supplier:", error);
+      }
+    };
+
     fetchCategories();
+    fetchSupplier();
   }, []);
 
   // Fetch products
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchSupplierProducts = async () => {
       try {
-        const res = await getData("products");
+        const res = await getData(
+          `products/product?supplierId=${localStorage.getItem("supplier")}`
+        ); // Fetch products by supplier ID
         setProducts(res.products);
       } catch (error) {
         console.error("Error fetching products:", error);
+        toast({
+          title: "Error",
+          description: "Failed to fetch products.",
+          variant: "destructive",
+        });
       }
     };
-    fetchProducts();
+
+    fetchSupplierProducts();
   }, []);
+
+  // Fetch signed image URL for the first product image
+  useEffect(() => {
+    const fetchSignedImageUrl = async (key) => {
+      const cleanedKey = key.replace("uploads/", ""); // Clean the key
+      const response = await getData(`images/${cleanedKey}`); // Fetch signed URL
+      return response.signedUrl; // Adjust based on your API response structure
+    };
+
+    if (products.length > 0 && products[0].product_images?.[0]) {
+      fetchSignedImageUrl(products[0].product_images[0]).then(setImageURL);
+    }
+  }, [products]);
 
   // Handle product info change
   const handleProductChange = (e) => {
@@ -132,7 +156,6 @@ const DashBoard = () => {
       return;
     }
 
-    // Create FormData instance
     const formData = new FormData();
     for (const [key, value] of Object.entries(productInfo)) {
       if (key === "product_images") {
@@ -145,49 +168,29 @@ const DashBoard = () => {
     }
 
     try {
-      const addedProduct = await sendData("products", formData, true);
+      await sendData("products", formData, true);
+      toast({
+        title: "Success",
+        description: "Product has been added successfully!",
+        variant: "success",
+      });
       setProductInfo({
         name: "",
-        category_id: "",
+        category_name: "",
         min_catalog_price: "",
         min_product_price: "",
         description: "",
         full_details: "",
         product_images: [],
+        supplier: "",
       });
     } catch (error) {
       console.error("Error adding product:", error);
-    }
-  };
-
-  // Add new category with image
-  const handleAddCategory = async (e) => {
-    e.preventDefault();
-    if (categoryName && categoryImage) {
-      try {
-        const categoryData = new FormData();
-        categoryData.append("name", categoryName);
-        categoryData.append("profileImage", categoryImage);
-
-        await sendData("category", categoryData, true);
-        const res = await getData("categories");
-        setCategories(res);
-
-        setCategoryName("");
-        setCategoryImage(null);
-      } catch (error) {
-        console.error("Error adding category:", error);
-      }
-    } else {
-      alert("Please provide a category name and image.");
-    }
-  };
-
-  // Handle image upload for the new category
-  const handleCategoryImageUpload = (e) => {
-    const imageFile = e.target.files[0];
-    if (imageFile) {
-      setCategoryImage(imageFile);
+      toast({
+        title: "Error",
+        description: "Failed to add product.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -196,9 +199,18 @@ const DashBoard = () => {
     try {
       await deleteData(`products/${id}`);
       setProducts(products.filter((product) => product._id !== id));
-      alert("Product deleted successfully!");
+      toast({
+        title: "Success",
+        description: "Product deleted successfully!",
+        variant: "success",
+      });
     } catch (error) {
       console.error("Error deleting product:", error);
+      toast({
+        title: "Error",
+        description: "Failed to delete product.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -207,54 +219,15 @@ const DashBoard = () => {
       <div className="supplier-info flex gap-5">
         <Card>
           <CardHeader>
-            <p>{supplier?.companyName}</p>
-            <p>{supplier?.email}</p>
+            <p>{supplierInfo?.companyName}</p>
+            <p>{supplierInfo?.email}</p>
+            <p>
+              {supplierInfo?.contactPerson?.firstname}{" "}
+              {supplierInfo?.contactPerson?.lastname}
+            </p>
+            <p>{supplierInfo?.vatNumber}</p>
           </CardHeader>
         </Card>
-        {supplier?.role === "Admin" && (
-          <div className="add-category-section mt-6">
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button>Add Category</Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <h2>Add New Category</h2>
-                </DialogHeader>
-                <form onSubmit={handleAddCategory}>
-                  <Label htmlFor="category_name">Category Name</Label>
-                  <Input
-                    name="category_name"
-                    id="category_name"
-                    value={categoryName}
-                    onChange={(e) => setCategoryName(e.target.value)}
-                    required
-                    className="border"
-                  />
-                  <Label htmlFor="category_image">Category Image</Label>
-                  <Input
-                    type="file"
-                    accept="image/*"
-                    id="category_image"
-                    onChange={handleCategoryImageUpload}
-                    required
-                    className="border"
-                  />
-                  {categoryImage && (
-                    <img
-                      src={URL.createObjectURL(categoryImage)}
-                      alt="Category Preview"
-                      style={{ width: "100px", margin: "10px 0" }}
-                    />
-                  )}
-                  <Button type="submit" className="mt-4">
-                    Add Category
-                  </Button>
-                </form>
-              </DialogContent>
-            </Dialog>
-          </div>
-        )}
         <Dialog>
           <DialogTrigger asChild>
             <Button className="absolute top-20 right-2">Add Product</Button>
@@ -271,20 +244,21 @@ const DashBoard = () => {
                   value={productInfo.name}
                   onChange={handleProductChange}
                   required
+                  className="border"
                 />
               </div>
               <div>
                 <Label htmlFor="category_id">Category</Label>
                 <Select
                   onValueChange={handleCategorySelect}
-                  defaultValue={productInfo.category_id}
+                  value={productInfo.category_id}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select category" />
                   </SelectTrigger>
                   <SelectContent>
                     {categories.map((category) => (
-                      <SelectItem key={category._id} value={category._id}>
+                      <SelectItem key={category._id} value={category.name}>
                         {category.name}
                       </SelectItem>
                     ))}
@@ -299,6 +273,7 @@ const DashBoard = () => {
                   value={productInfo.min_catalog_price}
                   onChange={handleProductChange}
                   required
+                  className="border"
                 />
               </div>
               <div>
@@ -309,10 +284,11 @@ const DashBoard = () => {
                   value={productInfo.min_product_price}
                   onChange={handleProductChange}
                   required
+                  className="border"
                 />
               </div>
               <div>
-                <Label htmlFor="description">Product Description</Label>
+                <Label htmlFor="description">Description</Label>
                 <Textarea
                   name="description"
                   value={productInfo.description}
@@ -331,65 +307,62 @@ const DashBoard = () => {
               </div>
               <div>
                 <Label htmlFor="product_images">Product Images (3-8)</Label>
-                <Input type="file" multiple onChange={handleImageSelection} />
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={handleImageSelection}
+                  required
+                />
                 {imageError && <p className="text-red-500">{imageError}</p>}
-                <div className="image-previews flex">
-                  {/* {productInfo.product_images.map((image, index) => (
-                    <img
-                      key={index}
-                      src={image.preview}
-                      alt={`Product Preview ${index + 1}`}
-                      style={{ width: "80px", margin: "10px" }}
-                    />
-                  ))} */}
-                </div>
               </div>
-              <Button type="submit" className="mt-4">
-                Add Product
-              </Button>
+              <Button type="submit">Add Product</Button>
             </form>
           </DialogContent>
         </Dialog>
       </div>
-      <Card>
-        <CardHeader>
-          <h2 className="font-mier-bold font-semibold">Products</h2>
-        </CardHeader>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Product Name</TableHead>
-              <TableHead>Category</TableHead>
-              <TableHead>Price</TableHead>
-              <TableHead>Description</TableHead>
-              <TableHead>Actions</TableHead>
+
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Image</TableHead>
+            <TableHead>Product Name</TableHead>
+            <TableHead>Category</TableHead>
+            <TableHead>Min Price</TableHead>
+            <TableHead>Actions</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {products.map((product) => (
+            <TableRow key={product._id}>
+              <TableCell>
+                <img
+                  src={imageURL} // Display the fetched signed URL
+                  alt={product.name}
+                  style={{
+                    width: "50px",
+                    height: "50px",
+                    objectFit: "cover",
+                  }}
+                />
+              </TableCell>
+              <TableCell>{product.name}</TableCell>
+              <TableCell>
+                {
+                  categories.find((cat) => cat._id === product.category_id)
+                    ?.name
+                }
+              </TableCell>
+              <TableCell>${product.min_product_price}</TableCell>
+              <TableCell>
+                <Button onClick={() => handleDeleteProduct(product._id)}>
+                  Delete
+                </Button>
+              </TableCell>
             </TableRow>
-          </TableHeader>
-          <TableBody>
-            {products?.map((product) => (
-              <TableRow key={product._id}>
-                <TableCell>{product.name}</TableCell>
-                <TableCell>
-                  {
-                    categories.find((cat) => cat._id === product.category_id)
-                      ?.name
-                  }
-                </TableCell>
-                <TableCell>${product.min_catalog_price}</TableCell>
-                <TableCell>{product.description}</TableCell>
-                <TableCell>
-                  <Button
-                    onClick={() => handleDeleteProduct(product._id)}
-                    className="text-red-500"
-                  >
-                    Delete
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </Card>
+          ))}
+        </TableBody>
+      </Table>
     </div>
   );
 };

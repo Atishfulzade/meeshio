@@ -1,19 +1,32 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { FaStar } from "react-icons/fa6";
 import { Button } from "@/components/ui/button";
 import { BsShopWindow } from "react-icons/bs";
 import { Progress } from "@/components/ui/progress";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { getData } from "../utils/fetchData";
 
 const ProductInfo = ({ productDetails }) => {
-  console.log(productDetails);
+  const [supplierInfo, setSupplierInfo] = useState(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  useEffect(() => {
+    const fetchSupplierInfo = async () => {
+      const response = await getData(
+        `supplier/profile/${productDetails?.supplier}`
+      );
+      setSupplierInfo(response);
+    };
+    fetchSupplierInfo();
+  }, [productDetails?.supplier]);
 
   return (
     <div className="h-full md:w-[50%] mt-8 md:mt-0 flex flex-col gap-3">
       {/* Product Title and Price */}
       <Card className="rounded-md border md:gap-2 md:p-3">
         <CardHeader className="p-2">
-          <h3 className="font-mier-demi font-semibold  text-lg line-clamp-2 text-slate-500">
+          <h3 className="font-mier-demi font-semibold text-lg line-clamp-2 text-slate-500">
             {productDetails?.name}
           </h3>
         </CardHeader>
@@ -28,14 +41,21 @@ const ProductInfo = ({ productDetails }) => {
             </span>
             11548 Reviews
           </div>
-          <span className="bg-slate-100 px-3 h-fit w-fit py-1 rounded-full text-xs md:text-sm text-slate-700">
-            Free Delivery
-          </span>
+          {productDetails?.shipping?.show_free_delivery && (
+            <span className="bg-slate-200 px-3 h-fit w-fit py-1 rounded-full text-xs md:text-sm text-slate-700">
+              Free Delivery
+            </span>
+          )}
+          {productDetails.category_name && (
+            <p className="font-mier-book">
+              Category : {productDetails.category_name}
+            </p>
+          )}
         </CardContent>
       </Card>
 
       {/* Select Size */}
-      <Card className="rounded-md border md:p-3 ">
+      <Card className="rounded-md border md:p-3">
         <CardHeader className="p-2">
           <h3 className="text-lg font-semibold font-mier-bold text-slate-700">
             Select size
@@ -51,46 +71,55 @@ const ProductInfo = ({ productDetails }) => {
       {/* Product Details */}
       <Card className="rounded-md border md:p-3">
         <CardHeader className="p-2">
-          <h3 className="  font-mier-bold text-slate-700">
+          <h3 className="font-mier-bold text-slate-700">
             {productDetails?.description}
           </h3>
         </CardHeader>
         <CardContent className="text-pretty">
-          <p>
-            Name:{productDetails?.description} <br />
-            Material: Plastic <br />
-            Type: Nozzle Cock <br />
-            Installation Type: Single Handle Installation Type <br />
-            Faucet Control: Handle Controlled Product Breadth: 0.5 Cm Product{" "}
-            <br />
-            Height: 1 Cm Product Length: 1 Cm Net Quantity (N): Pack Of 1
-          </p>
+          <p>{productDetails?.full_details}</p>
           <p className="mt-3">Manufactured in India</p>
         </CardContent>
       </Card>
 
-      {/* Sold By */}
+      {/* Sold By with Dialog */}
       <Card className="rounded-md border p-3">
         <CardHeader className="p-2">
           <h3 className="text-lg font-semibold font-mier-bold text-slate-700">
             Sold By
           </h3>
         </CardHeader>
-        <CardContent className="flex items-center  gap-3">
+        <CardContent className="flex items-center gap-3">
           <BsShopWindow
             className="bg-blue-300 rounded-full h-16 w-16 p-3"
             fill="white"
           />
           <h4 className="text-xl uppercase font-mier-book font-semibold text-slate-700">
-            Atish Shop
+            {supplierInfo?.companyName}
           </h4>
-          <Button
-            variant="outline"
-            className="border-fuchsia-800 ml-auto font-mier-bold text-lg text-fuchsia-800"
-          >
-            View Shop
-          </Button>
+
+          {/* Dialog Trigger Button */}
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogTrigger asChild>
+              <Button
+                variant="outline"
+                className="border-fuchsia-800 ml-auto font-mier-bold text-lg text-fuchsia-800"
+              >
+                View Shop
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="p-4">
+              <h3 className="text-lg font-semibold font-mier-bold text-slate-700">
+                Shop Details
+              </h3>
+              <p className="mt-2">Company Name: {supplierInfo?.companyName}</p>
+              <p className="mt-2">Address: {supplierInfo?.address}</p>
+              <p className="mt-2">Email: {supplierInfo?.email}</p>
+              <p className="mt-2">VatNumber: {supplierInfo?.vatNumber}</p>
+              {/* Additional supplier details can be added here */}
+            </DialogContent>
+          </Dialog>
         </CardContent>
+
         <CardContent className="flex gap-10 text-xs md:text-sm text-slate-600">
           <div className="flex flex-col items-center gap-2 h-full">
             <span className="border-2 border-blue-200 text-blue-500 font-semibold flex items-center gap-1 px-3 py-1 rounded-full">
@@ -116,11 +145,11 @@ const ProductInfo = ({ productDetails }) => {
           </h3>
         </CardHeader>
         <CardContent className="flex md:flex-row flex-col md:justify-between items-center justify-center gap-2">
-          <div className="flex md:flex-col flex-row  items-center md:gap-1 gap-5 justify-center  text-5xl text-green-500 w-[20%]">
+          <div className="flex md:flex-col flex-row items-center md:gap-1 gap-5 justify-center text-5xl text-green-500 w-[20%]">
             <h1 className="flex items-center gap-1">
               4.5 <FaStar size={24} />
             </h1>
-            <div className="text-xs  font-mier-demi text-slate-600">
+            <div className="text-xs font-mier-demi text-slate-600">
               <p className="whitespace-nowrap">7562 Ratings</p>
               <p className="whitespace-nowrap">2663 Reviews</p>
             </div>
@@ -141,12 +170,12 @@ const ProductInfo = ({ productDetails }) => {
               <Progress value={40} color="bg-yellow-500" className="w-full" />
               <span>2345</span>
             </div>
-            <div className="flex items-center gap-2 ">
+            <div className="flex items-center gap-2">
               <span className="text-xs text-slate-600 w-20">Average</span>
               <Progress value={20} color="bg-orange-500" className="w-full" />
               <span>1234</span>
             </div>
-            <div className="flex items-center gap-2 ">
+            <div className="flex items-center gap-2">
               <span className="text-xs text-slate-600 w-20">Poor</span>
               <Progress value={10} color="bg-red-500" className="w-full" />
               <span>567</span>

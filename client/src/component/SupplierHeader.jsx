@@ -41,9 +41,9 @@ const SupplierHeader = () => {
 
   const logoutUser = async () => {
     try {
-      const logOut = await sendData("supplier/auth/logout");
+      const logOut = await sendData("supplier/logout");
       localStorage.removeItem("token");
-      navigate("/supplier/login");
+      navigate("/");
       dispatch(setIsLoggedIn(false));
 
       return toast({
@@ -157,7 +157,7 @@ const SupplierHeader = () => {
                         </p>
                         {!isLoggedIn && (
                           <Button
-                            onClick={() => navigate("/supplier/login")}
+                            onClick={() => navigate("/supplier")}
                             className="py-5 text-[16px] bg-fuchsia-600 hover:bg-fuchsia-700"
                           >
                             Sign In

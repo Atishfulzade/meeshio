@@ -8,16 +8,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { updateCart } from "/src/redux_store/userInfoSlice.js"; // Ensure the path is correct
 import { useToast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
-import { sendData } from "../utils/fetchData";
 
-const Product = ({ selectedImage, productDetails }) => {
+const Product = ({ selectedImage, productDetails, signedUrls }) => {
   const dispatch = useDispatch();
   const cart = useSelector((state) => state.userInfo.cart);
-  const userId = useSelector((state) => state.userInfo.id); // Get the user ID from Redux
+  const userId = useSelector((state) => state.userInfo.id);
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  // Retrieve cart from localStorage when the component mounts
   useEffect(() => {
     const storedCart = localStorage.getItem("cart");
     if (storedCart) {
@@ -27,7 +25,6 @@ const Product = ({ selectedImage, productDetails }) => {
 
   const addCart = async () => {
     try {
-      // Check if the product is already in the cart
       const existingProductIndex = cart.findIndex(
         (item) => item.id === productDetails.id
       );
@@ -35,26 +32,20 @@ const Product = ({ selectedImage, productDetails }) => {
       let updatedCart;
 
       if (existingProductIndex !== -1) {
-        // Update quantity if product already exists in cart
         updatedCart = cart.map((item, index) =>
           index === existingProductIndex
             ? { ...item, quantity: item.quantity + 1 }
             : item
         );
       } else {
-        // Add new product to cart
         updatedCart = [...cart, { ...productDetails, quantity: 1 }];
       }
 
-      // Dispatch the updated cart to Redux
       dispatch(updateCart(updatedCart));
-
-      // Store the updated cart in localStorage
       localStorage.setItem("cart", JSON.stringify(updatedCart));
-      // Update the cart on the server
-      console.log(updateCart);
 
-      // await sendData("cart", updatedCart);
+      // Uncomment if you want to send the cart to the server
+      // await sendData("cart", { userId, cart: updatedCart });
 
       toast({
         title: "Product Added",
@@ -71,20 +62,20 @@ const Product = ({ selectedImage, productDetails }) => {
   };
 
   const buyNow = () => {
-    // Redirect to checkout page or handle buy now logic
     navigate("/checkout");
   };
 
   if (!productDetails) {
     return <Loader className="m-auto" />;
   }
+  console.log(selectedImage);
 
   return (
     <div className="flex flex-col gap-5 md:w-[43%]">
       <div className="md:w-[360px] md:h-[360px] lg:h-[550px] lg:w-[550px] overflow-hidden rounded-md border">
         <img
-          src={selectedImage || productDetails?.product_images?.[0]}
-          alt={productDetails?.name}
+          src={selectedImage || signedUrls[0]}
+          alt={productDetails?.name || "Product Image"}
           className="h-full w-full object-contain"
         />
       </div>

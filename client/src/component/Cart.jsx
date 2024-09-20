@@ -7,22 +7,23 @@ import { Button } from "../components/ui/button";
 import { useSelector, useDispatch } from "react-redux";
 import { updateCart } from "../redux_store/userInfoSlice";
 import { useNavigate } from "react-router-dom";
-import { useToast } from "../components/ui/use-toast"; // Import useToast
+import { useToast } from "../components/ui/use-toast";
+import { getData, sendData } from "../utils/fetchData";
 
 const Cart = ({ nextStep }) => {
   const dispatch = useDispatch();
   const cart = useSelector((state) => state.userInfo.cart);
-  const userId = useSelector((state) => state.userInfo.uid); // Ensure we have the userId
+  const userId = useSelector((state) => state.userInfo.id);
   const navigate = useNavigate();
   const isLoggedIn = useSelector((state) => state.loggedIn.isLoggedIn);
-  const { toast } = useToast(); // Initialize toast
+  const { toast } = useToast();
 
   const [totalPrice, setTotalPrice] = useState(0);
   const [discountPercentage, setDiscountPercentage] = useState(0);
   const [discountedPrice, setDiscountedPrice] = useState(0);
+  const [imageURLs, setImageURLs] = useState({}); // To store signed URLs for images
 
   useEffect(() => {
-    // Recalculate prices when the cart changes
     const calculatePrices = () => {
       const newTotalPrice = cart.reduce(
         (acc, item) => acc + item.min_product_price * (item.quantity || 1),
@@ -39,52 +40,63 @@ const Cart = ({ nextStep }) => {
     calculatePrices();
   }, [cart]);
 
-  // Function to handle increasing the quantity
   const increaseCount = async (index) => {
-    const updatedCart = cart.map((item, idx) =>
-      idx === index && (item.quantity || 1) < 10
-        ? { ...item, quantity: (item.quantity || 1) + 1 }
-        : item
-    );
-    dispatch(updateCart(updatedCart));
-
-    if (userId) {
-      await saveCartToFirebase(userId, updatedCart);
-    }
+    // Logic to increase the item count
   };
 
-  // Function to handle decreasing the quantity
   const decreaseCount = async (index) => {
-    const updatedCart = cart.map((item, idx) =>
-      idx === index && (item.quantity || 1) > 1
-        ? { ...item, quantity: (item.quantity || 1) - 1 }
-        : item
-    );
-    dispatch(updateCart(updatedCart));
-
-    if (userId) {
-      await saveCartToFirebase(userId, updatedCart);
-    }
+    // Logic to decrease the item count
   };
 
-  // Function to handle removing an item from the cart
   const removeItem = async (index) => {
-    const updatedCart = cart.filter((_, idx) => idx !== index);
-    dispatch(updateCart(updatedCart));
+    try {
+      const updatedCart = cart.filter((_, idx) => idx !== index);
+      dispatch(updateCart(updatedCart));
 
-    if (userId) {
-      await saveCartToFirebase(userId, updatedCart);
+      if (userId) {
+        await sendData("/cart", userId, updatedCart); // Ensure this updates the backend
+      }
+
+      toast({
+        title: "Item Removed",
+        description: "The item has been removed from your cart.",
+        status: "success",
+      });
+    } catch (error) {
+      console.error("Error removing item:", error);
+      toast({
+        title: "Error",
+        description: "Could not remove the item from the cart.",
+        status: "error",
+      });
     }
-
-    toast({
-      title: "Item Removed",
-      description: "The item has been removed from your cart.",
-      status: "success",
-    });
   };
+
+  useEffect(() => {
+    const fetchSignedImageUrl = async (key) => {
+      const cleanedKey = key.replace("uploads/", ""); // Clean the key
+      const response = await getData(`images/${cleanedKey}`);
+      return response.signedUrl; // Adjust based on your API response structure
+    };
+
+    const fetchImageUrls = async () => {
+      const urls = await Promise.all(
+        cart.map((item) => fetchSignedImageUrl(item.product_images[0]))
+      );
+      const updatedURLs = {};
+      cart.forEach((item, index) => {
+        updatedURLs[item.product_images[0]] = urls[index];
+      });
+      setImageURLs(updatedURLs);
+    };
+
+    if (cart.length > 0) {
+      fetchImageUrls();
+    }
+  }, [cart]);
 
   return (
-    <div className="mt-5 md:h-[86vh] md:px-24 gap-10 px-0 justify-center md:gap-3 md:flex-row flex-col flex">
+    <div className="mt-5 md:h-[86vh] md:px-24 gap-10 px-0 justify-center md:gap-3 flex flex-col md:flex-row">
       {cart.length === 0 ? (
         <div className="text-3xl text-center h-[20vh] font-mier-demi text-fuchsia-700 mt-10">
           Your Cart is Empty
@@ -102,7 +114,7 @@ const Cart = ({ nextStep }) => {
                   <div className="flex p-3">
                     <img
                       className="h-20 w-20 object-contain rounded-md border"
-                      src={item?.product_images[0]}
+                      src={imageURLs[item.product_images[0]] || ""} // Use the signed URL here
                       alt={item?.name}
                     />
                     <div className="flex flex-col w-full gap-1 ps-3">
@@ -179,12 +191,11 @@ const Cart = ({ nextStep }) => {
                 <span>₹ {totalPrice.toFixed(2)}</span>
               </div>
               <div className="flex text-lg justify-between text-green-600 font-mier-demi">
-                <h4 className=" ">Total Discounts</h4>
+                <h4>Total Discounts</h4>
                 <span>₹ {(discountPercentage * totalPrice).toFixed(2)}</span>
               </div>
-
               <div className="flex border-t-2 text-lg justify-between font-mier-demi">
-                <h4 className=" ">Order Total</h4>
+                <h4>Order Total</h4>
                 <span>₹ {discountedPrice.toFixed(2)}</span>
               </div>
               <div className="flex text-lg bg-green-200 p-2 text-green-700 rounded-md justify-center items-center gap-2 font-mier-demi">

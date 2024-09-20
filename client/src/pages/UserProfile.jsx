@@ -3,13 +3,11 @@ import { Formik, Field, Form } from "formik";
 import * as Yup from "yup";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
-import { MdVerified, MdOutlineEdit } from "react-icons/md";
+import { MdVerified, MdOutlineEdit, MdOutlineAddCard } from "react-icons/md";
 import { RiDeleteBin7Line } from "react-icons/ri";
 import { FaRegCreditCard } from "react-icons/fa6";
 import { TiHomeOutline } from "react-icons/ti";
 import { FaRegUser } from "react-icons/fa";
-import { MdOutlineAddCard } from "react-icons/md";
-
 import {
   Dialog,
   DialogContent,
@@ -45,42 +43,62 @@ const UserProfile = () => {
     cardDetails: false,
   });
   const [imageFile, setImageFile] = useState(null);
+  const [imageURL, setImageURL] = useState();
 
+  // Fetch user profile only on mount
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await getData("user/profile");
         setUser(response);
+
+        // Fetch image if profileImage is available
+        if (response?.profileImage) {
+          const imageUrl = await fetchSignedImageUrl(response.profileImage);
+          setImageURL(imageUrl);
+        }
       } catch (error) {
         console.log("Error fetching profile:", error);
       }
     };
-    fetchData();
-  }, [isEditing]);
 
+    const fetchSignedImageUrl = async (key) => {
+      const cleanedKey = key.replace("uploads/", "");
+      console.log(cleanedKey);
+
+      const response = await getData(`images/${cleanedKey}`);
+      return response.signedUrl; // Adjust based on your API response structure
+    };
+
+    fetchData(); // Fetch profile once on mount
+  }, []); // Empty dependency array ensures this only runs once when the component mounts
+
+  // Handle Profile Image Update
   const handleProfileImageSubmit = async () => {
     if (!imageFile) return;
 
     const formData = new FormData();
     formData.append("profileImage", imageFile);
 
-    for (const [key, value] of formData.entries()) {
-      if (value instanceof File) {
-        console.log(`${key}: ${value.name} (${value.size} bytes)`);
-      } else {
-        console.log(`${key}: ${value}`);
-      }
-    }
     try {
       const token = localStorage.getItem("token");
       await updateData("user/profile", formData, token, true);
-      console.log(formData);
 
       toast({
         title: "Profile Image Updated",
         description: "Your profile image has been updated successfully.",
         type: "success",
       });
+
+      // Re-fetch user data after successful update
+      const updatedUser = await getData("user/profile");
+      setUser(updatedUser);
+      if (updatedUser?.profileImage) {
+        const updatedImageUrl = await fetchSignedImageUrl(
+          updatedUser.profileImage
+        );
+        setImageURL(updatedImageUrl);
+      }
       setIsEditing({ ...isEditing, profileImage: false });
     } catch (error) {
       console.error("Error uploading profile image:", error);
@@ -97,17 +115,19 @@ const UserProfile = () => {
       await updateData("user/address", { address: newAddress }, false);
 
       toast({
-        title: "Address Added",
-        description: "Your new address has been added successfully.",
+        title: "Address Updated",
+        description: "Your address has been updated successfully.",
         type: "success",
       });
 
+      // Update user data locally after successful update
+      setUser((prevUser) => ({ ...prevUser, address: newAddress }));
       setIsEditing({ ...isEditing, address: false });
     } catch (error) {
-      console.error("Error adding address:", error);
+      console.error("Error updating address:", error);
       toast({
         title: "Update Failed",
-        description: "Something went wrong while adding the address.",
+        description: "Something went wrong while updating the address.",
         type: "error",
       });
     }
@@ -116,7 +136,6 @@ const UserProfile = () => {
   const handleCardDetailsSubmit = async (values) => {
     try {
       const token = localStorage.getItem("token");
-      // Format data according to the expected format
       const data = {
         cardNumber: values.cardNumber,
         cardholderName: values.cardholderName,
@@ -124,7 +143,6 @@ const UserProfile = () => {
         cvv: values.cvv,
         userId: values.userId,
       };
-      console.log(data);
 
       await sendData("user/card", data, token);
 
@@ -134,6 +152,11 @@ const UserProfile = () => {
         type: "success",
       });
 
+      // Update user data locally after successful card addition
+      setUser((prevUser) => ({
+        ...prevUser,
+        cards: [...(prevUser.cards || []), data],
+      }));
       setIsEditing({ ...isEditing, cardDetails: false });
     } catch (error) {
       console.error("Error adding card details:", error);
@@ -173,7 +196,7 @@ const UserProfile = () => {
         <div className="flex py-5 gap-3">
           <div className="mb-4 text-start flex relative w-36">
             <img
-              src={user?.profileImage || "/default-profile.png"}
+              src={imageURL}
               alt="Profile"
               className="w-32 h-32 rounded-full border object-cover"
             />
@@ -185,7 +208,7 @@ const UserProfile = () => {
               <MdOutlineEdit size={18} />
             </Button>
           </div>
-          <div className=" flex flex-col">
+          <div className="flex flex-col">
             <p className="text-4xl font-mier-book flex items-center">
               {user?.firstname} {user?.lastname}
               {user?.isVerified && (
@@ -198,57 +221,39 @@ const UserProfile = () => {
           </div>
         </div>
 
-        <div className="mb-4 flex flex-col gap-3 relative">
-          <h2 className="text-lg text-slate-800 font-mier-bold flex gap-2 items-center">
-            <TiHomeOutline />
-            Address
-          </h2>
-          {user?.address ? (
-            <div className="bg-fuchsia-200 rounded-md p-3 w-fit">
-              <p>{user.address.street}</p>
-              <p>
-                {user.address.city}, {user.address.state} {user.address.zipCode}
-              </p>
-              <p>Contact Number: {user.address.contactNumber}</p>
-            </div>
-          ) : (
-            <p>No address provided</p>
-          )}
-          <Button
-            onClick={() => setIsEditing({ ...isEditing, address: true })}
-            className="right-20 absolute font-mier-demi flex gap-2 w-fit bg-fuchsia-600 hover:bg-fuchsia-700"
-          >
-            <MdOutlineEdit size={20} /> Update Address
+        {/* Address Section */}
+        <div className="py-5">
+          <h3 className="text-lg font-semibold">Address</h3>
+          <p>
+            {user?.address?.street}, {user?.address?.city},{" "}
+            {user?.address?.state} - {user?.address?.zipCode}
+          </p>
+          <Button onClick={() => setIsEditing({ ...isEditing, address: true })}>
+            <MdOutlineEdit /> Edit Address
           </Button>
         </div>
 
-        <div className="mb-4 flex flex-col gap-4 relative">
-          <h2 className="text-lg text-slate-800 font-mier-bold flex gap-2 items-center">
-            <FaRegCreditCard />
-            Card Details
-          </h2>
-          <div className="flex gap-2 flex-wrap">
-            {user?.cards && user.cards.length > 0 ? (
-              user.cards.map((card, index) => (
-                <div
-                  key={index}
-                  className="bg-fuchsia-200 relative p-3 rounded-md "
-                >
-                  <p>Card Number: **** **** **** {card.cardNumber.slice(-4)}</p>
-                  <p>Name: {card.cardholderName}</p>
-                  <p>Expiry Date: {card.expiryDate}</p>
-                  <RiDeleteBin7Line className="bg-white h-7 w-7 p-1 absolute right-3 bottom-1 cursor-pointer shadow-md hover:scale-105 transition-all rounded-full" />
-                </div>
-              ))
-            ) : (
-              <p>No card details provided</p>
-            )}
-          </div>
+        {/* Card Details Section */}
+        <div className="py-5">
+          <h3 className="text-lg font-semibold">Card Details</h3>
+          {user?.cards?.map((card, index) => (
+            <div key={index} className="flex justify-between items-center">
+              <p>
+                {card.cardholderName} - **** **** ****{" "}
+                {card.cardNumber.slice(-4)}
+              </p>
+              <RiDeleteBin7Line
+                className="cursor-pointer"
+                onClick={() => {
+                  /* Handle delete */
+                }}
+              />
+            </div>
+          ))}
           <Button
             onClick={() => setIsEditing({ ...isEditing, cardDetails: true })}
-            className="right-20 absolute font-mier-demi flex gap-2 w-fit bg-fuchsia-600 hover:bg-fuchsia-700"
           >
-            <MdOutlineAddCard size={20} /> Add Card
+            <MdOutlineAddCard /> Add Card
           </Button>
         </div>
 
@@ -288,49 +293,41 @@ const UserProfile = () => {
         >
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Add Address</DialogTitle>
+              <DialogTitle>Edit Address</DialogTitle>
             </DialogHeader>
             <Formik
               initialValues={initialValues.address}
-              validationSchema={validationSchema.shape.address}
-              onSubmit={async (values) => {
-                await handleAddressSubmit(values);
-              }}
+              validationSchema={Yup.object().shape(validationSchema.address)}
+              onSubmit={handleAddressSubmit}
             >
-              {({ handleSubmit }) => (
-                <Form onSubmit={handleSubmit}>
+              {({ errors, touched }) => (
+                <Form>
+                  <Field name="street" component={Input} placeholder="Street" />
+                  {errors.street && touched.street && (
+                    <div>{errors.street}</div>
+                  )}
+                  <Field name="city" component={Input} placeholder="City" />
+                  {errors.city && touched.city && <div>{errors.city}</div>}
+                  <Field name="state" component={Input} placeholder="State" />
+                  {errors.state && touched.state && <div>{errors.state}</div>}
                   <Field
-                    type="text"
-                    name="street"
-                    placeholder="Street"
-                    as={Input}
-                  />
-                  <Field
-                    type="text"
-                    name="city"
-                    placeholder="City"
-                    as={Input}
-                  />
-                  <Field
-                    type="text"
-                    name="state"
-                    placeholder="State"
-                    as={Input}
-                  />
-                  <Field
-                    type="text"
                     name="zipCode"
+                    component={Input}
                     placeholder="Zip Code"
-                    as={Input}
                   />
+                  {errors.zipCode && touched.zipCode && (
+                    <div>{errors.zipCode}</div>
+                  )}
                   <Field
-                    type="text"
                     name="contactNumber"
+                    component={Input}
                     placeholder="Contact Number"
-                    as={Input}
                   />
+                  {errors.contactNumber && touched.contactNumber && (
+                    <div>{errors.contactNumber}</div>
+                  )}
                   <Button type="submit" className="mt-4">
-                    Save Address
+                    Save Changes
                   </Button>
                 </Form>
               )}
@@ -351,32 +348,43 @@ const UserProfile = () => {
             </DialogHeader>
             <Formik
               initialValues={initialValues.card}
-              validationSchema={validationSchema.shape.card}
+              validationSchema={Yup.object().shape(validationSchema.card)}
               onSubmit={handleCardDetailsSubmit}
-              enableReinitialize
             >
-              <Form>
-                <Field name="cardNumber" as={Input} placeholder="Card Number" />
-                <Field
-                  name="expiryDate"
-                  as={Input}
-                  placeholder="Expiry Date (MM/YY)"
-                />
-                <Field name="cvv" as={Input} placeholder="CVV" />
-                <Field
-                  name="cardholderName"
-                  as={Input}
-                  placeholder="Cardholder Name"
-                />
-                <Field
-                  name="userId"
-                  type="hidden"
-                  value={initialValues.card.userId}
-                />
-                <Button type="submit" className="mt-4">
-                  Save Card Details
-                </Button>
-              </Form>
+              {({ errors, touched }) => (
+                <Form>
+                  <Field
+                    name="cardNumber"
+                    component={Input}
+                    placeholder="Card Number"
+                  />
+                  {errors.cardNumber && touched.cardNumber && (
+                    <div>{errors.cardNumber}</div>
+                  )}
+                  <Field
+                    name="expiryDate"
+                    component={Input}
+                    placeholder="Expiry Date"
+                  />
+                  {errors.expiryDate && touched.expiryDate && (
+                    <div>{errors.expiryDate}</div>
+                  )}
+                  <Field name="cvv" component={Input} placeholder="CVV" />
+                  {errors.cvv && touched.cvv && <div>{errors.cvv}</div>}
+                  <Field
+                    name="cardholderName"
+                    component={Input}
+                    placeholder="Cardholder Name"
+                  />
+                  {errors.cardholderName && touched.cardholderName && (
+                    <div>{errors.cardholderName}</div>
+                  )}
+                  <Field name="userId" type="hidden" value={user?._id} />
+                  <Button type="submit" className="mt-4">
+                    Add Card
+                  </Button>
+                </Form>
+              )}
             </Formik>
           </DialogContent>
         </Dialog>

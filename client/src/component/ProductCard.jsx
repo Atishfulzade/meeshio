@@ -1,12 +1,29 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { FaStar } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Loader from "./Loader";
+import { getData } from "../utils/fetchData"; // Make sure this utility is imported
+
 const ProductCard = ({ details }) => {
   const ismobile = useSelector((state) => state.identifyMobile.isMobile);
   const navigate = useNavigate();
+  const [imageURL, setImageURL] = useState(null);
+
+  useEffect(() => {
+    const fetchSignedImageUrl = async (key) => {
+      const cleanedKey = key.replace("uploads/", ""); // Clean the key
+      const response = await getData(`images/${cleanedKey}`);
+      return response.signedUrl; // Adjust based on your API response structure
+    };
+
+    if (details?.product_images?.[0]) {
+      fetchSignedImageUrl(details.product_images[0]).then(setImageURL);
+    }
+  }, [details]);
+
   if (!details) return <Loader />;
+
   return (
     <div
       className={`border cursor-pointer ${
@@ -17,7 +34,7 @@ const ProductCard = ({ details }) => {
       onClick={() => navigate(`/product/${details._id}`)}
     >
       <img
-        src={details?.product_images?.[0]}
+        src={imageURL || details?.product_images?.[0]} // Use signed URL if available
         alt={details?.name}
         loading="lazy"
         className="w-full h-[61%] object-contain"
@@ -35,7 +52,7 @@ const ProductCard = ({ details }) => {
             ₹{details?.min_catalog_price}
           </h2>
         </div>
-        <span className="bg-slate-50 w-fit px-2 py-1 font-mier text-slate-700 lg:text-sm  text-xs rounded-full">
+        <span className="bg-slate-50 w-fit px-2 py-1 font-mier text-slate-700 lg:text-sm text-xs rounded-full">
           Free Delivery
         </span>
         <div className="flex font-mier-book font-medium text-xs lg:text-sm justify-start gap-2 items-center text-slate-600">
