@@ -187,25 +187,25 @@ const UserProfile = () => {
 
   return (
     <div className="h-screen px-6 mt-14">
-      <div className="h-full shadow-lg p-6 rounded-lg">
+      <div className="h-full shadow-lg py-8 rounded-lg">
         <div className="flex justify-between items-center">
-          <h2 className="text-lg text-slate-800 font-mier-bold flex gap-2 items-center">
+          <h2 className="text-lg text-slate-800 font-mier-bold border rounded-full px-4 border-slate-300 py-1 flex gap-2 items-center">
             <FaRegUser /> Profile
           </h2>
         </div>
-        <div className="flex py-5 gap-3">
+        <div className="flex py-3 gap-3">
           <div className="mb-4 text-start flex relative w-36">
             <img
               src={imageURL}
               alt="Profile"
-              className="w-32 h-32 rounded-full border object-cover"
+              className="w-20 h-20 rounded-full border object-cover p-1 border-fuchsia-500"
             />
             <Button
               variant="outlined"
               onClick={() => setIsEditing({ ...isEditing, profileImage: true })}
-              className="mt-2 rounded-full bg-white border text-gray-800 shadow-md absolute bottom-3 right-1"
+              className=" rounded-full w-fit bg-white border text-gray-800 shadow-md absolute bottom-1 right-10"
             >
-              <MdOutlineEdit size={18} />
+              <MdOutlineEdit size={16} />
             </Button>
           </div>
           <div className="flex flex-col">
@@ -222,38 +222,56 @@ const UserProfile = () => {
         </div>
 
         {/* Address Section */}
-        <div className="py-5">
-          <h3 className="text-lg font-semibold">Address</h3>
-          <p>
-            {user?.address?.street}, {user?.address?.city},{" "}
-            {user?.address?.state} - {user?.address?.zipCode}
+        <div className="">
+          <h2 className="text-lg text-slate-800 w-fit font-mier-bold border rounded-full px-4 border-slate-300 py-1 flex gap-2 items-center">
+            <TiHomeOutline />
+            Address
+          </h2>
+          <p className="flex flex-col py-5 ">
+            <p className="font-mier-book">{user?.address?.street},</p>
+            <p className="font-mier-book">
+              {user?.address?.city}, {user?.address?.state}
+            </p>
+            <p className="font-mier-book"> {user?.address?.zipCode}</p>
           </p>
-          <Button onClick={() => setIsEditing({ ...isEditing, address: true })}>
+          <Button
+            onClick={() => setIsEditing({ ...isEditing, address: true })}
+            className="flex justify-center gap-2 items-center bg-fuchsia-500 hover:bg-fuchsia-600"
+          >
             <MdOutlineEdit /> Edit Address
           </Button>
         </div>
 
         {/* Card Details Section */}
-        <div className="py-5">
-          <h3 className="text-lg font-semibold">Card Details</h3>
-          {user?.cards?.map((card, index) => (
-            <div key={index} className="flex justify-between items-center">
-              <p>
-                {card.cardholderName} - **** **** ****{" "}
-                {card.cardNumber.slice(-4)}
-              </p>
-              <RiDeleteBin7Line
-                className="cursor-pointer"
-                onClick={() => {
-                  /* Handle delete */
-                }}
-              />
-            </div>
-          ))}
+        <div className="mt-5">
+          <h2 className="text-lg w-fit text-slate-800 font-mier-bold border rounded-full px-4 border-slate-300 py-1 flex gap-2 items-center">
+            <MdOutlineAddCard />
+            Card Details
+          </h2>
+          <div className=" flex gap-3 py-5">
+            {user?.cards?.map((card, index) => (
+              <div
+                key={index}
+                className="flex justify-center  flex-col border shadow-md p-3 rounded-md items-start "
+              >
+                <p className="font-mier-book">{card.cardholderName}</p>
+                <p className="font-mier-book">
+                  **** **** **** {card.cardNumber.slice(-4)}
+                </p>
+                <RiDeleteBin7Line
+                  className="cursor-pointer"
+                  onClick={() => {
+                    /* Handle delete */
+                  }}
+                />
+              </div>
+            ))}
+          </div>
           <Button
             onClick={() => setIsEditing({ ...isEditing, cardDetails: true })}
+            className="flex justify-center gap-2 items-center bg-fuchsia-500 hover:bg-fuchsia-600"
           >
-            <MdOutlineAddCard /> Add Card
+            <FaRegCreditCard /> Add Card
           </Button>
         </div>
 

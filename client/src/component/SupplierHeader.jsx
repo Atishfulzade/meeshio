@@ -64,8 +64,8 @@ const SupplierHeader = () => {
     <div className="w-full bg-pink-100 fixed top-0 left-0 z-30 flex flex-col">
       <div className="flex w-full gap-3 justify-between items-center h-14 md:h-[70px] md:border-b-2 px-3 md:px-24 md:py-2 py-2">
         <div className="flex gap-3 justify-between items-center">
-          <Dialog open={isOpen} onOpenChange={setIsOpen}>
-            <DialogTrigger asChild>
+          {/* <Dialog open={isOpen} onOpenChange={setIsOpen}>
+            <DialogTrigger>
               <IoMenu
                 onClick={() => setIsOpen(true)}
                 size={24}
@@ -86,15 +86,10 @@ const SupplierHeader = () => {
                 </DialogClose>
               </div>
               <div className="p-4">
-                <ul className="flex flex-col gap-4">
-                  <li>Dashboard</li>
-                  <li>Orders</li>
-                  <li>Products</li>
-                  <li>Account Settings</li>
-                </ul>
+               
               </div>
             </DialogContent>
-          </Dialog>
+          </Dialog> */}
           <img
             src={meeshoLogo}
             alt="Meesho Supplier Logo"
@@ -119,10 +114,12 @@ const SupplierHeader = () => {
                 <HoverCardTrigger asChild>
                   <Button
                     variant="link"
-                    className="text-slate-800 decoration-2 underline-offset-[20px] font-normal justify-center items-center flex flex-col h-full"
+                    className="text-slate-800  decoration-2 underline-offset-[20px] font-normal justify-center items-center flex flex-col h-full"
                   >
-                    <FaRegUser size={24} />
-                    <p className="text-[17px] font-mier-book">Profile</p>
+                    <FaRegUser size={18} />
+                    {!ismobile && (
+                      <p className="text-[17px] font-mier-book">Profile</p>
+                    )}
                   </Button>
                 </HoverCardTrigger>
                 <HoverCardContent className="w-fit mt-[5px]">
@@ -137,9 +134,6 @@ const SupplierHeader = () => {
                             src={profileImage || avatar}
                             alt="User Avatar"
                             className="h-10 w-10 border cursor-pointer rounded-full"
-                            onClick={() =>
-                              isLoggedIn ? navigate("/supplier/profile") : ""
-                            }
                           />
                           <div className="flex flex-col">
                             <h3>{firstname + " " + lastname}</h3>
@@ -165,20 +159,7 @@ const SupplierHeader = () => {
                         )}
                       </div>
                     )}
-                    <Separator variant="horizantal" className="my-2" />
-                    <Link
-                      to="/supplier/orders"
-                      className="flex gap-3 items-center h-10 text-[18px]"
-                    >
-                      Orders
-                    </Link>
-                    <Separator variant="horizantal" />
-                    <Link
-                      to="/supplier/products"
-                      className="flex gap-3 items-center h-10 text-[18px]"
-                    >
-                      Products
-                    </Link>
+
                     <Separator variant="horizantal" />
                     {isLoggedIn ? (
                       <p

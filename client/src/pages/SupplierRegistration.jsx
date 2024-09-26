@@ -6,7 +6,9 @@ import { Input } from "../components/ui/input"; // Import your Input component
 import { sendData } from "../utils/fetchData";
 import { toast } from "../components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
-
+import { useDispatch } from "react-redux";
+import { setSupplierInfo } from "../redux_store/supplierInfoSlice";
+import { setIsLoggedIn } from "../redux_store/logInSlice";
 // Validation schema for supplier registration
 const validationSchema = Yup.object({
   companyName: Yup.string()
@@ -38,7 +40,7 @@ const validationSchema = Yup.object({
 
 const SupplierRegistration = () => {
   const navigate = useNavigate();
-
+  const dispatch = useDispatch();
   const formik = useFormik({
     initialValues: {
       companyName: "",
@@ -53,14 +55,16 @@ const SupplierRegistration = () => {
     validateOnChange: true, // Enable validation on change
     onSubmit: async (values) => {
       try {
-        await sendData("supplier/register", values);
+        const response = await sendData("supplier/register", values);
         formik.resetForm();
         toast({
           title: "Registration Successful",
           description: "You have successfully registered as a supplier.",
           type: "success",
         });
-        setTimeout(() => navigate("/login"), 2000); // Navigate to login page after 2 seconds
+        dispatch(setIsLoggedIn(true));
+        dispatch(setSupplierInfo(response.supplier));
+        navigate("/supplier/dashboard");
       } catch (error) {
         toast({
           title: "Registration Failed",

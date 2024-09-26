@@ -11,7 +11,7 @@ import { setIsLoggedIn } from "../redux_store/logInSlice";
 import { useToast } from "@/components/ui/use-toast";
 import { sendData } from "../utils/fetchData";
 import * as Yup from "yup";
-
+import Cookies from "js-cookie";
 const SignInForm = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -61,7 +61,6 @@ const SignInForm = () => {
             setIsRegistering(false);
             dispatch(setIsLoggedIn(true));
             console.log(response);
-
             dispatch(setUserInfo(response?.user));
             navigate("/");
           } else {
@@ -87,6 +86,8 @@ const SignInForm = () => {
             dispatch(setIsLoggedIn(true));
             dispatch(setUserInfo(response?.user));
             navigate("/");
+            const token = Cookies.get("yourCookieName");
+            console.log(token);
           } else {
             throw new Error(
               error.response?.data?.message || "Invalid login credentials"

@@ -4,7 +4,7 @@ import storage from "redux-persist/lib/storage"; // Default storage is localStor
 import identifyMobileSlice from "./identifyMobile";
 import logInSlice from "./logInSlice";
 import userInfoSlice from "./userInfoSlice"; // The slice you want to persist
-
+import supplierInfoSlice from "./supplierInfoSlice";
 // Configuration for redux-persist
 const persistConfig = {
   key: "root",
@@ -20,6 +20,7 @@ export const store = configureStore({
     identifyMobile: identifyMobileSlice,
     loggedIn: logInSlice,
     userInfo: persistedUserInfoReducer, // Persist userInfo slice
+    supplierInfo: supplierInfoSlice,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

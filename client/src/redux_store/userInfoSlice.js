@@ -14,9 +14,9 @@ export const userInfoSlice = createSlice({
   initialState,
   reducers: {
     setUserInfo: (state, action) => {
-      const { id, firstname, lastname, profileImage, email } =
+      const { _id, firstname, lastname, profileImage, email } =
         action.payload || {};
-      state.id = id || state.id;
+      state.id = _id || state.id;
       state.firstname = firstname || state.firstname;
       state.lastname = lastname || state.lastname;
       state.profileImage = profileImage || state.profileImage;

@@ -1,11 +1,8 @@
 import { Suspense, lazy, useEffect, useCallback } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setIsMobile } from "./redux_store/identifyMobile";
 import Loader from "./component/Loader";
-import SupplierPortal from "./pages/supplierAuth";
-import SupplierRegistration from "./pages/SupplierRegistration";
-import UserProfile from "./pages/UserProfile";
 
 // Lazy load components
 const Home = lazy(() => import("./pages/Home"));
@@ -21,9 +18,12 @@ const PaymentPage = lazy(() => import("./pages/PaymentPage"));
 const CartPage = lazy(() => import("./pages/CartPage"));
 const MobileHome = lazy(() => import("./component/MobileHome"));
 const OrdersPage = lazy(() => import("./pages/OrdersPage"));
+const UserProfile = lazy(() => import("./pages/UserProfile"));
+const SupplierPortal = lazy(() => import("./pages/supplierAuth"));
+const SupplierRegistration = lazy(() => import("./pages/SupplierRegistration"));
 
 // Utility function for debouncing
-function debounce(func, wait) {
+const debounce = (func, wait) => {
   let timeout;
   return function (...args) {
     const later = () => {
@@ -33,7 +33,7 @@ function debounce(func, wait) {
     clearTimeout(timeout);
     timeout = setTimeout(later, wait);
   };
-}
+};
 
 function App() {
   const isLoggedIn = useSelector((state) => state.loggedIn.isLoggedIn);
@@ -68,12 +68,20 @@ function App() {
           <Route path="supplier/login" element={<SignInForm />} />
           <Route path="checkout" element={<CartPage />} />
           <Route path="orders" element={<OrdersPage />} />
-          <Route path="supplier/dashboard" element={<DashBoard />} />
+          {isLoggedIn ? (
+            <>
+              <Route path="supplier/dashboard" element={<DashBoard />} />
+              <Route path="profile" element={<UserProfile />} />
+            </>
+          ) : (
+            <Route
+              path="profile"
+              element={<Navigate to="/user/authenticate" />}
+            />
+          )}
           <Route path="delete_account" element={<SignInForm />} />
           <Route path="supplier" element={<SupplierPortal />} />
           <Route path="supplier/auth" element={<SupplierRegistration />} />
-          {/* Conditionally render UserProfile route based on login status */}
-          {isLoggedIn && <Route path="profile" element={<UserProfile />} />}
         </Route>
       </Routes>
     </Suspense>

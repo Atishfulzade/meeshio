@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { IoClose, IoMenu } from "react-icons/io5";
 import { appstore, avatar, meeshoLogo, playstore } from "../assets";
 import { ImHeart } from "react-icons/im";
@@ -30,9 +30,10 @@ import {
   DialogTrigger,
 } from "@radix-ui/react-dialog";
 import { sendData } from "../utils/fetchData";
+import { DialogDescription } from "../components/ui/dialog";
+import { clearUserInfo } from "../redux_store/userInfoSlice";
 
 const Header = () => {
-  const [user, setUser] = useState(null); // State to store user info
   const ismobile = useSelector((state) => state.identifyMobile.isMobile);
   const isLoggedIn = useSelector((state) => state.loggedIn.isLoggedIn);
   const [searchInput, setSearchInput] = useState(""); // State to store
@@ -46,11 +47,13 @@ const Header = () => {
   const email = useSelector((state) => state.userInfo.email);
   const cartValue = useSelector((state) => state.userInfo.cart);
   const [isOpen, setIsOpen] = useState(false);
+  const localCart = localStorage.getItem("cart");
   const logoutUser = async () => {
     try {
       const logOut = await sendData("user/auth/logout");
       localStorage.removeItem("token");
       navigate("/");
+      dispatch(clearUserInfo());
       dispatch(setIsLoggedIn(false));
 
       return toast({
@@ -71,7 +74,7 @@ const Header = () => {
       <div className="flex w-full gap-3 justify-between items-center  h-14 md:h-[70px] md:border-b-2 px-3 md:px-24 md:py-2  py-2">
         <div className="flex gap-3   justify-between items-center">
           <Dialog open={isOpen} onOpenChange={setIsOpen}>
-            <DialogTrigger asChild>
+            <DialogTrigger>
               <IoMenu
                 onClick={() => setIsOpen(true)}
                 size={24}
@@ -79,24 +82,61 @@ const Header = () => {
               />
             </DialogTrigger>
 
-            <DialogContent
-              aria-describedby="description"
-              className="fixed  z-40  left-0 top-0 h-full w-full transition-all bg-white shadow-lgduration-300"
-            >
-              <div className="p-4 flex justify-between items-center">
+            <DialogContent className="fixed  z-40  left-0 top-0 h-full w-full transition-all bg-white shadow-lgduration-300">
+              <div className="px-4 flex justify-between items-center">
                 <h2 className="text-lg font-bold">
                   <img src={meeshoLogo} alt="logo" className="w-20" />
                 </h2>
                 <DialogClose asChild>
                   <IoClose onClick={() => setIsOpen(false)} size={24} />
-                </DialogClose>{" "}
+                </DialogClose>
+              </div>
+              <div className="flex justify-between px-5">
+                <DialogDescription className="flex flex-col">
+                  <p>Welcome {isLoggedIn ? firstname : "User"}!</p>
+                  {isLoggedIn && (
+                    <div className="flex gap-3 mt-3">
+                      <img
+                        src={profileImage}
+                        alt={firstname}
+                        className="h-7 w-7  rounded-full border border-fuchsia-700"
+                      />
+                      <p className="font-mier-book text-sm">
+                        {firstname} {lastname}
+                      </p>
+                    </div>
+                  )}
+                </DialogDescription>
+                <Button
+                  onClick={
+                    isLoggedIn
+                      ? logoutUser
+                      : () => {
+                          navigate("/user/authenticate");
+                          setIsOpen(false);
+                        }
+                  }
+                  className="bg-fuchsia-600 hover:bg-fuchsia-700"
+                >
+                  {isLoggedIn ? "Logout" : "Login"}
+                </Button>
               </div>
               <div className="p-4">
                 <ul className="flex flex-col gap-4">
-                  <li>Home</li>
-                  <li>Shop</li>
-                  <li>About</li>
-                  <li>Contact</li>
+                  <Link
+                    variant="link"
+                    to={"/supplier"}
+                    className="text-slate-800 text-[17px] font-normal font-mier-book"
+                  >
+                    Become a supplier
+                  </Link>
+                  <Link
+                    variant="link"
+                    to={"/supplier"}
+                    className="text-slate-800 text-[17px] font-normal font-mier-book"
+                  >
+                    Newsroom
+                  </Link>
                 </ul>
               </div>
             </DialogContent>
@@ -275,7 +315,6 @@ const Header = () => {
               className="text-slate-800 font-mier-book text-[17px] font-normal justify-center items-center flex flex-col h-full"
             >
               <ImHeart size={20} fill="red" />
-              Cart
             </Link>
 
             <Link
@@ -284,14 +323,16 @@ const Header = () => {
               className="text-slate-800 font-mier-book text-[17px] font-normal justify-center items-center flex flex-col h-full"
             >
               <HiMiniShoppingCart size={20} />
-              Cart
             </Link>
-            {cartValue.length < 1 ? (
-              ""
-            ) : (
-              <Badge className="bg-fuchsia-200 text-fuchsia-700 md:h-5 right-0 top-1 h-4 w-4 md:w-5 text-xs flex justify-center absolute md:top-[-5px] md:right-0 lg:right-[-12px]">
-                {cartValue.length}
+            {(cartValue && cartValue.length > 0) ||
+            (localCart && JSON.parse(localCart).length > 0) ? (
+              <Badge className="bg-fuchsia-200 text-fuchsia-800 h-5 w-5 text-xs flex justify-center absolute top-[-5px] right-0 lg:right-[-12px]">
+                {cartValue.length > 0
+                  ? cartValue.length
+                  : JSON.parse(localCart).length}
               </Badge>
+            ) : (
+              ""
             )}
           </div>
         )}

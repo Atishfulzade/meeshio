@@ -10,6 +10,7 @@ import {
   DialogHeader,
   DialogFooter,
   DialogTitle,
+  DialogDescription,
 } from "../components/ui/dialog";
 import { Link, useNavigate } from "react-router-dom";
 import { sendData } from "../utils/fetchData";
@@ -17,6 +18,13 @@ import { useToast } from "../components/ui/use-toast";
 import { useDispatch } from "react-redux";
 import { setIsLoggedIn } from "../redux_store/logInSlice";
 import { setUserInfo } from "../redux_store/userInfoSlice";
+import {
+  Select,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+} from "../components/ui/select";
+import { setSupplierInfo } from "../redux_store/supplierInfoSlice";
 
 // Validation schema using Yup
 const mobileValidationSchema = Yup.object({
@@ -32,6 +40,23 @@ const loginValidationSchema = Yup.object({
   password: Yup.string().required("Password is required"),
 });
 
+const countries = [
+  { name: "United States", code: "+1" },
+  { name: "India", code: "+91" },
+  { name: "United Kingdom", code: "+44" },
+  { name: "Australia", code: "+61" },
+  { name: "Germany", code: "+49" },
+  { name: "France", code: "+33" },
+  { name: "Japan", code: "+81" },
+  { name: "China", code: "+86" },
+  { name: "Brazil", code: "+55" },
+  { name: "South Africa", code: "+27" },
+  { name: "Italy", code: "+39" },
+  { name: "Mexico", code: "+52" },
+  { name: "Russia", code: "+7" },
+  { name: "South Korea", code: "+82" },
+];
+
 const SupplierLogin = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -41,10 +66,14 @@ const SupplierLogin = () => {
   const formik = useFormik({
     initialValues: {
       mobileNumber: "",
+      countryCode: "+91",
     },
     validationSchema: mobileValidationSchema,
     onSubmit: (values) => {
-      window.sessionStorage.setItem("mobile", values.mobileNumber);
+      window.sessionStorage.setItem(
+        "mobile",
+        `${values.countryCode}${values.mobileNumber}`
+      );
       navigate("auth");
       formik.resetForm();
     },
@@ -66,10 +95,8 @@ const SupplierLogin = () => {
         });
         localStorage.setItem("token", response.token);
         localStorage.setItem("supplier", response.supplier?._id);
-        console.log(response);
-
         dispatch(setIsLoggedIn(true));
-        dispatch(setUserInfo(response.supplier));
+        dispatch(setSupplierInfo(response?.supplier));
         navigate("/supplier/dashboard");
         setIsLoginOpen(false);
       } catch (error) {
@@ -91,13 +118,33 @@ const SupplierLogin = () => {
         <p className="text-center text-gray-600 mb-4">
           Become a Meesho seller and grow your business across India
         </p>
-
         <p className="text-center text-pink-500 font-bold mb-8">
           Don’t have a GSTIN or Composition GSTIN? You can still sell on Meesho.
         </p>
 
         <form onSubmit={formik.handleSubmit}>
-          <div className="mb-4">
+          <div className="mb-4 flex space-x-2 ">
+            {/* Country code select */}
+            <Select
+              name="countryCode"
+              value={formik.values.countryCode}
+              onValueChange={(value) =>
+                formik.setFieldValue("countryCode", value)
+              }
+            >
+              <SelectTrigger className="w-32 border border-gray-300 rounded-lg p-3">
+                {formik.values.countryCode}
+              </SelectTrigger>
+              <SelectContent>
+                {countries.map((country, i) => (
+                  <SelectItem key={country.code} value={country.code}>
+                    {country.name} ({country.code})
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            {/* Mobile number input */}
             <Input
               type="text"
               name="mobileNumber"
@@ -107,12 +154,13 @@ const SupplierLogin = () => {
               onBlur={formik.handleBlur}
               className="w-full p-3 border border-gray-300 rounded-lg"
             />
-            {formik.touched.mobileNumber && formik.errors.mobileNumber ? (
-              <div className="text-red-500 text-sm mt-1">
-                {formik.errors.mobileNumber}
-              </div>
-            ) : null}
           </div>
+
+          {formik.touched.mobileNumber && formik.errors.mobileNumber ? (
+            <div className="text-red-500 text-sm mt-1">
+              {formik.errors.mobileNumber}
+            </div>
+          ) : null}
 
           <Button
             type="submit"
@@ -145,6 +193,9 @@ const SupplierLogin = () => {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Login</DialogTitle>
+            <DialogDescription>
+              Log in to your account for full access
+            </DialogDescription>
           </DialogHeader>
           <form onSubmit={loginFormik.handleSubmit}>
             <div className="mb-4">

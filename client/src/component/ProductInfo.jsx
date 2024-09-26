@@ -6,6 +6,8 @@ import { Progress } from "@/components/ui/progress";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { getData } from "../utils/fetchData";
+import { DialogDescription, DialogTitle } from "../components/ui/dialog";
+import { assured } from "../assets";
 
 const ProductInfo = ({ productDetails }) => {
   const [supplierInfo, setSupplierInfo] = useState(null);
@@ -16,27 +18,44 @@ const ProductInfo = ({ productDetails }) => {
       const response = await getData(
         `supplier/profile/${productDetails?.supplier}`
       );
-      setSupplierInfo(response);
+      setSupplierInfo(response.supplier);
     };
     fetchSupplierInfo();
-  }, [productDetails?.supplier]);
+  }, []);
 
   return (
     <div className="h-full md:w-[50%] mt-8 md:mt-0 flex flex-col gap-3">
       {/* Product Title and Price */}
       <Card className="rounded-md border md:gap-2 md:p-3">
-        <CardHeader className="p-2">
-          <h3 className="font-mier-demi font-semibold text-lg line-clamp-2 text-slate-500">
+        <CardHeader className="p-1">
+          <h3 className="font-mier-demi font-semibold text-2xl line-clamp-2 text-slate-500">
             {productDetails?.name}
           </h3>
         </CardHeader>
-        <CardContent className="flex flex-col gap-2 p-2">
+        <CardContent className="flex flex-col gap-2 p-2 relative">
           <h3 className="text-3xl text-slate-700 font-mier-book font-medium">
-            ₹{productDetails?.min_product_price}
+            ₹{productDetails?.min_product_price}{" "}
+            <span className="text-sm text-slate-700 line-through font-mier-book font-medium">
+              {" "}
+              ₹{productDetails?.min_catalog_price}
+            </span>
           </h3>
+          {productDetails?.assured_details?.is_assured && (
+            <img
+              src={assured}
+              alt="assured"
+              className="absolute w-8 right-5 top-0"
+            />
+          )}
           <div className="flex items-center gap-2 text-xs md:text-sm text-slate-600">
-            <span className="bg-green-600 text-white px-3 py-1 rounded-full flex items-center gap-1">
-              3.6
+            <span
+              className={`${
+                productDetails?.catalog_reviews_summary?.average_rating <= 2
+                  ? "bg-red-500"
+                  : "bg-green-50"
+              } text-white px-3 py-1 rounded-full flex items-center gap-1`}
+            >
+              {productDetails?.catalog_reviews_summary?.average_rating}
               <FaStar fill="white" />
             </span>
             11548 Reviews
@@ -108,13 +127,19 @@ const ProductInfo = ({ productDetails }) => {
               </Button>
             </DialogTrigger>
             <DialogContent className="p-4">
-              <h3 className="text-lg font-semibold font-mier-bold text-slate-700">
-                Shop Details
-              </h3>
-              <p className="mt-2">Company Name: {supplierInfo?.companyName}</p>
-              <p className="mt-2">Address: {supplierInfo?.address}</p>
-              <p className="mt-2">Email: {supplierInfo?.email}</p>
-              <p className="mt-2">VatNumber: {supplierInfo?.vatNumber}</p>
+              <DialogTitle>Shop Details</DialogTitle>
+              <DialogDescription>
+                Detail Information about supplier.
+              </DialogDescription>
+              <p className="mt-2 font-mier-book">
+                Company Name: {supplierInfo?.companyName}
+              </p>
+              <p className="mt-0 font-mier-book">
+                Email: {supplierInfo?.email}
+              </p>
+              <p className="mt-0 font-mier-book">
+                VatNumber: {supplierInfo?.vatNumber}
+              </p>
               {/* Additional supplier details can be added here */}
             </DialogContent>
           </Dialog>

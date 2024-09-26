@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import SearchResult from "./SearchResult";
 import { getData, sendData } from "../utils/fetchData"; // Import the updated getData function
 
-const SearchBar = ({ width, searchInput, setSearchInput }) => {
+const SearchBar = React.memo(({ width, searchInput, setSearchInput }) => {
   const [results, setResults] = useState([]);
   const [filteredResults, setFilteredResults] = useState([]);
   const [showResults, setShowResults] = useState(false);
@@ -26,8 +26,9 @@ const SearchBar = ({ width, searchInput, setSearchInput }) => {
         console.error("Error fetching products:", error);
       }
     };
+    console.log("search");
 
-    fetchSearchResults();
+    searchInput.length > 0 ? fetchSearchResults() : "";
   }, [searchInput]);
 
   useEffect(() => {
@@ -66,6 +67,6 @@ const SearchBar = ({ width, searchInput, setSearchInput }) => {
       {showResults && <SearchResult results={filteredResults} />}
     </>
   );
-};
+});
 
 export default SearchBar;

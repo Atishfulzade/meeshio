@@ -11,48 +11,60 @@ import { useNavigate } from "react-router-dom";
 
 const Product = ({ selectedImage, productDetails, signedUrls }) => {
   const dispatch = useDispatch();
-  const cart = useSelector((state) => state.userInfo.cart);
-  const userId = useSelector((state) => state.userInfo.id);
-  const { toast } = useToast();
-  const navigate = useNavigate();
+  const cart = useSelector((state) => state.userInfo.cart); // Get cart from Redux store
+  const userId = useSelector((state) => state.userInfo.id); // Get user ID from Redux store
+  const { toast } = useToast(); // Toast notifications hook
+  const navigate = useNavigate(); // For route navigation
 
+  // Load cart from sessionStorage when the component mounts
   useEffect(() => {
-    const storedCart = localStorage.getItem("cart");
+    const storedCart = sessionStorage.getItem("cart");
     if (storedCart) {
-      dispatch(updateCart(JSON.parse(storedCart)));
+      dispatch(updateCart(JSON.parse(storedCart))); // Update Redux state with cart from sessionStorage
     }
   }, [dispatch]);
 
-  const addCart = async () => {
+  // Function to add product to the cart
+  const addCart = async (productId) => {
     try {
+      // Check if the product is already in the cart
       const existingProductIndex = cart.findIndex(
-        (item) => item.id === productDetails.id
+        (item) => item.id === productId
       );
 
       let updatedCart;
 
       if (existingProductIndex !== -1) {
+        // If the product exists, increment its quantity
         updatedCart = cart.map((item, index) =>
           index === existingProductIndex
             ? { ...item, quantity: item.quantity + 1 }
             : item
         );
       } else {
-        updatedCart = [...cart, { ...productDetails, quantity: 1 }];
+        // If the product doesn't exist, add it with a quantity of 1
+        updatedCart = [...cart, { id: productId, quantity: 1 }];
       }
 
+      // Update Redux state with the new cart
       dispatch(updateCart(updatedCart));
-      localStorage.setItem("cart", JSON.stringify(updatedCart));
 
-      // Uncomment if you want to send the cart to the server
-      // await sendData("cart", { userId, cart: updatedCart });
+      // Sync the updated cart with sessionStorage
+      sessionStorage.setItem("cart", JSON.stringify(updatedCart));
 
+      // Optionally, send the updated cart to the backend if the user is logged in
+      if (userId) {
+        await sendData("/cart", { userId, productId, quantity: 1 }); // Replace this with your actual backend API call
+      }
+
+      // Show success notification
       toast({
         title: "Product Added",
         description: "Product has been added to your cart.",
         variant: "success",
       });
     } catch (error) {
+      // Show error notification if the product couldn't be added to the cart
       toast({
         title: "Error",
         description: "Failed to add product to cart.",
@@ -61,42 +73,55 @@ const Product = ({ selectedImage, productDetails, signedUrls }) => {
     }
   };
 
+  // Navigate to checkout page
   const buyNow = () => {
     navigate("/checkout");
   };
 
+  // Show loader if product details are not available
   if (!productDetails) {
     return <Loader className="m-auto" />;
   }
-  console.log(selectedImage);
 
   return (
     <div className="flex flex-col gap-5 md:w-[43%]">
+      {/* Product Image */}
       <div className="md:w-[360px] md:h-[360px] lg:h-[550px] lg:w-[550px] overflow-hidden rounded-md border">
         <img
-          src={selectedImage || signedUrls[0]}
-          alt={productDetails?.name || "Product Image"}
+          src={selectedImage || signedUrls[0]} // Show selected image or the first signed URL
+          alt={productDetails?.name || "Product Image"} // Use the product name as the alt text
           className="h-full w-full object-contain"
         />
       </div>
+
+      {/* Action Buttons */}
       <div className="flex lg:w-[550px] md:w-[360px] gap-2 justify-between">
+        {/* Add to Cart Button */}
         <Button
-          onClick={addCart}
+          onClick={() => addCart(productDetails._id)} // Add product to cart when clicked
           variant="outline"
           className="border-fuchsia-800 font-mier-bold font-semibold h-12 text-lg text-fuchsia-800 w-1/2"
         >
           <HiMiniShoppingCart size={20} className="mr-2" />
           Add to cart
         </Button>
+
+        {/* Buy Now Button */}
         <Button
-          onClick={buyNow}
+          onClick={buyNow} // Navigate to checkout page when clicked
           className="bg-fuchsia-800 font-mier-bold font-semibold text-lg h-12 w-1/2"
         >
           <FaAngleDoubleRight size={20} className="mr-2" />
           Buy Now
         </Button>
-        <Separator orientation="horizontal" />
       </div>
+
+      {/* Stock Notification */}
+      <p className="font-mier-demi text-green-600 text-lg w-full">
+        {productDetails.available_stock < 100
+          ? "Few stock left order now!"
+          : ""}
+      </p>
     </div>
   );
 };

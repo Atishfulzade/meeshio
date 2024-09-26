@@ -97,11 +97,13 @@ import slide7 from "./slide7.webp";
 import slide8 from "./slide8.webp";
 import slide9 from "./slide9.webp";
 import slide10 from "./slide10.webp";
+import assured from "./assured.png";
 
 export {
   meeshoLogo,
   cardPayment,
   upi,
+  assured,
   style1,
   style2,
   avatar,
