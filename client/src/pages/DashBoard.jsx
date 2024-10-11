@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Card, CardHeader } from "../components/ui/card";
 import { Button } from "../components/ui/button";
+import { Alert, AlertTitle, AlertDescription } from "../components/ui/alert";
 import {
   Dialog,
   DialogContent,
@@ -28,16 +29,17 @@ import {
   SelectContent,
   SelectItem,
   SelectValue,
+  SelectGroup,
+  SelectLabel,
 } from "../components/ui/select";
-import { MdOutlineDelete } from "react-icons/md";
+import { MdMobileFriendly, MdOutlineDelete } from "react-icons/md";
 
-import { sendData, getData, deleteData } from "../utils/fetchData";
+import { sendData, getData, deleteData, updateData } from "../utils/fetchData";
 import { useToast } from "@/components/ui/use-toast"; // Adjust the import path as necessary
 import { useSelector } from "react-redux";
 
 const DashBoard = () => {
   const [products, setProducts] = useState([]);
-  const [supplierInfo, setSupplierInfo] = useState(null);
   const [categories, setCategories] = useState([]);
   const [imageError, setImageError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -47,6 +49,7 @@ const DashBoard = () => {
   const [productInfo, setProductInfo] = useState({
     name: "",
     category_id: "",
+    category_name: "",
     available_stock: "",
     min_catalog_price: "",
     min_product_price: "",
@@ -61,7 +64,10 @@ const DashBoard = () => {
   });
   const [isProductDialogOpen, setIsProductDialogOpen] = useState(false);
   const [isCategoryDialogOpen, setIsCategoryDialogOpen] = useState(false);
-
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedFields, setSelectedFields] = useState([]);
+  const [fieldValues, setFieldValues] = useState({});
+  const [editingProductId, setEditingProductId] = useState(null);
   const { toast } = useToast();
   const id = useSelector((state) => state.supplierInfo.id);
   const firstname = useSelector((state) => state.supplierInfo.firstname);
@@ -69,7 +75,7 @@ const DashBoard = () => {
   const role = useSelector((state) => state.supplierInfo.role);
   const companyName = useSelector((state) => state.supplierInfo.companyName);
   const email = useSelector((state) => state.supplierInfo.email);
-
+  const isMobile = useSelector((state) => state.identifyMobile.isMobile);
   // Fetch categories and supplier info
   useEffect(() => {
     const fetchCategories = async () => {
@@ -94,7 +100,7 @@ const DashBoard = () => {
 
     fetchSupplier();
     fetchCategories();
-  }, [productInfo]);
+  }, []);
 
   // Handle product info change
   const handleProductChange = (e) => {
@@ -108,8 +114,10 @@ const DashBoard = () => {
   };
 
   // Handle category selection for the product
-  const handleCategorySelect = (categoryId) => {
-    setProductInfo({ ...productInfo, category_id: categoryId });
+  const handleCategorySelect = (category) => {
+    setProductInfo({ ...productInfo, category_id: category.categoryId,category_name:category.});
+   
+    console.log(category);
   };
 
   // Handle image selection
@@ -186,8 +194,8 @@ const DashBoard = () => {
   useEffect(() => {
     const getSupplierProducts = async (req, res) => {
       try {
-        const res = await getData(`products/product?supplierId=${id}`);
-        setProducts(res?.products);
+        const response = await getData(`products/product?supplierId=${id}`);
+        setProducts(response?.products);
       } catch (error) {
         console.error("Error fetching products:", error);
       }
@@ -257,11 +265,51 @@ const DashBoard = () => {
       });
     }
   };
-  console.log(products);
-  console.log(signedUrl);
+  const handleFieldSelection = (field) => {
+    if (!selectedFields.includes(field)) {
+      setSelectedFields([...selectedFields, field]);
+    }
+  };
+
+  // Handle input change
+  const handleInputChange = (field, value) => {
+    setFieldValues({
+      ...fieldValues,
+      [field]: value,
+    });
+  };
+
+  // Open dialog for editing a specific product
+  const openEditDialog = (product) => {
+    setEditingProductId(product._id);
+    setIsDialogOpen(true);
+  };
+
+  // Submit updated product
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    updateData(`products/${editingProductId}`, fieldValues);
+    toast({
+      title: "Success",
+      description: "Product has been updated successfully!",
+      variant: "success",
+    });
+    setIsDialogOpen(false);
+    setSelectedFields([]);
+  };
+  console.log(isMobile);
 
   return (
     <div className="mt-16">
+      {isMobile && (
+        <Alert>
+          <MdMobileFriendly className="h-4 w-4" />
+          <AlertTitle>are you using mobile !</AlertTitle>
+          <AlertDescription>
+            Choose desktop mode to access all feature
+          </AlertDescription>
+        </Alert>
+      )}
       <div className="flex p-3 bg-fuchsia-200 w-full justify-between items-center">
         <div className=" flex flex-col">
           <p className="font-mier-book whitespace-nowrap">
@@ -286,8 +334,7 @@ const DashBoard = () => {
               <DialogHeader>
                 <DialogTitle>Add New Product</DialogTitle>
                 <DialogDescription>
-                  Fill out the form below to add a new product to your
-                  inventory.
+                  Fill out the form below to add a new product.
                 </DialogDescription>
               </DialogHeader>
               <form onSubmit={handleAddProduct} className="flex flex-col gap-2">
@@ -305,21 +352,23 @@ const DashBoard = () => {
                   <div className="w-1/2">
                     <Label htmlFor="category_id">Category</Label>
                     <Select
-                      onValueChange={handleCategorySelect}
-                      value={productInfo.category_id}
+                      onValueChange={(value) => handleCategorySelect(value)}
+                      value={productInfo} // The selected category's ID is stored here
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Select category" />
                       </SelectTrigger>
                       <SelectContent>
                         {categories.map((category) => (
-                          <SelectItem key={category._id} value={category.name}>
+                          <SelectItem key={category._id} value={category._id}>
                             {category.name}
+                            {/* Display the name, but store the ID */}
                           </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
                   </div>
+
                   <div className="w-1/2">
                     <Label htmlFor="available_stock">Available stock</Label>
                     <Input
@@ -375,7 +424,7 @@ const DashBoard = () => {
                     name="full_details"
                     value={productInfo.full_details}
                     onChange={handleProductChange}
-                    className="border"
+                    className="border "
                   />
                 </div>
                 <div>
@@ -391,6 +440,7 @@ const DashBoard = () => {
                     accept="image/*"
                     onChange={handleImageSelection}
                     required
+                    className="border"
                   />
                   {imageError && <p className="text-red-500">{imageError}</p>}
                 </div>
@@ -430,7 +480,7 @@ const DashBoard = () => {
                     </Select>
                   </div>
                   <div className="w-[30%] ">
-                    <Label htmlFor="is_assured">Assured Product</Label>
+                    <Label htmlFor="is_assured">Assured</Label>
                     <Select
                       onValueChange={(value) =>
                         handleBooleanSelect("assured_details.is_assured", value)
@@ -536,6 +586,12 @@ const DashBoard = () => {
               <TableHead>Name</TableHead>
               <TableHead>Category</TableHead>
               <TableHead>Price</TableHead>
+              <TableHead>Stock</TableHead>
+              <TableHead>Description</TableHead>
+              <TableHead>Trend</TableHead>
+              <TableHead>Popular</TableHead>
+              <TableHead>Shipping Charges</TableHead>
+              <TableHead>Special Offers</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -551,15 +607,40 @@ const DashBoard = () => {
                     />
                   </TableCell>
                   <TableCell>{product?.name}</TableCell>
-                  <TableCell>{product.available_stock}</TableCell>
-                  <TableCell>{product.min_catalog_price}</TableCell>
                   <TableCell>
+                    {product?.category_id?.name || "No Category"}
+                  </TableCell>
+                  <TableCell>{product?.min_catalog_price}</TableCell>
+                  <TableCell>{product?.available_stock}</TableCell>
+                  <TableCell>{product?.description}</TableCell>
+                  <TableCell>{product?.trend || "N/A"}</TableCell>
+                  <TableCell>{product?.popular ? "Yes" : "No"}</TableCell>
+                  <TableCell>
+                    {product?.shipping?.show_free_delivery
+                      ? "Free Delivery"
+                      : `₹${product?.shipping?.charges}`}
+                  </TableCell>
+                  <TableCell>
+                    {product?.special_offers?.offers?.length > 0
+                      ? product.special_offers.offers.map((offer, index) => (
+                          <div key={index}>
+                            <strong>{offer.type}:</strong> ₹{offer.amount}
+                          </div>
+                        ))
+                      : "No Offers"}
+                  </TableCell>
+                  <TableCell>
+                    {/* Edit Product Dialog */}
                     <Dialog
-                      open={isCategoryDialogOpen}
-                      onOpenChange={setIsCategoryDialogOpen}
+                      open={isDialogOpen && editingProductId === product._id}
+                      onOpenChange={setIsDialogOpen}
                     >
                       <DialogTrigger asChild>
-                        <Button className="bg-fuchsia-600 hover:bg-fuchsia-700">
+                        <Button
+                          variant="outline"
+                          className="mr-5"
+                          onClick={() => openEditDialog(product)}
+                        >
                           <RiEditCircleLine size={18} />
                         </Button>
                       </DialogTrigger>
@@ -567,24 +648,47 @@ const DashBoard = () => {
                         <DialogHeader>
                           <DialogTitle>Update product</DialogTitle>
                           <DialogDescription>
-                            Select the field of products that you have to update
+                            Select the fields of the product you want to update
                           </DialogDescription>
                         </DialogHeader>
                         <form
-                          onSubmit={() => updateProduct(product._id)}
+                          onSubmit={handleSubmit}
                           className="flex flex-col gap-2"
                         >
-                          <div className="">
-                            {Array(1).map((input) => (
-                              <div>
-                                <Label htmlFor="categoryName">
-                                  Category Name
-                                </Label>
+                          <div className="w-full">
+                            <Select onValueChange={handleFieldSelection}>
+                              <SelectTrigger className="w-full">
+                                <SelectValue placeholder="Select a field" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectGroup>
+                                  <SelectLabel>Fields</SelectLabel>
+                                  <SelectItem value="name">Name</SelectItem>
+                                  <SelectItem value="available_stock">
+                                    Available Stock
+                                  </SelectItem>
+                                  <SelectItem value="min_catalog_price">
+                                    Price
+                                  </SelectItem>
+                                  <SelectItem value="description">
+                                    Description
+                                  </SelectItem>
+                                  <SelectItem value="trend">Trend</SelectItem>
+                                </SelectGroup>
+                              </SelectContent>
+                            </Select>
+                          </div>
+
+                          {/* Render input fields dynamically based on selected fields */}
+                          <div className="flex flex-col gap-4">
+                            {selectedFields.map((field) => (
+                              <div key={field}>
+                                <Label htmlFor={field}>{field}</Label>
                                 <Input
-                                  name="categoryName"
-                                  value={categoryName}
+                                  name={field}
+                                  value={fieldValues[field] || ""}
                                   onChange={(e) =>
-                                    setCategoryName(e.target.value)
+                                    handleInputChange(field, e.target.value)
                                   }
                                   required
                                   className="border"
@@ -592,14 +696,18 @@ const DashBoard = () => {
                               </div>
                             ))}
                           </div>
+
                           <Button type="submit" disabled={loading}>
-                            {loading ? "Adding Category..." : "Add Category"}
+                            {loading ? "Updating Product..." : "Update Product"}
                           </Button>
                         </form>
                       </DialogContent>
                     </Dialog>
+
+                    {/* Delete Product Button */}
                     <Button
-                      className="bg-red-500 hover:bg-red-600"
+                      variant="outline"
+                      title="Delete"
                       onClick={() => handleDeleteProduct(product._id)}
                     >
                       <MdOutlineDelete size={18} />
@@ -609,7 +717,7 @@ const DashBoard = () => {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={5}>No products found</TableCell>
+                <TableCell colSpan={11}>No products found</TableCell>
               </TableRow>
             )}
           </TableBody>

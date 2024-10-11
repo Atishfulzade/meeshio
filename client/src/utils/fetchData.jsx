@@ -1,7 +1,7 @@
 import axios from "axios";
 
-// const baseURL = "http://localhost:3000/api/v1";
-const baseURL = "https://meeshio.onrender.com/api/v1";
+const baseURL = "http://localhost:3000/api/v1";
+// const baseURL = "https://meeshio.onrender.com/api/v1";
 
 // Helper function to attach the token to the Authorization header
 const getAuthHeaders = (token) => {
@@ -46,7 +46,7 @@ export const sendData = async (endpoint, data) => {
 };
 
 // PUT request for updating a resource with or without file upload
-export const updateData = async (endpoint, data, isMultipart = false) => {
+export const updateData = async (endpoint, data) => {
   const token = window.localStorage.getItem("token");
 
   try {
@@ -69,6 +69,7 @@ export const deleteData = async (endpoint) => {
   try {
     const response = await axios.delete(
       `${baseURL}/${endpoint}`,
+
       getAuthHeaders(token)
     );
     return response?.data;

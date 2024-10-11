@@ -1,17 +1,16 @@
 import React, { useEffect } from "react";
-import { Button } from "../components/ui/button";
+import { Button } from "../components/ui/button"; // Ensure correct path
 import { HiMiniShoppingCart } from "react-icons/hi2";
 import { FaAngleDoubleRight } from "react-icons/fa";
-import { Separator } from "@radix-ui/react-separator";
 import Loader from "./Loader";
 import { useDispatch, useSelector } from "react-redux";
-import { updateCart } from "/src/redux_store/userInfoSlice.js"; // Ensure the path is correct
-import { useToast } from "@/components/ui/use-toast";
+import { updateCart } from "../redux_store/cartSlice"; // Corrected path
+import { useToast } from "../components/ui/use-toast"; // Corrected path
 import { useNavigate } from "react-router-dom";
 
 const Product = ({ selectedImage, productDetails, signedUrls }) => {
   const dispatch = useDispatch();
-  const cart = useSelector((state) => state.userInfo.cart); // Get cart from Redux store
+  const cart = useSelector((state) => state.cart.cart); // Get cart from Redux store
   const userId = useSelector((state) => state.userInfo.id); // Get user ID from Redux store
   const { toast } = useToast(); // Toast notifications hook
   const navigate = useNavigate(); // For route navigation
@@ -19,10 +18,10 @@ const Product = ({ selectedImage, productDetails, signedUrls }) => {
   // Load cart from sessionStorage when the component mounts
   useEffect(() => {
     const storedCart = sessionStorage.getItem("cart");
-    if (storedCart) {
+    if (storedCart && !cart.length) {
       dispatch(updateCart(JSON.parse(storedCart))); // Update Redux state with cart from sessionStorage
     }
-  }, [dispatch]);
+  }, [dispatch, cart.length]); // Dependency array updated to prevent multiple re-renders
 
   // Function to add product to the cart
   const addCart = async (productId) => {
@@ -53,9 +52,7 @@ const Product = ({ selectedImage, productDetails, signedUrls }) => {
       sessionStorage.setItem("cart", JSON.stringify(updatedCart));
 
       // Optionally, send the updated cart to the backend if the user is logged in
-      if (userId) {
-        await sendData("/cart", { userId, productId, quantity: 1 }); // Replace this with your actual backend API call
-      }
+      await sendData("cart", { userId, productId, quantity: 1 });
 
       // Show success notification
       toast({
@@ -64,7 +61,7 @@ const Product = ({ selectedImage, productDetails, signedUrls }) => {
         variant: "success",
       });
     } catch (error) {
-      // Show error notification if the product couldn't be added to the cart
+      // Show error notification if the product couldn't be added to cart
       toast({
         title: "Error",
         description: "Failed to add product to cart.",
@@ -119,7 +116,7 @@ const Product = ({ selectedImage, productDetails, signedUrls }) => {
       {/* Stock Notification */}
       <p className="font-mier-demi text-green-600 text-lg w-full">
         {productDetails.available_stock < 100
-          ? "Few stock left order now!"
+          ? "Few stock left, order now!"
           : ""}
       </p>
     </div>

@@ -12,6 +12,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { sendData } from "../utils/fetchData";
 import * as Yup from "yup";
 import Cookies from "js-cookie";
+
 const SignInForm = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -60,7 +61,6 @@ const SignInForm = () => {
             localStorage.setItem("token", response?.token);
             setIsRegistering(false);
             dispatch(setIsLoggedIn(true));
-            console.log(response);
             dispatch(setUserInfo(response?.user));
             navigate("/");
           } else {
@@ -73,8 +73,6 @@ const SignInForm = () => {
             password: values.password,
           });
           if (response?.message && response.token) {
-            console.log(response);
-
             dispatch(setUserInfo(response.user));
             dispatch(setIsLoggedIn(true));
             toast({
@@ -83,14 +81,13 @@ const SignInForm = () => {
               appearance: "success",
             });
             localStorage.setItem("token", response.token);
-            dispatch(setIsLoggedIn(true));
             dispatch(setUserInfo(response?.user));
             navigate("/");
             const token = Cookies.get("yourCookieName");
             console.log(token);
           } else {
             throw new Error(
-              error.response?.data?.message || "Invalid login credentials"
+              response.response?.data?.message || "Invalid login credentials"
             );
           }
         }
@@ -117,13 +114,6 @@ const SignInForm = () => {
       >
         {isRegistering && (
           <>
-            <div>
-              {formik.touched.username && formik.errors.username ? (
-                <div className="text-red-500 text-sm">
-                  {formik.errors.username}
-                </div>
-              ) : null}
-            </div>
             <div>
               <Input
                 type="text"

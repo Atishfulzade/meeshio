@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { IoClose } from "react-icons/io5";
 import { HiPlus, HiMinusSm } from "react-icons/hi";
 import { useSelector, useDispatch } from "react-redux";
-import { removeFromCart, updateCart } from "../redux_store/userInfoSlice";
+import { removeFromCart, updateCart } from "../redux_store/cartSlice";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "../components/ui/use-toast";
 import { deleteData, getData } from "../utils/fetchData";
 import Loader from "./Loader";
 import { Button } from "../components/ui/button"; // Assuming you have a Button component
+import { MdDeleteOutline } from "react-icons/md";
 
 const Cart = ({ nextStep }) => {
   const dispatch = useDispatch();
@@ -16,6 +16,7 @@ const Cart = ({ nextStep }) => {
   const navigate = useNavigate();
   const isLoggedIn = useSelector((state) => state.loggedIn.isLoggedIn);
   const { toast } = useToast();
+  console.log("cart", cart);
 
   const [totalPrice, setTotalPrice] = useState(0);
   const [discountPercentage] = useState(0.1); // 10% discount
@@ -26,11 +27,13 @@ const Cart = ({ nextStep }) => {
 
   // Fetch cart items' details from the server
   useEffect(() => {
-    const fetchServerCart = async () => {
-      const response = await getData(`cart`);
-      dispatch(updateCart(response));
+    const fetchCartFromServer = async () => {
+      if (id) {
+        const response = await getData(`cart`);
+        dispatch(updateCart(response));
+      }
     };
-    id && fetchServerCart();
+    fetchCartFromServer();
 
     const fetchCartItems = async () => {
       const fetchedItems = await Promise.all(
@@ -43,7 +46,7 @@ const Cart = ({ nextStep }) => {
     };
 
     fetchCartItems();
-  }, [cart]);
+  }, [cart, dispatch, id]);
 
   // Calculate total price and discounted price
   useEffect(() => {
@@ -61,7 +64,7 @@ const Cart = ({ nextStep }) => {
       idx === index ? { ...item, quantity: item.quantity + 1 } : item
     );
     dispatch(updateCart(updatedCart));
-    sessionStorage.setItem("cart", JSON.stringify(updatedCart)); // Save updated cart to sessionStorage
+    sessionStorage.setItem("cart", JSON.stringify(updatedCart));
   };
 
   // Decrease quantity of an item in the cart
@@ -72,22 +75,31 @@ const Cart = ({ nextStep }) => {
         : item
     );
     dispatch(updateCart(updatedCart));
-    sessionStorage.setItem("cart", JSON.stringify(updatedCart)); // Save updated cart to sessionStorage
+    sessionStorage.setItem("cart", JSON.stringify(updatedCart));
   };
 
   // Remove item from the cart
   const removeItem = async (_id) => {
     try {
+      // Filter the cart to remove the item locally
       const filteredCart = cart.filter((item) => item._id !== _id);
+
+      // Update the Redux store with the filtered cart
       dispatch(updateCart(filteredCart));
-      setCartItems(filteredCart);
 
-      // Remove from backend (if logged in)
-      id && (await deleteData(`cart/${userId}`, { userId, productId: _id }));
-
-      // Save updated cart to sessionStorage
+      // Update session storage with the new cart data
       sessionStorage.setItem("cart", JSON.stringify(filteredCart));
 
+      // Delete the item from the server-side cart if the user is logged in
+      if (id) {
+        const response = await deleteData(`cart/${userId}`, {
+          userId,
+          productId: _id,
+        });
+        console.log("Backend Response:", response);
+      }
+
+      // Display success message
       toast({
         title: "Item Removed",
         description: "The item has been removed from your cart.",
@@ -108,30 +120,30 @@ const Cart = ({ nextStep }) => {
     const fetchImageUrls = async () => {
       const urls = await Promise.all(
         cartItems.map(async (item) => {
-          const cleanedKey = item.product_images[0]?.replace("uploads/", "");
-          const response = await getData(`images/${cleanedKey}`);
-          return response.signedUrl;
+          if (item.product_images && item.product_images.length > 0) {
+            const cleanedKey = item.product_images[0].replace("uploads/", "");
+            const response = await getData(`images/${cleanedKey}`);
+            return response.signedUrl; // Assuming response contains a signedUrl
+          }
+          return null; // If no images, return null
         })
       );
 
-      const updatedURLs = [];
-      cart.forEach((item, index) => {
-        updatedURLs[item.product_images?.[0]] = urls[index];
-      });
-      setImageURLs(updatedURLs);
+      // Assign URLs directly to the product list (to maintain index correspondence)
+      setImageURLs(urls);
     };
 
-    if (cart.length > 0) {
+    if (cartItems.length > 0) {
       fetchImageUrls();
     }
-  }, [cart]);
+  }, [cartItems]);
 
-  if (!cartItems) return <Loader />;
+  if (!cartItems.length) return <Loader />;
 
   return (
-    <div className="mt-20 md:h-[86vh] md:px-24 gap-10 px-0 justify-center md:gap-3 flex flex-col md:flex-row">
+    <div className="mt-20 md:h-[86vh] md:px-24 gap-10 h-screen px-0 justify-center md:gap-3 flex flex-col md:flex-row">
       {cartItems.length === 0 ? (
-        <div className="text-4xl mt-52 pt-10 h-screen text-center font-mier-demi text-fuchsia-700 ">
+        <div className="text-xl md:mt-52 pt-10 h-screen mt-72 text-center font-mier-demi text-fuchsia-700">
           Your Cart is Empty
         </div>
       ) : (
@@ -147,43 +159,55 @@ const Cart = ({ nextStep }) => {
                 >
                   <div className="flex justify-between p-2">
                     <img
-                      src={imageURLs && imageURLs[item.product_images[0]]}
-                      alt={item.product_name}
+                      src={imageURLs?.[0]} // Use index to map the correct image URL
+                      alt={item.name}
                       className="w-20 h-20"
                     />
-                    <div className="flex flex-col">
-                      <h4 className="font-semibold">{item.product_name}</h4>
-                      <p>Price: ${item.min_product_price}</p>
-                      <div className="flex items-center">
+                    <div className="flex flex-col ml-5">
+                      <h4 className="font-semibold">{item.name}</h4>
+                      <p className="font-mier-book text-sm">
+                        {item.description}
+                      </p>
+                      <p className="font-mier-demi text-2xl">
+                        Price: ₹{item.min_product_price}{" "}
+                        <span className="text-xl line-through text-stone-500">
+                          {item.min_catalog_price}
+                        </span>
+                      </p>
+                      <div className="flex border justify-between w-fit px-3 rounded-md items-center">
                         <HiMinusSm
                           className="cursor-pointer"
                           onClick={() => decreaseCount(index)}
                         />
-                        <span className="mx-2">{cart[index].quantity}</span>
+                        <span className="mx-2 border px-3 select-none">
+                          {cart[index].quantity}
+                        </span>
                         <HiPlus
                           className="cursor-pointer"
                           onClick={() => increaseCount(index)}
                         />
                       </div>
                     </div>
-                    <IoClose
+                    <MdDeleteOutline
+                      size={20}
                       className="cursor-pointer text-red-500"
-                      onClick={() => removeItem(item._id)}
+                      onClick={() => removeItem(item._id)} // Ensure that _id exists
                     />
                   </div>
                 </div>
               ))}
             </div>
           </div>
+
           {/* Summary Section */}
           <div className="flex flex-col md:w-96 w-full p-3 md:p-0">
             <h3 className="text-xl font-mier-bold my-1 text-left">
               Product Details ({cart.length}) products
             </h3>
             <div className="border p-2">
-              <p>Total Price: ${totalPrice.toFixed(2)}</p>
-              <p>Discount: ${(totalPrice * discountPercentage).toFixed(2)}</p>
-              <p>Final Price: ${discountedPrice.toFixed(2)}</p>
+              <p>Total Price: ₹{totalPrice.toFixed(2)}</p>
+              <p>Discount: ₹{(totalPrice * discountPercentage).toFixed(2)}</p>
+              <p>Final Price: ₹{discountedPrice.toFixed(2)}</p>
               <Button
                 onClick={() => {
                   if (isLoggedIn) {

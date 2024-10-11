@@ -1,8 +1,8 @@
-import React, { useEffect, useState, useRef } from "react";
-import { IoClose, IoMenu } from "react-icons/io5";
+import React, { useEffect, useState } from "react";
+import { IoClose, IoMenu, IoLogOutOutline } from "react-icons/io5";
 import { appstore, avatar, meeshoLogo, playstore } from "../assets";
 import { ImHeart } from "react-icons/im";
-import { HiMiniShoppingCart } from "react-icons/hi2";
+import { HiMiniShoppingCart, HiOutlineShoppingBag } from "react-icons/hi2";
 import { Button } from "../components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { FaRegUser } from "react-icons/fa6";
@@ -10,8 +10,6 @@ import { PiShoppingCart, PiDeviceMobile } from "react-icons/pi";
 import { useDispatch, useSelector } from "react-redux";
 import { Badge } from "@/components/ui/badge";
 import { useLocation, useNavigate } from "react-router-dom";
-import { IoLogOutOutline } from "react-icons/io5";
-
 import {
   HoverCard,
   HoverCardContent,
@@ -22,42 +20,45 @@ import Navbar_second from "./Navbar_second";
 import SearchBar from "./SearchBar";
 import { setIsLoggedIn } from "../redux_store/logInSlice";
 import { useToast } from "@/components/ui/use-toast";
-import { HiOutlineShoppingBag } from "react-icons/hi";
+import { getData, sendData, updateData } from "../utils/fetchData";
+import { clearUserInfo } from "../redux_store/userInfoSlice";
 import {
   Dialog,
   DialogClose,
   DialogContent,
+  DialogDescription,
   DialogTrigger,
-} from "@radix-ui/react-dialog";
-import { sendData } from "../utils/fetchData";
-import { DialogDescription } from "../components/ui/dialog";
-import { clearUserInfo } from "../redux_store/userInfoSlice";
+} from "../components/ui/dialog";
 
 const Header = () => {
   const ismobile = useSelector((state) => state.identifyMobile.isMobile);
   const isLoggedIn = useSelector((state) => state.loggedIn.isLoggedIn);
-  const [searchInput, setSearchInput] = useState(""); // State to store
+  const [searchInput, setSearchInput] = useState(""); // State to store search input
+  const [cart, setCart] = useState([]);
   const location = useLocation();
+  const [isOpen, setIsOpen] = useState(false);
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { toast } = useToast();
+  const token = localStorage.getItem("token");
   const firstname = useSelector((state) => state.userInfo.firstname);
   const profileImage = useSelector((state) => state.userInfo.profileImage);
   const lastname = useSelector((state) => state.userInfo.lastname);
   const email = useSelector((state) => state.userInfo.email);
-  const cartValue = useSelector((state) => state.userInfo.cart);
-  const [isOpen, setIsOpen] = useState(false);
-  const localCart = localStorage.getItem("cart");
+  const id = useSelector((state) => state.userInfo.id);
+  const localCart = sessionStorage.getItem("cart");
+
   const logoutUser = async () => {
     try {
       const logOut = await sendData("user/auth/logout");
       localStorage.removeItem("token");
-      navigate("/");
       dispatch(clearUserInfo());
       dispatch(setIsLoggedIn(false));
+      navigate("/");
 
       return toast({
-        title: logOut?.message,
+        title: logOut?.message || "Logged Out",
         description: "You have been successfully logged out",
         status: "success",
       });
@@ -69,10 +70,84 @@ const Header = () => {
       });
     }
   };
+
+  const updateServerCart = async () => {
+    try {
+      const parsedLocalCart = JSON.parse(localCart) || [];
+
+      const cartData = parsedLocalCart.map((item) => ({
+        itemId: item.id,
+        quantity: item.quantity,
+      }));
+
+      if (cartData.length > 0) {
+        await updateData(`cart`, cartData);
+      }
+    } catch (error) {
+      console.log("Error updating server cart:", error.message);
+    }
+  };
+
+  const fetchCartFromServer = async () => {
+    try {
+      const response = await getData(`cart`);
+      setCart(response);
+    } catch (error) {
+      console.log("Error fetching server cart:", error.message);
+    }
+  };
+
+  const mergeCarts = async () => {
+    try {
+      const localCart = JSON.parse(sessionStorage.getItem("cart")) || [];
+      const serverCart = await getData(`cart`);
+      console.log(serverCart);
+
+      const mergedCartMap = new Map();
+
+      localCart.forEach((item) => {
+        mergedCartMap.set(item.id, { ...item });
+      });
+
+      serverCart.forEach((item) => {
+        if (mergedCartMap.has(item.itemId)) {
+          const mergedItem = mergedCartMap.get(item.itemId);
+          mergedCartMap.set(item.itemId, {
+            ...mergedItem,
+            quantity: mergedItem.quantity + item.quantity,
+          });
+        } else {
+          mergedCartMap.set(item.itemId, { ...item });
+        }
+      });
+
+      const mergedCartArray = Array.from(mergedCartMap.values());
+
+      await updateData(`cart/${id}`, mergedCartArray);
+      localStorage.setItem("cart", JSON.stringify(mergedCartArray));
+      setCart(mergedCartArray);
+    } catch (error) {
+      console.error("Error merging carts:", error.message);
+    }
+  };
+
+  useEffect(() => {
+    if (token && id) {
+      mergeCarts(); // Merge carts only if the user is logged in
+    }
+  }, [token, id]);
+
+  useEffect(() => {
+    if (token && id) {
+      updateServerCart();
+      fetchCartFromServer();
+    }
+  }, [token, id]);
+
   return (
-    <div className="w-full bg-white fixed top-0 left-0 z-30 flex flex-col ">
+    <div className="w-full bg-white fixed top-0 left-0 z-10 flex flex-col ">
       <div className="flex w-full gap-3 justify-between items-center  h-14 md:h-[70px] md:border-b-2 px-3 md:px-24 md:py-2  py-2">
-        <div className="flex gap-3   justify-between items-center">
+        <div className="flex gap-3 z-40  justify-between items-center">
           <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger>
               <IoMenu
@@ -82,8 +157,8 @@ const Header = () => {
               />
             </DialogTrigger>
 
-            <DialogContent className="fixed  z-40  left-0 top-0 h-full w-full transition-all bg-white shadow-lgduration-300">
-              <div className="px-4 flex justify-between items-center">
+            <DialogContent className="fixed  z-0  left-0 top-0 h-full w-full transition-all bg-white shadow-lg duration-1000">
+              <div className="px-4 flex z-50 justify-between items-center">
                 <h2 className="text-lg font-bold">
                   <img src={meeshoLogo} alt="logo" className="w-20" />
                 </h2>
@@ -296,46 +371,48 @@ const Header = () => {
                   <PiShoppingCart size={20} />
                   Cart
                 </Link>
-                {cartValue.length < 1 ? (
+                {cart.length < 1 ? (
                   ""
                 ) : (
                   <Badge className="bg-fuchsia-200 text-fuchsia-800 h-5 w-5 text-xs flex justify-center absolute top-[-5px] right-0 lg:right-[-12px]">
-                    {cartValue.length}
+                    {cart.length}
                   </Badge>
                 )}
               </div>
             )}
           </div>
         )}
-        {ismobile && location.pathname !== "/checkout" && (
-          <div className=" flex gap-6">
-            <Link
-              to={"/checkout"}
-              variant="link"
-              className="text-slate-800 font-mier-book text-[17px] font-normal justify-center items-center flex flex-col h-full"
-            >
-              <ImHeart size={20} fill="red" />
-            </Link>
+        {ismobile &&
+          location.pathname !== "/user/authenticate" &&
+          "/checkout" && (
+            <div className=" flex gap-6">
+              <Link
+                to={"/checkout"}
+                variant="link"
+                className="text-slate-800 font-mier-book text-[17px] font-normal justify-center items-center flex flex-col h-full"
+              >
+                <ImHeart size={20} fill="red" />
+              </Link>
 
-            <Link
-              to={"/checkout"}
-              variant="link"
-              className="text-slate-800 font-mier-book text-[17px] font-normal justify-center items-center flex flex-col h-full"
-            >
-              <HiMiniShoppingCart size={20} />
-            </Link>
-            {(cartValue && cartValue.length > 0) ||
-            (localCart && JSON.parse(localCart).length > 0) ? (
-              <Badge className="bg-fuchsia-200 text-fuchsia-800 h-5 w-5 text-xs flex justify-center absolute top-[-5px] right-0 lg:right-[-12px]">
-                {cartValue.length > 0
-                  ? cartValue.length
-                  : JSON.parse(localCart).length}
-              </Badge>
-            ) : (
-              ""
-            )}
-          </div>
-        )}
+              <Link
+                to={"/checkout"}
+                variant="link"
+                className="text-slate-800 font-mier-book text-[17px] font-normal justify-center items-center flex flex-col h-full"
+              >
+                <HiMiniShoppingCart size={20} />
+              </Link>
+              {(cart && cart.length > 0) ||
+              (localCart && JSON.parse(localCart).length > 0) ? (
+                <Badge className="bg-fuchsia-200 text-fuchsia-800 h-5 w-5 text-xs flex justify-center absolute top-[-5px] right-0 lg:right-[-12px]">
+                  {cartValue.length > 0
+                    ? cartValue.length
+                    : JSON.parse(localCart).length}
+                </Badge>
+              ) : (
+                ""
+              )}
+            </div>
+          )}
       </div>
       {location.pathname !== "/checkout" && !ismobile && <Navbar_second />}
     </div>

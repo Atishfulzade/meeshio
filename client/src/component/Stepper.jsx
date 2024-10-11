@@ -7,7 +7,7 @@ import { useSelector } from "react-redux";
 
 const Stepper = ({ steps }) => {
   const [currentStep, setCurrentStep] = useState(0);
-  const cart = useSelector((state) => state.userInfo.cart);
+  const cart = useSelector((state) => state.cart.cart);
   const totalPrice = cart.reduce(
     (acc, item) => acc + (item.price || 0) * (item.quantity || 1),
     0
@@ -76,7 +76,7 @@ const Stepper = ({ steps }) => {
   return (
     <>
       {cart.length === 0 ? (
-        <div className="text-3xl text-center my-auto font-mier-demi h-32 text-fuchsia-700 mt-10">
+        <div className="text-3xl text-center my-auto font-mier-demi h-32 text-fuchsia-700 mt-52">
           Your Cart is Empty
         </div>
       ) : (

@@ -4,7 +4,7 @@ import { FaRegEdit } from "react-icons/fa";
 import { HiPlus, HiMinusSm } from "react-icons/hi";
 import { Button } from "../components/ui/button";
 import { useSelector, useDispatch } from "react-redux";
-import { updateCart } from "../redux_store/userInfoSlice";
+import { updateCart } from "../redux_store/cartSlice";
 import { toast } from "../components/ui/use-toast";
 import { ToastAction } from "@/components/ui/toast";
 import { useNavigate } from "react-router-dom";

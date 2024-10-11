@@ -1,22 +1,23 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { IoIosClose } from "react-icons/io";
 import { IoSearchOutline } from "react-icons/io5";
 import { Input } from "@/components/ui/input";
 import SearchResult from "./SearchResult";
-import { getData, sendData } from "../utils/fetchData"; // Import the updated getData function
+import { sendData } from "../utils/fetchData";
+import { debounce } from "../App"; // Assuming you have debounce defined in your App
 
 const SearchBar = React.memo(({ width, searchInput, setSearchInput }) => {
   const [results, setResults] = useState([]);
   const [filteredResults, setFilteredResults] = useState([]);
   const [showResults, setShowResults] = useState(false);
-  console.log(searchInput);
 
-  useEffect(() => {
-    const fetchSearchResults = async () => {
+  // Memoize the debounced search function
+  const debouncedFetchSearchResults = useCallback(
+    debounce(async (input) => {
       try {
-        if (searchInput.length > 0) {
+        if (input.length > 0) {
           const response = await sendData("products/search", {
-            search: searchInput,
+            search: input,
           });
           setResults(response);
         } else {
@@ -25,11 +26,15 @@ const SearchBar = React.memo(({ width, searchInput, setSearchInput }) => {
       } catch (error) {
         console.error("Error fetching products:", error);
       }
-    };
-    console.log("search");
+    }, 300), // Set debounce delay to 300ms or adjust as needed
+    []
+  );
 
-    searchInput.length > 0 ? fetchSearchResults() : "";
-  }, [searchInput]);
+  useEffect(() => {
+    if (searchInput.length > 0) {
+      debouncedFetchSearchResults(searchInput); // Pass the input to debounced function
+    }
+  }, [searchInput, debouncedFetchSearchResults]);
 
   useEffect(() => {
     if (searchInput.length > 0) {
@@ -64,7 +69,7 @@ const SearchBar = React.memo(({ width, searchInput, setSearchInput }) => {
           onClick={() => setSearchInput("")}
         />
       </div>
-      {showResults && <SearchResult results={filteredResults} />}
+      {searchInput.length > 0 && <SearchResult results={filteredResults} />}
     </>
   );
 });

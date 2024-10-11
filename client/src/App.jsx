@@ -3,6 +3,22 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setIsMobile } from "./redux_store/identifyMobile";
 import Loader from "./component/Loader";
+import { setIsLoggedIn } from "./redux_store/logInSlice";
+import { setUserInfo } from "./redux_store/userInfoSlice";
+import { sendData } from "./utils/fetchData";
+
+// Utility function for debouncing
+export const debounce = (func, wait) => {
+  let timeout;
+  return function (...args) {
+    const later = () => {
+      clearTimeout(timeout);
+      func(...args);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+};
 
 // Lazy load components
 const Home = lazy(() => import("./pages/Home"));
@@ -22,19 +38,6 @@ const UserProfile = lazy(() => import("./pages/UserProfile"));
 const SupplierPortal = lazy(() => import("./pages/supplierAuth"));
 const SupplierRegistration = lazy(() => import("./pages/SupplierRegistration"));
 
-// Utility function for debouncing
-const debounce = (func, wait) => {
-  let timeout;
-  return function (...args) {
-    const later = () => {
-      clearTimeout(timeout);
-      func(...args);
-    };
-    clearTimeout(timeout);
-    timeout = setTimeout(later, wait);
-  };
-};
-
 function App() {
   const isLoggedIn = useSelector((state) => state.loggedIn.isLoggedIn);
   const dispatch = useDispatch();
@@ -43,6 +46,32 @@ function App() {
   const updateIsMobile = useCallback(() => {
     const windowSize = window.innerWidth <= 768;
     dispatch(setIsMobile(windowSize));
+  }, [dispatch]);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      // Validate token and fetch user details from backend
+      const validateToken = async () => {
+        try {
+          const response = await sendData("user/auth/validateuser", {
+            token,
+          });
+          if (response?.user) {
+            dispatch(setIsLoggedIn(true));
+            dispatch(setUserInfo(response.user));
+          } else {
+            localStorage.removeItem("token");
+            dispatch(setIsLoggedIn(false));
+          }
+        } catch (error) {
+          console.error("Error validating token", error);
+          localStorage.removeItem("token");
+          dispatch(setIsLoggedIn(false));
+        }
+      };
+      validateToken();
+    }
   }, [dispatch]);
 
   useEffect(() => {

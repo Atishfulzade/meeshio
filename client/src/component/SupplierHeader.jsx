@@ -26,18 +26,16 @@ import {
 import { sendData } from "../utils/fetchData";
 
 const SupplierHeader = () => {
-  const [user, setUser] = useState(null); // State to store user info
   const ismobile = useSelector((state) => state.identifyMobile.isMobile);
   const isLoggedIn = useSelector((state) => state.loggedIn.isLoggedIn);
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { toast } = useToast();
-  const firstname = useSelector((state) => state.userInfo.firstname);
-  const profileImage = useSelector((state) => state.userInfo.profileImage);
-  const lastname = useSelector((state) => state.userInfo.lastname);
-  const email = useSelector((state) => state.userInfo.email);
-  const [isOpen, setIsOpen] = useState(false);
+  const firstname = useSelector((state) => state.supplierInfo.firstname);
+  const profileImage = useSelector((state) => state.supplierInfo.profileImage);
+  const lastname = useSelector((state) => state.supplierInfo.lastname);
+  const email = useSelector((state) => state.supplierInfo.email);
 
   const logoutUser = async () => {
     try {

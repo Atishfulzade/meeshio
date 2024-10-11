@@ -3,6 +3,7 @@ import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage"; // Default storage is localStorage for web
 import identifyMobileSlice from "./identifyMobile";
 import logInSlice from "./logInSlice";
+import cartSlice from "./cartSlice";
 import userInfoSlice from "./userInfoSlice"; // The slice you want to persist
 import supplierInfoSlice from "./supplierInfoSlice";
 // Configuration for redux-persist
@@ -21,6 +22,7 @@ export const store = configureStore({
     loggedIn: logInSlice,
     userInfo: persistedUserInfoReducer, // Persist userInfo slice
     supplierInfo: supplierInfoSlice,
+    cart: cartSlice,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
