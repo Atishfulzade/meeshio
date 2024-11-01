@@ -15,7 +15,7 @@ const Address = ({
   prevStep,
 }) => {
   const isMobile = useSelector((state) => state.identifyMobile.isMobile);
-  const cart = useSelector((state) => state.userInfo.cart);
+  const cart = useSelector((state) => state.cart.cart);
   const userId = localStorage.getItem("userId"); // Use the correct userId from localStorage
 
   const [addressDetail, setAddressDetail] = useState([]);

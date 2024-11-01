@@ -29,29 +29,32 @@ import {
   DialogDescription,
   DialogTrigger,
 } from "../components/ui/dialog";
+import { updateCart } from "../redux_store/cartSlice";
 
 const Header = () => {
-  const ismobile = useSelector((state) => state.identifyMobile.isMobile);
-  const isLoggedIn = useSelector((state) => state.loggedIn.isLoggedIn);
-  const [searchInput, setSearchInput] = useState(""); // State to store search input
-  const [cart, setCart] = useState([]);
-  const location = useLocation();
-  const [isOpen, setIsOpen] = useState(false);
+  const ismobile = useSelector((state) => state.identifyMobile.isMobile); // Mobile check
+  const isLoggedIn = useSelector((state) => state.loggedIn.isLoggedIn); // Login status
+  const [searchInput, setSearchInput] = useState(""); // State for search input
+  const [cart, setCart] = useState([]); // Local state for cart items
+  const [isOpen, setIsOpen] = useState(false); // State for menu open/close
 
+  const location = useLocation(); // For navigation handling
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { toast } = useToast();
-  const token = localStorage.getItem("token");
-  const firstname = useSelector((state) => state.userInfo.firstname);
+  const { toast } = useToast(); // Toast notifications
+
+  const token = localStorage.getItem("token"); // Fetch token from localStorage
+  const firstname = useSelector((state) => state.userInfo.firstname); // User information
   const profileImage = useSelector((state) => state.userInfo.profileImage);
   const lastname = useSelector((state) => state.userInfo.lastname);
   const email = useSelector((state) => state.userInfo.email);
   const id = useSelector((state) => state.userInfo.id);
-  const localCart = sessionStorage.getItem("cart");
+  const localCart = JSON.parse(sessionStorage.getItem("cart")) || []; // Cart from sessionStorage
 
+  // Function to log out the user
   const logoutUser = async () => {
     try {
-      const logOut = await sendData("user/auth/logout");
+      const logOut = await sendData("user/auth/logout"); // API call for logout
       localStorage.removeItem("token");
       dispatch(clearUserInfo());
       dispatch(setIsLoggedIn(false));
@@ -71,45 +74,47 @@ const Header = () => {
     }
   };
 
+  // Function to update the server-side cart
   const updateServerCart = async () => {
     try {
-      const parsedLocalCart = JSON.parse(localCart) || [];
-
-      const cartData = parsedLocalCart.map((item) => ({
+      const cartData = localCart.map((item) => ({
         itemId: item.id,
         quantity: item.quantity,
       }));
 
       if (cartData.length > 0) {
-        await updateData(`cart`, cartData);
+        await sendData(`cart`, cartData); // Send cart data to the server
       }
     } catch (error) {
       console.log("Error updating server cart:", error.message);
     }
   };
 
+  // Fetch the cart from the server
   const fetchCartFromServer = async () => {
     try {
       const response = await getData(`cart`);
-      setCart(response);
+      setCart(response.items); // Set the cart with fetched server data
+      dispatch(updateCart(response.items)); // Update Redux cart state
     } catch (error) {
       console.log("Error fetching server cart:", error.message);
     }
   };
 
+  // Merge local and server carts when the user logs in
   const mergeCarts = async () => {
     try {
-      const localCart = JSON.parse(sessionStorage.getItem("cart")) || [];
       const serverCart = await getData(`cart`);
-      console.log(serverCart);
 
       const mergedCartMap = new Map();
 
+      // Add local cart items to the map
       localCart.forEach((item) => {
         mergedCartMap.set(item.id, { ...item });
       });
 
-      serverCart.forEach((item) => {
+      // Add server cart items and merge quantities
+      serverCart?.items.forEach((item) => {
         if (mergedCartMap.has(item.itemId)) {
           const mergedItem = mergedCartMap.get(item.itemId);
           mergedCartMap.set(item.itemId, {
@@ -122,28 +127,29 @@ const Header = () => {
       });
 
       const mergedCartArray = Array.from(mergedCartMap.values());
-
-      await updateData(`cart/${id}`, mergedCartArray);
-      localStorage.setItem("cart", JSON.stringify(mergedCartArray));
+      await sendData(`cart`, mergedCartArray); // Send merged cart data to the server
+      sessionStorage.setItem("cart", JSON.stringify(mergedCartArray)); // Update sessionStorage with merged cart
       setCart(mergedCartArray);
+      dispatch(updateCart(mergedCartArray)); // Update Redux cart state
     } catch (error) {
       console.error("Error merging carts:", error.message);
     }
   };
 
+  // Effect to merge carts when user logs in
   useEffect(() => {
     if (token && id) {
       mergeCarts(); // Merge carts only if the user is logged in
     }
-  }, [token, id]);
+  }, [token, id]); // Run when token or user id changes
 
+  // Effect to update the server cart and fetch cart from server
   useEffect(() => {
     if (token && id) {
-      updateServerCart();
-      fetchCartFromServer();
+      updateServerCart(); // Update the server cart
+      fetchCartFromServer(); // Fetch cart data from the server
     }
   }, [token, id]);
-
   return (
     <div className="w-full bg-white fixed top-0 left-0 z-10 flex flex-col ">
       <div className="flex w-full gap-3 justify-between items-center  h-14 md:h-[70px] md:border-b-2 px-3 md:px-24 md:py-2  py-2">
@@ -371,12 +377,12 @@ const Header = () => {
                   <PiShoppingCart size={20} />
                   Cart
                 </Link>
-                {cart.length < 1 ? (
-                  ""
-                ) : (
+                {(cart && cart.length > 0) || localCart.length > 0 ? (
                   <Badge className="bg-fuchsia-200 text-fuchsia-800 h-5 w-5 text-xs flex justify-center absolute top-[-5px] right-0 lg:right-[-12px]">
-                    {cart.length}
+                    {cart.length > 0 ? cart.length : localCart.length}
                   </Badge>
+                ) : (
+                  ""
                 )}
               </div>
             )}
@@ -401,12 +407,9 @@ const Header = () => {
               >
                 <HiMiniShoppingCart size={20} />
               </Link>
-              {(cart && cart.length > 0) ||
-              (localCart && JSON.parse(localCart).length > 0) ? (
-                <Badge className="bg-fuchsia-200 text-fuchsia-800 h-5 w-5 text-xs flex justify-center absolute top-[-5px] right-0 lg:right-[-12px]">
-                  {cartValue.length > 0
-                    ? cartValue.length
-                    : JSON.parse(localCart).length}
+              {(cart && cart.length > 0) || localCart.length > 0 ? (
+                <Badge className="bg-fuchsia-200 text-fuchsia-800 h-5 w-5 text-xs flex justify-center absolute top-0 right-0 lg:right-[-12px]">
+                  {cart.length > 0 ? cart.length : localCart.length}
                 </Badge>
               ) : (
                 ""

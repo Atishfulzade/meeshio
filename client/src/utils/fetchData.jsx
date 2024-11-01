@@ -63,15 +63,15 @@ export const updateData = async (endpoint, data) => {
 };
 
 // DELETE request for removing a resource with Authorization token
-export const deleteData = async (endpoint) => {
+// DELETE request for removing a resource with Authorization token
+export const deleteData = async (endpoint, data) => {
   const token = window.localStorage.getItem("token");
 
   try {
-    const response = await axios.delete(
-      `${baseURL}/${endpoint}`,
-
-      getAuthHeaders(token)
-    );
+    const response = await axios.delete(`${baseURL}/${endpoint}`, {
+      ...getAuthHeaders(token),
+      data: data, // Attach data in the request config
+    });
     return response?.data;
   } catch (error) {
     handleError(error);

@@ -11,54 +11,51 @@ import { MdDeleteOutline } from "react-icons/md";
 
 const Cart = ({ nextStep }) => {
   const dispatch = useDispatch();
-  const cart = useSelector((state) => state.userInfo.cart);
+  const cart = useSelector((state) => state.cart.cart);
   const userId = useSelector((state) => state.userInfo.id);
   const navigate = useNavigate();
   const isLoggedIn = useSelector((state) => state.loggedIn.isLoggedIn);
   const { toast } = useToast();
-  console.log("cart", cart);
 
   const [totalPrice, setTotalPrice] = useState(0);
   const [discountPercentage] = useState(0.1); // 10% discount
   const [discountedPrice, setDiscountedPrice] = useState(0);
-  const [imageURLs, setImageURLs] = useState();
   const [cartItems, setCartItems] = useState([]);
-  const id = useSelector((state) => state.userInfo.id);
 
-  // Fetch cart items' details from the server
   useEffect(() => {
-    const fetchCartFromServer = async () => {
-      if (id) {
-        const response = await getData(`cart`);
-        dispatch(updateCart(response));
+    const fetchCartItems = async () => {
+      try {
+        const fetchedItems = await Promise.all(
+          cart.map(async (item) => {
+            console.log(item);
+
+            const response = await getData(
+              `products/${item.id || item.productId._id}`
+            );
+            return { ...response, quantity: item.quantity };
+          })
+        );
+        setCartItems(fetchedItems);
+      } catch (error) {
+        console.error("Failed to fetch cart items:", error);
       }
     };
-    fetchCartFromServer();
+    console.log(cartItems);
 
-    const fetchCartItems = async () => {
-      const fetchedItems = await Promise.all(
-        cart.map(async (product) => {
-          const response = await getData(`products/${product.id}`);
-          return response;
-        })
-      );
-      setCartItems(fetchedItems);
-    };
+    if (cart.length) {
+      fetchCartItems();
+    }
+  }, [cart]);
 
-    fetchCartItems();
-  }, [cart, dispatch, id]);
-
-  // Calculate total price and discounted price
   useEffect(() => {
-    const newTotalPrice = cart.reduce(
+    const newTotalPrice = cartItems.reduce(
       (acc, item) => acc + item.min_product_price * (item.quantity || 1),
       0
     );
     setTotalPrice(newTotalPrice);
     setDiscountedPrice(newTotalPrice * (1 - discountPercentage));
-  }, [cart, discountPercentage]);
+  }, [cartItems, discountPercentage]);
 
-  // Increase quantity of an item in the cart
   const increaseCount = (index) => {
     const updatedCart = cart.map((item, idx) =>
       idx === index ? { ...item, quantity: item.quantity + 1 } : item
@@ -67,7 +64,6 @@ const Cart = ({ nextStep }) => {
     sessionStorage.setItem("cart", JSON.stringify(updatedCart));
   };
 
-  // Decrease quantity of an item in the cart
   const decreaseCount = (index) => {
     const updatedCart = cart.map((item, idx) =>
       idx === index && item.quantity > 1
@@ -78,28 +74,18 @@ const Cart = ({ nextStep }) => {
     sessionStorage.setItem("cart", JSON.stringify(updatedCart));
   };
 
-  // Remove item from the cart
-  const removeItem = async (_id) => {
+  const removeItem = async (productId) => {
     try {
-      // Filter the cart to remove the item locally
-      const filteredCart = cart.filter((item) => item._id !== _id);
-
-      // Update the Redux store with the filtered cart
+      const filteredCart = cart.filter(
+        (item) => item.productId._id !== productId
+      );
       dispatch(updateCart(filteredCart));
-
-      // Update session storage with the new cart data
       sessionStorage.setItem("cart", JSON.stringify(filteredCart));
 
-      // Delete the item from the server-side cart if the user is logged in
-      if (id) {
-        const response = await deleteData(`cart/${userId}`, {
-          userId,
-          productId: _id,
-        });
-        console.log("Backend Response:", response);
+      if (userId) {
+        await deleteData(`cart`, { productId });
       }
 
-      // Display success message
       toast({
         title: "Item Removed",
         description: "The item has been removed from your cart.",
@@ -115,29 +101,6 @@ const Cart = ({ nextStep }) => {
     }
   };
 
-  // Fetch image URLs for the products
-  useEffect(() => {
-    const fetchImageUrls = async () => {
-      const urls = await Promise.all(
-        cartItems.map(async (item) => {
-          if (item.product_images && item.product_images.length > 0) {
-            const cleanedKey = item.product_images[0].replace("uploads/", "");
-            const response = await getData(`images/${cleanedKey}`);
-            return response.signedUrl; // Assuming response contains a signedUrl
-          }
-          return null; // If no images, return null
-        })
-      );
-
-      // Assign URLs directly to the product list (to maintain index correspondence)
-      setImageURLs(urls);
-    };
-
-    if (cartItems.length > 0) {
-      fetchImageUrls();
-    }
-  }, [cartItems]);
-
   if (!cartItems.length) return <Loader />;
 
   return (
@@ -148,7 +111,6 @@ const Cart = ({ nextStep }) => {
         </div>
       ) : (
         <>
-          {/* Product Details */}
           <div className="flex flex-col gap-2">
             <h3 className="text-xl font-mier ms-2">Product Details</h3>
             <div className="flex flex-col gap-2 h-full p-2 md:p-0">
@@ -157,9 +119,10 @@ const Cart = ({ nextStep }) => {
                   key={index}
                   className="flex flex-col justify-between border md:w-[600px] min-w-[300px] rounded-md h-fit"
                 >
+                  {console.log(item)}
                   <div className="flex justify-between p-2">
                     <img
-                      src={imageURLs?.[0]} // Use index to map the correct image URL
+                      src={item.imageURL || ""}
                       alt={item.name}
                       className="w-20 h-20"
                     />
@@ -180,7 +143,7 @@ const Cart = ({ nextStep }) => {
                           onClick={() => decreaseCount(index)}
                         />
                         <span className="mx-2 border px-3 select-none">
-                          {cart[index].quantity}
+                          {item.quantity}
                         </span>
                         <HiPlus
                           className="cursor-pointer"
@@ -191,7 +154,7 @@ const Cart = ({ nextStep }) => {
                     <MdDeleteOutline
                       size={20}
                       className="cursor-pointer text-red-500"
-                      onClick={() => removeItem(item._id)} // Ensure that _id exists
+                      onClick={() => removeItem(item._id)}
                     />
                   </div>
                 </div>
@@ -199,7 +162,6 @@ const Cart = ({ nextStep }) => {
             </div>
           </div>
 
-          {/* Summary Section */}
           <div className="flex flex-col md:w-96 w-full p-3 md:p-0">
             <h3 className="text-xl font-mier-bold my-1 text-left">
               Product Details ({cart.length}) products
@@ -213,7 +175,7 @@ const Cart = ({ nextStep }) => {
                   if (isLoggedIn) {
                     nextStep();
                   } else {
-                    navigate("/login");
+                    navigate("/user/authenticate");
                   }
                 }}
                 className="bg-fuchsia-600 mt-3 text-white hover:bg-fuchsia-700"

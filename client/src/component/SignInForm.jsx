@@ -84,7 +84,6 @@ const SignInForm = () => {
             dispatch(setUserInfo(response?.user));
             navigate("/");
             const token = Cookies.get("yourCookieName");
-            console.log(token);
           } else {
             throw new Error(
               response.response?.data?.message || "Invalid login credentials"

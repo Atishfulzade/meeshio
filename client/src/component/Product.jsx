@@ -52,7 +52,9 @@ const Product = ({ selectedImage, productDetails, signedUrls }) => {
       sessionStorage.setItem("cart", JSON.stringify(updatedCart));
 
       // Optionally, send the updated cart to the backend if the user is logged in
-      await sendData("cart", { userId, productId, quantity: 1 });
+      if (userId) {
+        await sendData("cart", { userId, productId, quantity: 1 });
+      }
 
       // Show success notification
       toast({

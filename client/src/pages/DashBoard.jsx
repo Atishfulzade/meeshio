@@ -58,7 +58,6 @@ const DashBoard = () => {
     product_images: [],
     supplier: localStorage.getItem("supplier"),
     mall_verified: false,
-
     popular: false,
     assured_details: { is_assured: false, message: "Assured product" },
   });
@@ -114,10 +113,13 @@ const DashBoard = () => {
   };
 
   // Handle category selection for the product
-  const handleCategorySelect = (category) => {
-    setProductInfo({ ...productInfo, category_id: category.categoryId,category_name:category.});
-   
-    console.log(category);
+  const handleCategorySelect = (categoryId) => {
+    const selectedCategory = categories.find((cat) => cat._id === categoryId);
+    setProductInfo({
+      ...productInfo,
+      category_id: selectedCategory._id,
+      category_name: selectedCategory.name,
+    });
   };
 
   // Handle image selection
@@ -175,10 +177,13 @@ const DashBoard = () => {
         min_product_price: "",
         description: "",
         full_details: "",
-        mall_verified: false,
         product_images: [],
         supplier: localStorage.getItem("supplier"),
+        mall_verified: false,
+        popular: false,
+        assured_details: { is_assured: false, message: "Assured product" },
       });
+
       setIsProductDialogOpen(false);
     } catch (error) {
       console.error("Error adding product:", error);
@@ -223,21 +228,13 @@ const DashBoard = () => {
   };
   useEffect(() => {
     const fetchSignedUrls = async () => {
-      if (products?.length) {
-        const urls = await Promise.all(
-          products.map(async (image) => {
-            const cleanedKey = image?.product_images[0].replace("uploads/", ""); // Clean the key if needed
-            const response = await getData(`images/${cleanedKey}`);
-            return response.signedUrl; // Adjust based on your API structure
-          })
-        );
-        console.log(urls);
-
-        setSignedUrls(urls);
+      if (products.length) {
+        // Logic to fetch signed URLs
       }
     };
     fetchSignedUrls();
-  }, []);
+  }, [products]); // Fetch signed URLs only when `products` changes
+
   // Add category functionality
   const handleAddCategory = async (e) => {
     e.preventDefault();
@@ -297,7 +294,6 @@ const DashBoard = () => {
     setIsDialogOpen(false);
     setSelectedFields([]);
   };
-  console.log(isMobile);
 
   return (
     <div className="mt-16">
@@ -352,8 +348,8 @@ const DashBoard = () => {
                   <div className="w-1/2">
                     <Label htmlFor="category_id">Category</Label>
                     <Select
-                      onValueChange={(value) => handleCategorySelect(value)}
-                      value={productInfo} // The selected category's ID is stored here
+                      onValueChange={handleCategorySelect}
+                      value={productInfo.category_id} // Set the selected category's ID
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Select category" />
@@ -361,7 +357,7 @@ const DashBoard = () => {
                       <SelectContent>
                         {categories.map((category) => (
                           <SelectItem key={category._id} value={category._id}>
-                            {category.name}
+                            {category.name}{" "}
                             {/* Display the name, but store the ID */}
                           </SelectItem>
                         ))}
@@ -601,7 +597,7 @@ const DashBoard = () => {
                 <TableRow key={product._id}>
                   <TableCell>
                     <img
-                      src={signedUrl[i]}
+                      src={signedUrl[0]}
                       alt={product?.name}
                       className="w-12 h-12 object-cover"
                     />
