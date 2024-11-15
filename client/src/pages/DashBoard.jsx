@@ -10,10 +10,10 @@ import {
   DialogTitle,
   DialogDescription,
 } from "../components/ui/dialog";
+import { SidebarWithTabs } from "../component/SideBarLayout";
 import { Input } from "../components/ui/input";
 import { Textarea } from "../components/ui/textarea";
 import { RiEditCircleLine } from "react-icons/ri";
-
 import { Label } from "@radix-ui/react-label";
 import {
   Table,
@@ -297,6 +297,7 @@ const DashBoard = () => {
 
   return (
     <div className="mt-16">
+      <SidebarWithTabs />
       {isMobile && (
         <Alert>
           <MdMobileFriendly className="h-4 w-4" />

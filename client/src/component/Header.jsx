@@ -163,8 +163,11 @@ const Header = () => {
               />
             </DialogTrigger>
 
-            <DialogContent className="fixed  z-0  left-0 top-0 h-full w-full transition-all bg-white shadow-lg duration-1000">
-              <div className="px-4 flex z-50 justify-between items-center">
+            <DialogContent className="fixed top-0 h-full w-1/2 left-0 shadow-lg">
+              <div
+                className="px-4 flex z-50 relative
+               justify-between items-center"
+              >
                 <h2 className="text-lg font-bold">
                   <img src={meeshoLogo} alt="logo" className="w-20" />
                 </h2>

@@ -4,12 +4,13 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Loader from "./Loader";
 import { getData } from "../utils/fetchData"; // Make sure this utility is imported
+import { IoMdHeart } from "react-icons/io";
 
 const ProductCard = ({ details }) => {
   const ismobile = useSelector((state) => state.identifyMobile.isMobile);
   const navigate = useNavigate();
   const [imageURL, setImageURL] = useState(null);
-
+  const [favorite, setFavorite] = useState(false);
   useEffect(() => {
     const fetchSignedImageUrl = async (key) => {
       const cleanedKey = key.replace("uploads/", ""); // Clean the key
@@ -26,7 +27,7 @@ const ProductCard = ({ details }) => {
 
   return (
     <div
-      className={`border cursor-pointer ${
+      className={`border cursor-pointer relative ${
         ismobile
           ? "h-80 w-1/2 mx-auto rounded-none border-collapse"
           : "lg:h-[360px] lg:w-[220px] h-72 w-40 rounded-md overflow-hidden "
@@ -39,7 +40,19 @@ const ProductCard = ({ details }) => {
         loading="lazy"
         className="w-full h-[61%] object-contain"
       />
-
+      <span
+        onClick={(e) => {
+          e.stopPropagation();
+          setFavorite(!favorite);
+        }}
+        className="absolute top-2 right-1"
+      >
+        <IoMdHeart
+          size={22}
+          fill={favorite ? "red" : "rgba(240, 249, 255, 0.75)"}
+          className=" transition-all "
+        />
+      </span>
       <div className="flex flex-col p-1 lg:p-2 gap-0 lg:gap-1 overflow-hidden">
         <h3 className="font-mier-book line-clamp-1 p-0 text-sm lg:text-lg font-medium text-slate-600">
           {details?.name}
