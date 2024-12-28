@@ -26,6 +26,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { setUserInfo } from "../redux_store/userInfoSlice";
+import { sendData } from "../utils/fetchData";
+import { toast } from "../components/ui/use-toast";
 
 const QRCodePayment = () => {
   const [showQR, setShowQR] = useState(false);
@@ -64,11 +66,11 @@ const Payment = ({
   prevStep,
 }) => {
   const cart = useSelector((state) => state.userInfo.cart);
+  const userId = useSelector((state) => state.userInfo.id);
 
   // Use memoization for the savedCards array
   const savedCards = useSelector((state) => state.userInfo.savedCard || []);
   const memoizedSavedCards = useMemo(() => savedCards, [savedCards]);
-
   const dispatch = useDispatch();
   const [openDialog, setOpenDialog] = useState(false);
 
@@ -78,6 +80,7 @@ const Payment = ({
       cardNumber: "",
       nameOnCard: "",
       expiryDate: "",
+      userId: userId,
     },
     validationSchema: Yup.object({
       cardNumber: Yup.string()
@@ -93,17 +96,29 @@ const Payment = ({
         )
         .required("Expiry date is required."),
     }),
-    onSubmit: (values) => {
-      // Add the new card to the array
-      const newCardsArray = [...memoizedSavedCards, values];
-      dispatch(setUserInfo({ savedCard: newCardsArray }));
+    onSubmit: async (values) => {
+      try {
+        const newCardsArray = [...memoizedSavedCards, values];
+        await sendData("user/card", values);
+        dispatch(setUserInfo({ savedCard: newCardsArray }));
 
-      // Close the dialog after submission
-      setOpenDialog(false);
-      formik.resetForm();
+        // Close the dialog after submission
+        setOpenDialog(false);
+        formik.resetForm();
+        toast({
+          title: "Card saved successfully",
+          description: "Card added successfully!",
+          appearance: "success",
+        });
+      } catch (error) {
+        toast({
+          title: "Unable to save card",
+          description: { error: error.message || "Failed to add card" },
+          appearance: "success",
+        });
+      }
     },
   });
-  console.log(savedCards);
 
   return (
     <div className="mt-5 h-[86vh] md:px-24 justify-center gap-3 flex md:flex-row flex-col">
@@ -258,7 +273,7 @@ const Payment = ({
         <div className="flex-col flex rounded-md font-mier-demi text-slate-600 border gap-3 p-3">
           <div className="flex text-lg justify-between">
             <h4>Total Product price</h4>
-            <span>{cart.length} Quantity</span>
+            <span>{cart?.length} Quantity</span>
             <span>₹ {totalPrice}</span>
           </div>
           <div className="flex text-lg justify-between">

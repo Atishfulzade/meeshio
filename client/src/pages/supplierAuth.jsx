@@ -102,7 +102,7 @@ const SupplierLogin = () => {
       } catch (error) {
         toast({
           title: "Login Failed",
-          description: "Invalid credentials, please try again.",
+          description: error.message || "Failed to login",
           status: "error",
         });
       }

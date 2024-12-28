@@ -3,8 +3,6 @@ import { Loader2 } from "lucide-react";
 import React from "react";
 
 const SearchResult = ({ results }) => {
-  console.log(results);
-
   if (!results) {
     return <Loader2 />;
   }
@@ -16,7 +14,7 @@ const SearchResult = ({ results }) => {
             key={i}
             className="p-2 border-b border-slate-200 hover:bg-gray-100"
           >
-            <p className="text-sm font-medium">{result.title}</p>
+            <p className="text-sm font-medium cursor-pointer">{result.name}</p>
             {/* <p className="text-xs text-gray-500">{result.description}</p> */}
           </div>
         ))

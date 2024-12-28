@@ -10,7 +10,6 @@ import {
   DialogTitle,
   DialogDescription,
 } from "../components/ui/dialog";
-import { SidebarWithTabs } from "../component/SideBarLayout";
 import { Input } from "../components/ui/input";
 import { Textarea } from "../components/ui/textarea";
 import { RiEditCircleLine } from "react-icons/ri";
@@ -37,7 +36,10 @@ import { MdMobileFriendly, MdOutlineDelete } from "react-icons/md";
 import { sendData, getData, deleteData, updateData } from "../utils/fetchData";
 import { useToast } from "@/components/ui/use-toast"; // Adjust the import path as necessary
 import { useSelector } from "react-redux";
-
+import { fetchSignedUrl } from "../utils/signedUrl";
+import { logInSlice } from "../redux_store/logInSlice";
+import { setSupplierInfo } from "../redux_store/supplierInfoSlice";
+import { fetchSignedUrls } from "../utils/signedUrl";
 const DashBoard = () => {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -227,13 +229,17 @@ const DashBoard = () => {
     }
   };
   useEffect(() => {
-    const fetchSignedUrls = async () => {
-      if (products.length) {
-        // Logic to fetch signed URLs
-      }
+    const fetchSignedUrlImages = async (product) => {
+      product?.map(async (image) => {
+        const productImages = image?.product_images[0];
+        console.log(productImages);
+
+        const res = await fetchSignedUrls([...productImages]);
+        setSignedUrls(res);
+      });
     };
-    fetchSignedUrls();
-  }, [products]); // Fetch signed URLs only when `products` changes
+    fetchSignedUrlImages(products);
+  }, []); // Fetch signed URLs only when `products` changes
 
   // Add category functionality
   const handleAddCategory = async (e) => {
@@ -294,10 +300,10 @@ const DashBoard = () => {
     setIsDialogOpen(false);
     setSelectedFields([]);
   };
+  console.log(signedUrl);
 
   return (
     <div className="mt-16">
-      <SidebarWithTabs />
       {isMobile && (
         <Alert>
           <MdMobileFriendly className="h-4 w-4" />
@@ -598,7 +604,7 @@ const DashBoard = () => {
                 <TableRow key={product._id}>
                   <TableCell>
                     <img
-                      src={signedUrl[0]}
+                      src={signedUrl[i]}
                       alt={product?.name}
                       className="w-12 h-12 object-cover"
                     />

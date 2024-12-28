@@ -8,6 +8,7 @@ import { deleteData, getData } from "../utils/fetchData";
 import Loader from "./Loader";
 import { Button } from "../components/ui/button"; // Assuming you have a Button component
 import { MdDeleteOutline } from "react-icons/md";
+import { fetchSignedUrls } from "../utils/signedUrl";
 
 const Cart = ({ nextStep }) => {
   const dispatch = useDispatch();
@@ -16,7 +17,7 @@ const Cart = ({ nextStep }) => {
   const navigate = useNavigate();
   const isLoggedIn = useSelector((state) => state.loggedIn.isLoggedIn);
   const { toast } = useToast();
-
+  const [signedUrls, setSignedUrls] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
   const [discountPercentage] = useState(0.1); // 10% discount
   const [discountedPrice, setDiscountedPrice] = useState(0);
@@ -27,8 +28,6 @@ const Cart = ({ nextStep }) => {
       try {
         const fetchedItems = await Promise.all(
           cart.map(async (item) => {
-            console.log(item);
-
             const response = await getData(
               `products/${item.id || item.productId._id}`
             );
@@ -40,7 +39,6 @@ const Cart = ({ nextStep }) => {
         console.error("Failed to fetch cart items:", error);
       }
     };
-    console.log(cartItems);
 
     if (cart.length) {
       fetchCartItems();
@@ -83,7 +81,7 @@ const Cart = ({ nextStep }) => {
       sessionStorage.setItem("cart", JSON.stringify(filteredCart));
 
       if (userId) {
-        await deleteData(`cart`, { productId });
+        await deleteData("cart", { productId });
       }
 
       toast({
@@ -92,7 +90,6 @@ const Cart = ({ nextStep }) => {
         status: "success",
       });
     } catch (error) {
-      console.error("Error removing item:", error);
       toast({
         title: "Error",
         description: "Could not remove the item from the cart.",
@@ -100,6 +97,21 @@ const Cart = ({ nextStep }) => {
       });
     }
   };
+  let productImage = cartItems.map((item) => item.product_images[0]);
+  useEffect(() => {
+    const fetchImages = async () => {
+      if (productImage?.length) {
+        try {
+          const urls = await fetchSignedUrls(productImage);
+          setSignedUrls(urls.filter(Boolean));
+        } catch (error) {
+          console.error("Error fetching signed URLs:", error);
+        }
+      }
+    };
+
+    fetchImages();
+  }, [cartItems]);
 
   if (!cartItems.length) return <Loader />;
 
@@ -119,10 +131,9 @@ const Cart = ({ nextStep }) => {
                   key={index}
                   className="flex flex-col justify-between border md:w-[600px] min-w-[300px] rounded-md h-fit"
                 >
-                  {console.log(item)}
                   <div className="flex justify-between p-2">
                     <img
-                      src={item.imageURL || ""}
+                      src={signedUrls[index] || ""}
                       alt={item.name}
                       className="w-20 h-20"
                     />

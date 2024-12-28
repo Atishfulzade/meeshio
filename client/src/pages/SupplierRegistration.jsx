@@ -62,6 +62,8 @@ const SupplierRegistration = () => {
           description: "You have successfully registered as a supplier.",
           type: "success",
         });
+        localStorage.setItem("token", response.token);
+        localStorage.setItem("supplier", response.supplier?._id);
         dispatch(setIsLoggedIn(true));
         dispatch(setSupplierInfo(response.supplier));
         navigate("/supplier/dashboard");

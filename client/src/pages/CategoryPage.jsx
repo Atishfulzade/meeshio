@@ -1,7 +1,12 @@
 import React from "react";
+import ProductCard from "../component/ProductCard";
 
 const CategoryPage = () => {
-  return <div>Category</div>;
+  return (
+    <div>
+      <ProductCard />
+    </div>
+  );
 };
 
 export default CategoryPage;

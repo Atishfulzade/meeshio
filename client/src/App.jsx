@@ -6,7 +6,7 @@ import Loader from "./component/Loader";
 import { setIsLoggedIn } from "./redux_store/logInSlice";
 import { setUserInfo } from "./redux_store/userInfoSlice";
 import { sendData } from "./utils/fetchData";
-
+import SidebarWithTabs from "./component/SidebarWithTabs";
 // Utility function for debouncing
 export const debounce = (func, wait) => {
   let timeout;
@@ -29,7 +29,7 @@ const ErrorPage = lazy(() => import("./pages/ErrorPage"));
 const AuthenticatePage = lazy(() => import("./pages/AuthenticatePage"));
 const ProfilePage = lazy(() => import("./pages/ProfilePage"));
 const CategoryPage = lazy(() => import("./pages/CategoryPage"));
-const DashBoard = lazy(() => import("./pages/DashBoard"));
+// const DashBoard = lazy(() => import("./pages/DashBoard"));
 const PaymentPage = lazy(() => import("./pages/PaymentPage"));
 const CartPage = lazy(() => import("./pages/CartPage"));
 const MobileHome = lazy(() => import("./component/MobileHome"));
@@ -37,7 +37,7 @@ const OrdersPage = lazy(() => import("./pages/OrdersPage"));
 const UserProfile = lazy(() => import("./pages/UserProfile"));
 const SupplierPortal = lazy(() => import("./pages/supplierAuth"));
 const SupplierRegistration = lazy(() => import("./pages/SupplierRegistration"));
-
+const Favourite = lazy(() => import("./pages/Favourite"));
 function App() {
   const isLoggedIn = useSelector((state) => state.loggedIn.isLoggedIn);
   const dispatch = useDispatch();
@@ -95,11 +95,13 @@ function App() {
           <Route path="category" element={<CategoryPage />} />
           <Route path="payment" element={<PaymentPage />} />
           <Route path="supplier/login" element={<SignInForm />} />
+          <Route path="favourite" element={<Favourite />} />
           <Route path="checkout" element={<CartPage />} />
+          <Route path="category/:categoryName" element={<CategoryPage />} />
           <Route path="orders" element={<OrdersPage />} />
           {isLoggedIn ? (
             <>
-              <Route path="supplier/dashboard" element={<DashBoard />} />
+              <Route path="supplier/dashboard" element={<SidebarWithTabs />} />
               <Route path="profile" element={<UserProfile />} />
             </>
           ) : (

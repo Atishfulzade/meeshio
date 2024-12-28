@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   HoverCard,
   HoverCardContent,
@@ -11,24 +11,24 @@ import { navbar_second } from "../utils/constant";
 import { useSelector } from "react-redux";
 const Navbar_second = () => {
   const ismobile = useSelector((state) => state.identifyMobile.isMobile);
-
+  const navigate = useNavigate();
   return (
-    <div className=" w-full h-12">
+    <div className=" w-full lg:h-12 md:h-10">
       <div className=" md:flex w-full h-full items-center justify-between md:px-20">
         {navbar_second.map((item, itemIndex) => (
           <HoverCard key={itemIndex}>
             <HoverCardTrigger asChild>
               <Button
                 variant="link"
-                className="text-slate-800 decoration-2 underline-offset-[17px] font-normal justify-center items-center flex flex-col h-full"
+                className="text-slate-800 decoration-2 lg:underline-offset-[17px] md:underline-offset-[14px] font-normal justify-center items-center flex flex-col h-full"
               >
-                <p className="text-[17px] font-medium hover:text-fuchsia-600 transition-all font-mier-book">
+                <p className="lg:text-[17px] md:text-[14px] font-medium hover:text-fuchsia-600 transition-all font-mier-book">
                   {item.title}
                 </p>
               </Button>
             </HoverCardTrigger>
-            <HoverCardContent className="md:w-[90vw] p-0 mt-[-3px]">
-              <div className="flex w-full px-3">
+            <HoverCardContent className="md:w-[90vw] p-0 ">
+              <div className="flex w-full lg:px-3">
                 {item.links.map((link, index) => (
                   <div
                     key={index}
@@ -41,7 +41,7 @@ const Navbar_second = () => {
                     </h1>
                     {link.category.map((category, i) => (
                       <Link
-                        to={category.url}
+                        to={`category/${category.title}`}
                         key={i}
                         className="text-slate-600 hover:text-slate-900 mt-1 font-mier"
                       >

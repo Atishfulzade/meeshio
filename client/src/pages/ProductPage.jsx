@@ -6,7 +6,7 @@ import Cards from "../component/Cards";
 import { useParams } from "react-router-dom";
 import { getData } from "../utils/fetchData";
 import Loader from "../component/Loader";
-
+import { fetchSignedUrls } from "../utils/signedUrl";
 const ProductPage = () => {
   const { productId } = useParams();
   const [signedUrls, setSignedUrls] = useState([]);
@@ -22,19 +22,18 @@ const ProductPage = () => {
   }, [productId]);
 
   useEffect(() => {
-    const fetchSignedUrls = async () => {
+    const fetchImages = async () => {
       if (productDetails?.product_images?.length) {
-        const urls = await Promise.all(
-          productDetails.product_images.map(async (image) => {
-            const cleanedKey = image.replace("uploads/", ""); // Clean the key if needed
-            const response = await getData(`images/${cleanedKey}`);
-            return response.signedUrl; // Adjust based on your API structure
-          })
-        );
-        setSignedUrls(urls);
+        try {
+          const urls = await fetchSignedUrls(productDetails.product_images);
+          setSignedUrls(urls.filter(Boolean));
+        } catch (error) {
+          console.error("Error fetching signed URLs:", error);
+        }
       }
     };
-    fetchSignedUrls();
+
+    fetchImages();
   }, [productDetails]);
 
   if (!productDetails) return <Loader />;

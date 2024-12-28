@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Separator } from "../components/ui/separator";
 import { IoMdArrowBack } from "react-icons/io";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
-import { Button } from "../components/ui/button";
 import { useSelector } from "react-redux";
 import { getData } from "../utils/fetchData";
+import AddressPopup from "./AddressPopup";
 
 const Address = ({
   nextStep,
@@ -16,31 +14,28 @@ const Address = ({
 }) => {
   const isMobile = useSelector((state) => state.identifyMobile.isMobile);
   const cart = useSelector((state) => state.cart.cart);
-  const userId = localStorage.getItem("userId"); // Use the correct userId from localStorage
-
-  const [addressDetail, setAddressDetail] = useState([]);
-  const [selectedAddress, setSelectedAddress] = useState(null);
+  const userId = localStorage.getItem("userId") || "";
+  const [addressDetail, setAddressDetail] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   // Fetch address data
   useEffect(() => {
     const fetchAddresses = async () => {
+      setLoading(true);
       try {
         const response = await getData(`user/profile`); // Adjust endpoint as necessary
-        setAddressDetail(response.data?.address || []); // Adjust based on your API response structure
+        setAddressDetail(response?.address || null);
       } catch (error) {
-        console.error("Error fetching addresses:", error);
+        console.error("Error fetching address:", error);
+      } finally {
+        setLoading(false);
       }
     };
-
     fetchAddresses();
   }, [userId]);
 
-  const handleSelectAddress = (value) => {
-    setSelectedAddress(value);
-  };
-
-  const proceedWithSelectedAddress = () => {
-    if (selectedAddress) {
+  const proceedWithAddress = () => {
+    if (addressDetail) {
       nextStep();
     }
   };
@@ -57,56 +52,43 @@ const Address = ({
           <IoMdArrowBack />
         </span>
 
-        {/* Header */}
         <h3 className="text-xl my-2 font-mier-bold">Address Details</h3>
 
-        {/* Address List */}
-        <div className="flex flex-col mt-20 gap-2 md:h-full">
-          <div className="p-3">
-            {addressDetail.length > 0 ? (
-              <RadioGroup
-                value={selectedAddress}
-                onValueChange={handleSelectAddress}
-              >
-                {addressDetail.map((address) => (
-                  <div
-                    key={address._id}
-                    className="flex border flex-col p-3 md:w-[400px] w-full rounded-md gap-1 bg-slate-200 h-fit space-x-2 my-2"
-                  >
-                    <div className="flex items-start">
-                      <RadioGroupItem
-                        value={address._id}
-                        id={`address-${address._id}`}
-                      />
-                      <Label
-                        htmlFor={`address-${address._id}`}
-                        className="text-lg flex flex-col font-mier-book ml-2"
-                      >
-                        {address.street}, {address.city}, {address.state},{" "}
-                        {address.zipCode} <br />
-                        Contact: {address.contactNumber}
-                      </Label>
-                    </div>
+        <div className="flex flex-col gap-2 md:h-full">
+          {loading ? (
+            <p>Loading address...</p>
+          ) : (
+            <>
+              {addressDetail ? (
+                <div
+                  key={addressDetail._id}
+                  className="flex border flex-col p-3 md:w-[400px] w-full rounded-md gap-1 bg-slate-200 h-fit space-x-2 my-2"
+                >
+                  <div className="flex flex-col items-start">
+                    <h5>{addressDetail.name}</h5>
+                    <p>Contact: {addressDetail.contact}</p>
+                    <p>{addressDetail.landmark}</p>
+                    <p>
+                      {addressDetail.street}, <br />
+                      {addressDetail.city},
+                    </p>
+                    {addressDetail.state}, {addressDetail.pin} <br />
                   </div>
-                ))}
-              </RadioGroup>
-            ) : (
-              <p>No addresses available.</p>
-            )}
-
-            {/* Proceed Button */}
-            <Button
-              className={`mt-4 ${
-                selectedAddress
-                  ? "bg-fuchsia-700 hover:bg-fuchsia-800"
-                  : "bg-gray-400 cursor-not-allowed"
-              }`}
-              onClick={proceedWithSelectedAddress}
-              disabled={!selectedAddress}
-            >
-              Use this address
-            </Button>
-          </div>
+                  <AddressPopup
+                    addressDetail={addressDetail}
+                    title="Update address"
+                    description="Update your delivery address"
+                  />
+                </div>
+              ) : (
+                <AddressPopup
+                  addressDetail={{}}
+                  title="Add address"
+                  description="Add your delivery address"
+                />
+              )}
+            </>
+          )}
         </div>
       </div>
 
@@ -133,6 +115,17 @@ const Address = ({
             <h4>Order Total</h4>
             <span>₹ {discountedPrice.toFixed(2)}</span>
           </div>
+          <button
+            onClick={proceedWithAddress}
+            disabled={!addressDetail}
+            className={`mt-3 px-4 py-2 rounded-md ${
+              addressDetail
+                ? "bg-fuchsia-700 text-white"
+                : "bg-gray-400 text-gray-700 cursor-not-allowed"
+            }`}
+          >
+            Proceed
+          </button>
         </div>
       </div>
     </div>

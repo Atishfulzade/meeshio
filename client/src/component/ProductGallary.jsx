@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import { getData } from "../utils/fetchData"; // Import your utility for fetching signed URLs
+import React from "react";
 
 const ProductGallary = ({ signedUrls, setSelectedImage, selectedImage }) => {
   return (

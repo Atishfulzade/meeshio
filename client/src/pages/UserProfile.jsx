@@ -16,6 +16,7 @@ import {
 } from "../components/ui/dialog";
 import { getData, sendData, updateData } from "../utils/fetchData";
 import { toast } from "../components/ui/use-toast";
+import AddressPopup from "../component/AddressPopup";
 
 // Validation schema for address and card details
 const validationSchema = Yup.object({
@@ -56,6 +57,7 @@ const UserProfile = () => {
         if (response?.profileImage) {
           const imageUrl = await fetchSignedImageUrl(response.profileImage);
           setImageURL(imageUrl);
+          console.log(imageURL);
         }
       } catch (error) {
         console.log("Error fetching profile:", error);
@@ -186,7 +188,7 @@ const UserProfile = () => {
   };
 
   return (
-    <div className="h-screen px-6 mt-14">
+    <div className="h-screen px-6 mt-32">
       <div className="h-full shadow-lg py-8 rounded-lg">
         <div className="flex justify-between items-center">
           <h2 className="text-lg text-slate-800 font-mier-bold border rounded-full px-4 border-slate-300 py-1 flex gap-2 items-center">
@@ -228,18 +230,20 @@ const UserProfile = () => {
             Address
           </h2>
           <p className="flex flex-col py-5 ">
+            <p className="font-mier-book">{user?.address?.landmark},</p>
             <p className="font-mier-book">{user?.address?.street},</p>
             <p className="font-mier-book">
               {user?.address?.city}, {user?.address?.state}
             </p>
-            <p className="font-mier-book"> {user?.address?.zipCode}</p>
+            <p className="font-mier-book"> {user?.address?.pin}</p>
+            <p className="font-mier-book">Contact: {user?.address?.contact}</p>
           </p>
-          <Button
-            onClick={() => setIsEditing({ ...isEditing, address: true })}
-            className="flex justify-center gap-2 items-center bg-fuchsia-500 hover:bg-fuchsia-600"
-          >
-            <MdOutlineEdit /> Edit Address
-          </Button>
+
+          <AddressPopup
+            addressDetail={user?.address}
+            title=" Update address"
+            description={"Update your delivery address"}
+          />
         </div>
 
         {/* Card Details Section */}
@@ -304,55 +308,6 @@ const UserProfile = () => {
           </DialogContent>
         </Dialog>
 
-        {/* Address Dialog */}
-        <Dialog
-          open={isEditing.address}
-          onOpenChange={() => setIsEditing({ ...isEditing, address: false })}
-        >
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Edit Address</DialogTitle>
-            </DialogHeader>
-            <Formik
-              initialValues={initialValues.address}
-              validationSchema={Yup.object().shape(validationSchema.address)}
-              onSubmit={handleAddressSubmit}
-            >
-              {({ errors, touched }) => (
-                <Form>
-                  <Field name="street" component={Input} placeholder="Street" />
-                  {errors.street && touched.street && (
-                    <div>{errors.street}</div>
-                  )}
-                  <Field name="city" component={Input} placeholder="City" />
-                  {errors.city && touched.city && <div>{errors.city}</div>}
-                  <Field name="state" component={Input} placeholder="State" />
-                  {errors.state && touched.state && <div>{errors.state}</div>}
-                  <Field
-                    name="zipCode"
-                    component={Input}
-                    placeholder="Zip Code"
-                  />
-                  {errors.zipCode && touched.zipCode && (
-                    <div>{errors.zipCode}</div>
-                  )}
-                  <Field
-                    name="contactNumber"
-                    component={Input}
-                    placeholder="Contact Number"
-                  />
-                  {errors.contactNumber && touched.contactNumber && (
-                    <div>{errors.contactNumber}</div>
-                  )}
-                  <Button type="submit" className="mt-4">
-                    Save Changes
-                  </Button>
-                </Form>
-              )}
-            </Formik>
-          </DialogContent>
-        </Dialog>
-
         {/* Card Details Dialog */}
         <Dialog
           open={isEditing.cardDetails}
@@ -362,7 +317,10 @@ const UserProfile = () => {
         >
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Add Card Details</DialogTitle>
+              <DialogTitle>
+                <MdOutlineAddCard />
+                Add Card Details
+              </DialogTitle>
             </DialogHeader>
             <Formik
               initialValues={initialValues.card}

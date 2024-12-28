@@ -40,19 +40,21 @@ const ProductCard = ({ details }) => {
         loading="lazy"
         className="w-full h-[61%] object-contain"
       />
-      <span
-        onClick={(e) => {
-          e.stopPropagation();
-          setFavorite(!favorite);
-        }}
-        className="absolute top-2 right-1"
-      >
-        <IoMdHeart
-          size={22}
-          fill={favorite ? "red" : "rgba(240, 249, 255, 0.75)"}
-          className=" transition-all "
-        />
-      </span>
+      {ismobile && (
+        <span
+          onClick={(e) => {
+            e.stopPropagation();
+            setFavorite(!favorite);
+          }}
+          className="absolute top-2 right-1"
+        >
+          <IoMdHeart
+            size={22}
+            fill={favorite ? "red" : "rgba(240, 249, 255, 0.75)"}
+            className=" transition-all "
+          />
+        </span>
+      )}
       <div className="flex flex-col p-1 lg:p-2 gap-0 lg:gap-1 overflow-hidden">
         <h3 className="font-mier-book line-clamp-1 p-0 text-sm lg:text-lg font-medium text-slate-600">
           {details?.name}

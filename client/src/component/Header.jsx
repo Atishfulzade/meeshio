@@ -30,6 +30,7 @@ import {
   DialogTrigger,
 } from "../components/ui/dialog";
 import { updateCart } from "../redux_store/cartSlice";
+import { fetchSignedUrl, fetchSignedUrls } from "../utils/signedUrl";
 
 const Header = () => {
   const ismobile = useSelector((state) => state.identifyMobile.isMobile); // Mobile check
@@ -37,7 +38,7 @@ const Header = () => {
   const [searchInput, setSearchInput] = useState(""); // State for search input
   const [cart, setCart] = useState([]); // Local state for cart items
   const [isOpen, setIsOpen] = useState(false); // State for menu open/close
-
+  const [ProfilePhoto, setProfilePhoto] = useState("");
   const location = useLocation(); // For navigation handling
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -89,7 +90,10 @@ const Header = () => {
       console.log("Error updating server cart:", error.message);
     }
   };
-
+  const profileImageUpdate = async (img) => {
+    const image = await fetchSignedUrl(img);
+    setProfilePhoto(image);
+  };
   // Fetch the cart from the server
   const fetchCartFromServer = async () => {
     try {
@@ -149,7 +153,9 @@ const Header = () => {
       updateServerCart(); // Update the server cart
       fetchCartFromServer(); // Fetch cart data from the server
     }
+    profileImageUpdate();
   }, [token, id]);
+
   return (
     <div className="w-full bg-white fixed top-0 left-0 z-10 flex flex-col ">
       <div className="flex w-full gap-3 justify-between items-center  h-14 md:h-[70px] md:border-b-2 px-3 md:px-24 md:py-2  py-2">
@@ -163,17 +169,15 @@ const Header = () => {
               />
             </DialogTrigger>
 
-            <DialogContent className="fixed top-0 h-full w-1/2 left-0 shadow-lg">
+            <DialogContent className="fixed h-screen flex flex-col left-40 w-4/5 shadow-lg">
               <div
                 className="px-4 flex z-50 relative
-               justify-between items-center"
+                items-center justify-between"
               >
                 <h2 className="text-lg font-bold">
-                  <img src={meeshoLogo} alt="logo" className="w-20" />
+                  <img src={meeshoLogo} alt="logo" className="w-20 " />
                 </h2>
-                <DialogClose asChild>
-                  <IoClose onClick={() => setIsOpen(false)} size={24} />
-                </DialogClose>
+                {/* <IoClose onClick={() => setIsOpen(false)} size={24} /> */}
               </div>
               <div className="flex justify-between px-5">
                 <DialogDescription className="flex flex-col">
@@ -228,12 +232,12 @@ const Header = () => {
           <img
             src={meeshoLogo}
             alt="Meesho logo"
-            className="w-24 mb-1 lg:w-[165px] md:w-60"
+            className="w-24 mb-1 lg:w-40 md:w-32 md:pr-4 lg:pr-0"
           />
         </div>
         {!ismobile && location.pathname !== "/checkout" && (
           <SearchBar
-            width={"w-96"}
+            width={"md:w-72 lg:w-96"}
             searchInput={searchInput}
             setSearchInput={setSearchInput}
           />
@@ -245,12 +249,12 @@ const Header = () => {
               ismobile ? "hidden" : "flex"
             } gap-4`}
           >
-            <div className="flex h-full items-center">
+            <div className="lg:flex md:hidden  h-full items-center">
               <HoverCard>
                 <HoverCardTrigger asChild>
                   <Button
                     variant="link"
-                    className="text-slate-800 text-[17px] decoration-2 font-normal font-mier-book  underline-offset-[29px]  "
+                    className="text-slate-800 text-[17px] decoration-2 font-normal font-mier-book  underline-offset-[26px]  "
                   >
                     <PiDeviceMobile className="mr-2 font-mier-book" size={22} />
                     Download App
@@ -303,7 +307,7 @@ const Header = () => {
                   <HoverCardTrigger asChild>
                     <Button
                       variant="link"
-                      className="text-slate-800 decoration-2 underline-offset-[20px] font-normal justify-center items-center flex flex-col h-full"
+                      className="text-slate-800 decoration-2 underline-offset-[14px] font-normal justify-center items-center flex flex-col h-full"
                     >
                       <FaRegUser size={24} />
                       <p className="text-[17px] font-mier-book">Profile</p>
@@ -316,14 +320,16 @@ const Header = () => {
                           <h4 className="text-lg font-semibold text-left">
                             Hello, {firstname}
                           </h4>
-                          <div className="flex gap-1 font-medium items-center">
+                          <div
+                            className="flex gap-1 font-medium items-center cursor-pointer "
+                            onClick={() =>
+                              isLoggedIn ? navigate("/profile") : ""
+                            }
+                          >
                             <img
-                              src={profileImage || avatar}
+                              src={ProfilePhoto || avatar}
                               alt="User Avatar"
-                              className="h-10 w-10 border cursor-pointer rounded-full"
-                              onClick={() =>
-                                isLoggedIn ? navigate("/profile") : ""
-                              }
+                              className="h-10 w-10 border  rounded-full"
                             />
                             <div className="flex flex-col">
                               <h3>{firstname + " " + lastname}</h3>
@@ -396,7 +402,7 @@ const Header = () => {
           "/checkout" && (
             <div className=" flex gap-6">
               <Link
-                to={"/checkout"}
+                to={"/favourite"}
                 variant="link"
                 className="text-slate-800 font-mier-book text-[17px] font-normal justify-center items-center flex flex-col h-full"
               >
@@ -420,7 +426,9 @@ const Header = () => {
             </div>
           )}
       </div>
-      {location.pathname !== "/checkout" && !ismobile && <Navbar_second />}
+      {location.pathname !== "/checkout" &&
+        location.pathname !== "/category/:categoryName" &&
+        !ismobile && <Navbar_second />}
     </div>
   );
 };

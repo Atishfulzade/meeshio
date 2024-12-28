@@ -26,7 +26,7 @@ const SearchBar = React.memo(({ width, searchInput, setSearchInput }) => {
       } catch (error) {
         console.error("Error fetching products:", error);
       }
-    }, 300), // Set debounce delay to 300ms or adjust as needed
+    }, 500), // Set debounce delay to 300ms or adjust as needed
     []
   );
 

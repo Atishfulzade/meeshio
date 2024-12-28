@@ -80,7 +80,7 @@ const SignInForm = () => {
               description: response.message,
               appearance: "success",
             });
-            localStorage.setItem("token", response.token);
+            localStorage.setItem("token", response?.token);
             dispatch(setUserInfo(response?.user));
             navigate("/");
             const token = Cookies.get("yourCookieName");

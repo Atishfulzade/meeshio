@@ -63,7 +63,6 @@ export const updateData = async (endpoint, data) => {
 };
 
 // DELETE request for removing a resource with Authorization token
-// DELETE request for removing a resource with Authorization token
 export const deleteData = async (endpoint, data) => {
   const token = window.localStorage.getItem("token");
 
