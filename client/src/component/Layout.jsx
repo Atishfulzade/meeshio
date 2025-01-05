@@ -1,9 +1,8 @@
-import { Outlet } from "react-router-dom";
 import React from "react";
+import { Outlet, useLocation } from "react-router-dom";
 import Header from "./Header";
 import { Toaster } from "../components/ui/toaster";
 import Footer from "./Footer";
-import { useLocation } from "react-router-dom";
 import SupplierHeader from "./SupplierHeader";
 
 const Layout = () => {
@@ -12,17 +11,14 @@ const Layout = () => {
   // Check if the current path matches specific routes
   const isSupplierDashboard = location.pathname === "/supplier/dashboard";
   const isProfile = location.pathname === "/profile";
+  const isSupplierPath = location.pathname.startsWith("/supplier");
 
   return (
     <div>
-      {isSupplierDashboard || location.pathname.startsWith("/supplier") ? (
-        <SupplierHeader />
-      ) : (
-        <Header />
-      )}
+      {!isSupplierDashboard && !isSupplierPath && <Header />}
       <Toaster />
       <Outlet />
-      {!isProfile && !isSupplierDashboard && <Footer />}
+      {!isProfile && !isSupplierDashboard && !isSupplierPath && <Footer />}
     </div>
   );
 };

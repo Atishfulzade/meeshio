@@ -12,7 +12,7 @@ import { assured } from "../assets";
 const ProductInfo = ({ productDetails }) => {
   const [supplierInfo, setSupplierInfo] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-
+  document.title = productDetails?.name || productDetails;
   useEffect(() => {
     const fetchSupplierInfo = async () => {
       const response = await getData(

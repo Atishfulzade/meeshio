@@ -37,27 +37,6 @@ const SupplierHeader = () => {
   const lastname = useSelector((state) => state.supplierInfo.lastname);
   const email = useSelector((state) => state.supplierInfo.email);
 
-  const logoutUser = async () => {
-    try {
-      const logOut = await sendData("supplier/logout");
-      localStorage.removeItem("token");
-      navigate("/");
-      dispatch(setIsLoggedIn(false));
-
-      return toast({
-        title: logOut?.message,
-        description: "You have been successfully logged out",
-        status: "success",
-      });
-    } catch (error) {
-      return toast({
-        title: "Failed to Log Out",
-        description: "An error occurred while trying to log out",
-        status: "error",
-      });
-    }
-  };
-
   return (
     <div className="w-full bg-pink-100 fixed top-0 left-0 z-30 flex flex-col">
       <div className="flex w-full gap-3 justify-between items-center h-14 md:h-[70px] md:border-b-2 px-3 md:px-24 md:py-2 py-2">

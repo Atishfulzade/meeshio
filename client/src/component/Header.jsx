@@ -169,9 +169,9 @@ const Header = () => {
               />
             </DialogTrigger>
 
-            <DialogContent className="fixed h-screen flex flex-col left-40 w-4/5 shadow-lg">
+            <DialogContent className="absolute h-full  flex flex-col w-full shadow-lg">
               <div
-                className="px-4 flex z-50 relative
+                className=" flex z-50 relative
                 items-center justify-between"
               >
                 <h2 className="text-lg font-bold">
@@ -179,7 +179,7 @@ const Header = () => {
                 </h2>
                 {/* <IoClose onClick={() => setIsOpen(false)} size={24} /> */}
               </div>
-              <div className="flex justify-between px-5">
+              <div className="flex justify-between">
                 <DialogDescription className="flex flex-col">
                   <p>Welcome {isLoggedIn ? firstname : "User"}!</p>
                   {isLoggedIn && (

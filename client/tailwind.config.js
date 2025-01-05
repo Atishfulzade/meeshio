@@ -22,10 +22,22 @@ module.exports = {
   		}
   	},
   	fontFamily: {
-  		mier: ["mier", "sans-serif"],
-  		'mier-bold': ["mier_bold", "sans-serif"],
-  		'mier-book': ["mier_book", "sans-serif"],
-  		'mier-demi': ["mier_demi", "sans-serif"]
+  		mier: [
+  			'mier',
+  			'sans-serif'
+  		],
+  		'mier-bold': [
+  			'mier_bold',
+  			'sans-serif'
+  		],
+  		'mier-book': [
+  			'mier_book',
+  			'sans-serif'
+  		],
+  		'mier-demi': [
+  			'mier_demi',
+  			'sans-serif'
+  		]
   	},
   	extend: {
   		colors: {

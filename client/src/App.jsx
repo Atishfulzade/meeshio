@@ -1,12 +1,18 @@
 import { Suspense, lazy, useEffect, useCallback } from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setIsMobile } from "./redux_store/identifyMobile";
 import Loader from "./component/Loader";
 import { setIsLoggedIn } from "./redux_store/logInSlice";
 import { setUserInfo } from "./redux_store/userInfoSlice";
 import { sendData } from "./utils/fetchData";
-import SidebarWithTabs from "./component/SidebarWithTabs";
+import SupplierDashboardLayout from "./component/SupplierDashboardLayout";
+import { setSupplierInfo } from "./redux_store/supplierInfoSlice";
+import SupplierProduct from "./component/SupplierProduct";
+import SupplierSidebar from "./component/App-sidebar";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import AddProduct from "./pages/AddProduct";
+
 // Utility function for debouncing
 export const debounce = (func, wait) => {
   let timeout;
@@ -29,7 +35,7 @@ const ErrorPage = lazy(() => import("./pages/ErrorPage"));
 const AuthenticatePage = lazy(() => import("./pages/AuthenticatePage"));
 const ProfilePage = lazy(() => import("./pages/ProfilePage"));
 const CategoryPage = lazy(() => import("./pages/CategoryPage"));
-// const DashBoard = lazy(() => import("./pages/DashBoard"));
+const DashBoard = lazy(() => import("./pages/DashBoard"));
 const PaymentPage = lazy(() => import("./pages/PaymentPage"));
 const CartPage = lazy(() => import("./pages/CartPage"));
 const MobileHome = lazy(() => import("./component/MobileHome"));
@@ -38,40 +44,48 @@ const UserProfile = lazy(() => import("./pages/UserProfile"));
 const SupplierPortal = lazy(() => import("./pages/supplierAuth"));
 const SupplierRegistration = lazy(() => import("./pages/SupplierRegistration"));
 const Favourite = lazy(() => import("./pages/Favourite"));
+
 function App() {
   const isLoggedIn = useSelector((state) => state.loggedIn.isLoggedIn);
   const dispatch = useDispatch();
   const isMobile = useSelector((state) => state.identifyMobile.isMobile);
+  const navigate = useNavigate();
 
   const updateIsMobile = useCallback(() => {
     const windowSize = window.innerWidth <= 768;
     dispatch(setIsMobile(windowSize));
-  }, [dispatch]);
+  }, []);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (token) {
-      // Validate token and fetch user details from backend
-      const validateToken = async () => {
-        try {
-          const response = await sendData("user/auth/validateuser", {
-            token,
-          });
-          if (response?.user) {
-            dispatch(setIsLoggedIn(true));
-            dispatch(setUserInfo(response.user));
-          } else {
-            localStorage.removeItem("token");
-            dispatch(setIsLoggedIn(false));
-          }
-        } catch (error) {
-          console.error("Error validating token", error);
+    if (!token) {
+      dispatch(setIsLoggedIn(false));
+      return;
+    }
+
+    const validateToken = async () => {
+      try {
+        const response = await sendData("user/auth/validateuser", { token });
+        if (!response?.user) {
           localStorage.removeItem("token");
           dispatch(setIsLoggedIn(false));
+          return;
         }
-      };
-      validateToken();
-    }
+
+        dispatch(setIsLoggedIn(true));
+        dispatch(setUserInfo(response.user));
+
+        if (response.user.role === "supplier") {
+          navigate("/supplier/dashboard");
+        }
+      } catch (error) {
+        console.error("Error validating token", error);
+        localStorage.removeItem("token");
+        dispatch(setIsLoggedIn(false));
+      }
+    };
+
+    validateToken();
   }, [dispatch]);
 
   useEffect(() => {
@@ -101,7 +115,10 @@ function App() {
           <Route path="orders" element={<OrdersPage />} />
           {isLoggedIn ? (
             <>
-              <Route path="supplier/dashboard" element={<SidebarWithTabs />} />
+              <Route
+                path="supplier/dashboard"
+                element={<SupplierDashboardLayout />}
+              />
               <Route path="profile" element={<UserProfile />} />
             </>
           ) : (
@@ -113,6 +130,18 @@ function App() {
           <Route path="delete_account" element={<SignInForm />} />
           <Route path="supplier" element={<SupplierPortal />} />
           <Route path="supplier/auth" element={<SupplierRegistration />} />
+          <Route
+            path="/supplier/*"
+            element={
+              <SidebarProvider>
+                <SupplierSidebar />
+              </SidebarProvider>
+            }
+          >
+            <Route path="dashboard" element={<DashBoard />} />
+            <Route path="product" element={<SupplierProduct />} />
+            <Route path="add-product" element={<AddProduct />} />
+          </Route>
         </Route>
       </Routes>
     </Suspense>

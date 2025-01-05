@@ -7,7 +7,7 @@ const SearchResult = ({ results }) => {
     return <Loader2 />;
   }
   return (
-    <div className="absolute bg-white border border-slate-300 rounded-md shadow-lg mt-52 p-2 w-full h-40 z-10">
+    <div className="absolute bg-white border border-slate-300 rounded-md shadow-lg  p-2 w-96 h-40 z-10">
       {results.length > 0 ? (
         results.map((result, i) => (
           <div
