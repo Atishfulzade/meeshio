@@ -66,8 +66,6 @@ const UserProfile = () => {
 
     const fetchSignedImageUrl = async (key) => {
       const cleanedKey = key.replace("uploads/", "");
-      console.log(cleanedKey);
-
       const response = await getData(`images/${cleanedKey}`);
       return response.signedUrl; // Adjust based on your API response structure
     };
@@ -83,8 +81,7 @@ const UserProfile = () => {
     formData.append("profileImage", imageFile);
 
     try {
-      const token = localStorage.getItem("token");
-      await updateData("user/profile", formData, token, true);
+      await updateData("user/profile", formData);
 
       toast({
         title: "Profile Image Updated",

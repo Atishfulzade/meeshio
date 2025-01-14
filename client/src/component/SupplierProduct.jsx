@@ -28,10 +28,12 @@ import {
   SelectValue,
 } from "../components/ui/select";
 import { useSelector } from "react-redux";
-import { MdOutlineDelete } from "react-icons/md";
 import { getData, updateData } from "../utils/fetchData";
 import { fetchSignedUrls } from "../utils/signedUrl";
 import { toast } from "../components/ui/use-toast";
+import { Bell, Loader, Pen, Trash } from "lucide-react";
+import { convertTimeToCocale } from "../utils/convertTimeToLocale";
+import SearchBar from "./SearchBar";
 
 const SupplierProduct = () => {
   const [products, setProducts] = useState([]);
@@ -39,27 +41,32 @@ const SupplierProduct = () => {
   const [selectedFields, setSelectedFields] = useState([]);
   const [fieldValues, setFieldValues] = useState({});
   const [loading, setLoading] = useState(false);
+  const [searchInput, setSearchInput] = useState("");
   const id = useSelector((state) => state.supplierInfo?.id);
 
   // Fetch products on component mount
   useEffect(() => {
     const fetchProducts = async () => {
+      setLoading(true);
       try {
         const response = await getData(`products/product?supplierId=${id}`);
         const enrichedProducts = await Promise.all(
           response.products.map(async (product) => {
             const productImages = product?.product_images || [];
+            console.log(product.product_images[0]);
+
             const signedUrls = await fetchSignedUrls(productImages);
             return { ...product, signedUrls };
           })
         );
         setProducts(enrichedProducts);
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching products:", error);
       }
     };
     if (id) fetchProducts();
-  }, [id]);
+  }, []);
 
   // Handle field selection for editing
   const handleFieldSelection = (field) => {
@@ -127,6 +134,17 @@ const SupplierProduct = () => {
 
   return (
     <div>
+      <div className="flex w-full justify-between items-center ">
+        <SearchBar
+          width="w-full"
+          searchInput={searchInput}
+          setSearchInput={setSearchInput}
+        />
+        <div className="relative">
+          <span className="bg-red-700 animate-pulse h-2 w-2 rounded-full absolute"></span>
+          <Bell strokeWidth={1.25} size={20} />
+        </div>
+      </div>
       <Table>
         <TableHeader>
           <TableRow>
@@ -138,112 +156,121 @@ const SupplierProduct = () => {
             <TableHead>Created At</TableHead>
             <TableHead>Updated At</TableHead>
             <TableHead>Popular</TableHead>
-            <TableHead>Shipping Charges</TableHead>
-            <TableHead>Special Offers</TableHead>
+            <TableHead>Mall verified</TableHead>
+            <TableHead>Supplier</TableHead>
             <TableHead>Actions</TableHead>
           </TableRow>
         </TableHeader>
-        <TableBody>
-          {products.length > 0 ? (
-            products.map((product) => (
-              <TableRow key={product._id}>
-                <TableCell>
-                  <img
-                    src={product.signedUrls[0] || ""}
-                    alt={product.name || "Product Image"}
-                    className="w-12 h-12 object-cover"
-                  />
-                </TableCell>
-                <TableCell>{product.name}</TableCell>
-                <TableCell>{product.category_name || "No Category"}</TableCell>
-                <TableCell>{product.min_catalog_price}</TableCell>
-                <TableCell>{product.available_stock}</TableCell>
-                <TableCell>{product.createdAt}</TableCell>
-                <TableCell>{product.updatedAt}</TableCell>
-                <TableCell>{product.popular ? "Yes" : "No"}</TableCell>
-                <TableCell>{product.mall_verified || "No"}</TableCell>
-                <TableCell>
-                  {product.special_offers?.offers?.length > 0
-                    ? product.special_offers.offers.map((offer, index) => (
-                        <div key={index}>
-                          <strong>{offer.type}:</strong> ₹{offer.amount}
-                        </div>
-                      ))
-                    : "No Offers"}
-                </TableCell>
-                <TableCell>
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <Button
-                        variant="outline"
-                        className="mr-2"
-                        onClick={() => openEditDialog(product)}
-                      >
-                        <RiEditCircleLine size={18} />
-                      </Button>
-                    </DialogTrigger>
-                    {editingProduct && editingProduct._id === product._id && (
-                      <DialogContent>
-                        <DialogHeader>
-                          <DialogTitle>Update Product</DialogTitle>
-                          <DialogDescription>
-                            Select fields to update
-                          </DialogDescription>
-                        </DialogHeader>
-                        <form onSubmit={handleSubmit}>
-                          <Select onValueChange={handleFieldSelection}>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select a field" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectGroup>
-                                <SelectItem value="name">Name</SelectItem>
-                                <SelectItem value="available_stock">
-                                  Stock
-                                </SelectItem>
-                                <SelectItem value="min_catalog_price">
-                                  Price
-                                </SelectItem>
-                                <SelectItem value="description">
-                                  Description
-                                </SelectItem>
-                              </SelectGroup>
-                            </SelectContent>
-                          </Select>
-                          {selectedFields.map((field) => (
-                            <div key={field}>
-                              <Label htmlFor={field}>{field}</Label>
-                              <Input
-                                name={field}
-                                value={fieldValues[field] || ""}
-                                onChange={(e) =>
-                                  handleInputChange(field, e.target.value)
-                                }
-                              />
-                            </div>
-                          ))}
-                          <Button type="submit" disabled={loading}>
-                            {loading ? "Updating..." : "Update"}
-                          </Button>
-                        </form>
-                      </DialogContent>
-                    )}
-                  </Dialog>
-                  <Button
-                    variant="outline"
-                    onClick={() => handleDeleteProduct(product._id)}
-                  >
-                    <MdOutlineDelete size={18} />
-                  </Button>
-                </TableCell>
+        {loading ? (
+          <div className="flex justify-center items-center w-full h-24">
+            <Loader className="animate-spin" /> Loading...
+          </div>
+        ) : (
+          <TableBody>
+            {products.length > 0 ? (
+              products.map((product) => (
+                <TableRow key={product._id} className="p-0 ">
+                  <TableCell className=" p-0">
+                    <img
+                      src={product.signedUrls[0] || ""}
+                      alt={product.name || "Product Image"}
+                      className="w-12 h-14 object-cover rounded-sm"
+                    />
+                  </TableCell>
+                  <TableCell className="line-clamp-2 overflow-hidden">
+                    {product.name}
+                  </TableCell>
+                  <TableCell>
+                    {product.category_name || "No Category"}
+                  </TableCell>
+                  <TableCell>{product.min_catalog_price}</TableCell>
+                  <TableCell>{product.available_stock}</TableCell>
+                  <TableCell>
+                    {convertTimeToCocale(product.createdAt)}
+                  </TableCell>
+                  <TableCell>
+                    {convertTimeToCocale(product.updatedAt)}
+                  </TableCell>
+                  <TableCell>{product.popular ? "Yes" : "No"}</TableCell>
+                  <TableCell>{product?.mall_verified ? "Yes" : "No"}</TableCell>
+                  <TableCell>{product.supplier}</TableCell>
+                  <TableCell className="flex gap-2 ">
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Pen
+                          size={18}
+                          onClick={() => openEditDialog(product)}
+                          className="cursor-pointer mt-2"
+                        />
+                      </DialogTrigger>
+                      {editingProduct && editingProduct._id === product._id && (
+                        <DialogContent>
+                          <DialogHeader>
+                            <DialogTitle>Update Product</DialogTitle>
+                            <DialogDescription>
+                              Select fields to update
+                            </DialogDescription>
+                          </DialogHeader>
+                          <form onSubmit={handleSubmit}>
+                            <Select onValueChange={handleFieldSelection}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select a field" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectGroup>
+                                  <SelectItem value="name">Name</SelectItem>
+                                  <SelectItem value="available_stock">
+                                    Stock
+                                  </SelectItem>
+                                  <SelectItem value="min_catalog_price">
+                                    Price
+                                  </SelectItem>
+                                  <SelectItem value="description">
+                                    Description
+                                  </SelectItem>
+                                </SelectGroup>
+                              </SelectContent>
+                            </Select>
+                            {selectedFields.map((field) => (
+                              <div key={field}>
+                                <Label htmlFor={field}>{field}</Label>
+                                <Input
+                                  name={field}
+                                  value={fieldValues[field] || ""}
+                                  onChange={(e) =>
+                                    handleInputChange(field, e.target.value)
+                                  }
+                                  className="border"
+                                />
+                              </div>
+                            ))}
+                            <Button
+                              type="submit"
+                              disabled={loading}
+                              className="mt-3"
+                            >
+                              {loading ? "Updating..." : "Update"}
+                            </Button>
+                          </form>
+                        </DialogContent>
+                      )}
+                    </Dialog>
+
+                    <Trash
+                      className="cursor-pointer mt-2"
+                      size={18}
+                      onClick={() => handleDeleteProduct(product._id)}
+                    />
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={11}>No products found</TableCell>
               </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={11}>No products found</TableCell>
-            </TableRow>
-          )}
-        </TableBody>
+            )}
+          </TableBody>
+        )}
       </Table>
     </div>
   );

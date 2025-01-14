@@ -95,6 +95,7 @@ const FilterBar = ({ products, setFilterProduct }) => {
                     width={"w-62"}
                     searchInput={searchInput}
                     setSearchInput={setSearchInput}
+                    showResult={false}
                   />
                 )}
                 <CategoryWithMore

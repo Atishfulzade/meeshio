@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Outlet, NavLink, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -11,6 +11,10 @@ import {
   Settings,
   User,
   User2,
+  Bell,
+  Package,
+  List,
+  PackagePlus,
 } from "lucide-react";
 import {
   Sidebar,
@@ -38,41 +42,42 @@ import { setIsLoggedIn } from "../redux_store/logInSlice";
 const items = [
   {
     title: "Dashboard",
-    url: "/supplier/dashboard",
+    url: "/supplier/m/dashboard",
     icon: Home,
   },
   {
     title: "Products",
-    url: "/supplier/product",
-    icon: Inbox,
+    url: "/supplier/m/product",
+    icon: List,
   },
   {
     title: "Add Product",
-    url: "/supplier/add-product",
-    icon: Blocks,
+    url: "/supplier/m/add-product",
+    icon: PackagePlus,
   },
   {
-    title: "Search",
+    title: "Orders",
     url: "#",
-    icon: Search,
+    icon: Package,
   },
   {
-    title: "Settings",
+    title: "Notification",
     url: "#",
-    icon: Settings,
+    icon: Bell,
   },
 ];
 
 const SupplierSidebar = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [supplierLogo, setSupplierLogo] = useState("");
   const supplier = useSelector((state) => state.supplierInfo);
   const logoutUser = async () => {
     try {
       const logOut = await sendData("supplier/logout");
       localStorage.removeItem("token");
-      navigate("/");
       dispatch(setIsLoggedIn(false));
+      navigate("/");
 
       return toast({
         title: logOut?.message,
@@ -87,6 +92,17 @@ const SupplierSidebar = () => {
       });
     }
   };
+
+  const handleSupplierLogo = async () => {
+    if (supplier.profileImage) {
+      const signedUrl = await fetchSignedUrl(supplier.profileImage);
+      setSupplierLogo(signedUrl);
+    }
+  };
+  useEffect(() => {
+    handleSupplierLogo();
+  }, [supplier]);
+
   return (
     <div style={{ display: "flex", minHeight: "100vh" }}>
       {/* Sidebar */}
@@ -127,7 +143,7 @@ const SupplierSidebar = () => {
                 <DropdownMenuTrigger asChild>
                   <SidebarMenuButton>
                     {supplier.profileImage ? (
-                      <img src={fetchSignedUrl(supplier.profileImage)} alt="" />
+                      <img src={supplierLogo} alt="company logo" />
                     ) : (
                       <User2 />
                     )}

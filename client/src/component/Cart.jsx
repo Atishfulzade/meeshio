@@ -129,26 +129,26 @@ const Cart = ({ nextStep }) => {
               {cartItems.map((item, index) => (
                 <div
                   key={index}
-                  className="flex flex-col justify-between border md:w-[600px] min-w-[300px] rounded-md h-fit"
+                  className="flex flex-col relative justify-start border md:w-[600px] min-w-[300px] rounded-md h-28"
                 >
-                  <div className="flex justify-between p-2">
+                  <div className="flex justify-start p-2">
                     <img
                       src={signedUrls[index] || ""}
                       alt={item.name}
                       className="w-20 h-20"
                     />
                     <div className="flex flex-col ml-5">
-                      <h4 className="font-semibold">{item.name}</h4>
-                      <p className="font-mier-book text-sm">
-                        {item.description}
-                      </p>
-                      <p className="font-mier-demi text-2xl">
+                      <h4 className="font-semibold text-slate-700 font-mier-bold">
+                        {item.name}
+                      </h4>
+
+                      <p className="font-mier-bold text-2xl">
                         Price: ₹{item.min_product_price}{" "}
-                        <span className="text-xl line-through text-stone-500">
+                        <span className="text-xl line-through text-stone-500 font-mier-book">
                           {item.min_catalog_price}
                         </span>
                       </p>
-                      <div className="flex border justify-between w-fit px-3 rounded-md items-center">
+                      <div className="flex border justify-between w-fit px-3 mt-2 rounded-md items-center">
                         <HiMinusSm
                           className="cursor-pointer"
                           onClick={() => decreaseCount(index)}
@@ -164,7 +164,7 @@ const Cart = ({ nextStep }) => {
                     </div>
                     <MdDeleteOutline
                       size={20}
-                      className="cursor-pointer text-red-500"
+                      className=" absolute right-1 top-1 cursor-pointer text-red-500"
                       onClick={() => removeItem(item._id)}
                     />
                   </div>

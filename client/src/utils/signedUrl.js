@@ -7,6 +7,8 @@ const cleanKey = (image) => image?.replace("uploads/", "");
 export const fetchSignedUrl = async (image) => {
   try {
     const cleanedKey = cleanKey(image);
+
+    if (!cleanedKey) return;
     const response = await getData(`images/${cleanedKey}`);
     return response?.signedUrl || null;
   } catch (error) {

@@ -1,12 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { IoClose, IoMenu } from "react-icons/io5";
-import { appstore, avatar, meeshoLogo, playstore } from "../assets";
+import React from "react";
+import { avatar, meeshoLogo } from "../assets";
 import { Button } from "../components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { FaRegUser } from "react-icons/fa6";
-import { PiShoppingCart, PiDeviceMobile } from "react-icons/pi";
 import { useDispatch, useSelector } from "react-redux";
-import { Badge } from "@/components/ui/badge";
 import { useLocation, useNavigate } from "react-router-dom";
 import { IoLogOutOutline } from "react-icons/io5";
 import {
@@ -14,16 +11,8 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
-import { Link } from "react-router-dom";
-import { setIsLoggedIn } from "../redux_store/logInSlice";
+
 import { useToast } from "@/components/ui/use-toast";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogTrigger,
-} from "@radix-ui/react-dialog";
-import { sendData } from "../utils/fetchData";
 
 const SupplierHeader = () => {
   const ismobile = useSelector((state) => state.identifyMobile.isMobile);

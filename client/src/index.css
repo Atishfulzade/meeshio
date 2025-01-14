@@ -165,3 +165,12 @@
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 }
+.active-class {
+  color: #4a90e2;
+  font-weight: bold;
+}
+
+.inactive-class {
+  color: #000;
+  font-weight: normal;
+}

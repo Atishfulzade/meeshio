@@ -10,33 +10,22 @@ const CardDisplay = ({ heading }) => {
   const [products, setProducts] = useState([]);
   const cardRef = useRef(null);
   const [filteredProducts, setFilteredProducts] = useState([]);
-  const [visibleProducts, setVisibleProducts] = useState([]); // State to hold visible products
-  const [itemsToShow, setItemsToShow] = useState(16); // State to track how many items to show
-  const observerRef = useRef(null); // Reference for the Intersection Observer
+  const [visibleProducts, setVisibleProducts] = useState([]);
+  const [itemsToShow, setItemsToShow] = useState(16);
+  const observerRef = useRef(null);
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const data = await getData("products");
-
-        // Process the images for each product
         const processedProducts = data.map((product) => {
-          if (Array.isArray(product.images)) {
-            return product;
-          }
-
           if (typeof product.images === "string") {
             try {
               const parsedImages = JSON.parse(product.images);
-              if (Array.isArray(parsedImages)) {
-                product.images = parsedImages.map((img) =>
-                  img.replace(/["[\]]/g, "")
-                );
-              } else {
-                product.images = [];
-              }
-            } catch (error) {
-              console.error("Failed to parse images string:", error);
+              product.images = Array.isArray(parsedImages)
+                ? parsedImages.map((img) => img.replace(/["\\[\\]]/g, ""))
+                : [];
+            } catch {
               product.images = [];
             }
           }
@@ -44,66 +33,54 @@ const CardDisplay = ({ heading }) => {
         });
 
         setProducts(processedProducts);
-        setFilteredProducts(processedProducts); // Initialize with all products
-        setVisibleProducts(processedProducts.slice(0, itemsToShow)); // Show the first 16 products
+        setFilteredProducts(processedProducts);
+        setVisibleProducts(processedProducts.slice(0, itemsToShow));
       } catch (error) {
         console.error("Error fetching products:", error);
       }
     };
 
     fetchProducts();
-  }, [itemsToShow]); // Re-run when itemsToShow changes
+  }, []);
+  useEffect(() => {
+    setVisibleProducts(filteredProducts.slice(0, itemsToShow));
+  }, [filteredProducts, itemsToShow]);
 
   useEffect(() => {
-    // Create the Intersection Observer to detect when the user has reached the bottom of the list
     const observer = new IntersectionObserver(
-      (entries) => {
-        const [entry] = entries;
+      ([entry]) => {
         if (entry.isIntersecting) {
           loadMoreItems();
         }
       },
-      {
-        root: null, // Default is the viewport
-        rootMargin: "0px",
-        threshold: 1.0, // Trigger when the entire element is in view
-      }
+      { root: null, rootMargin: "0px", threshold: 1.0 }
     );
 
-    if (observerRef.current) {
-      observer.observe(observerRef.current); // Observe the reference element
-    }
-
-    return () => {
-      if (observerRef.current) {
-        observer.unobserve(observerRef.current); // Clean up observer on unmount
-      }
-    };
-  }, [filteredProducts]); // Only re-run when filteredProducts changes
+    if (observerRef.current) observer.observe(observerRef.current);
+    return () => observer.disconnect();
+  }, [filteredProducts, itemsToShow]);
 
   const loadMoreItems = () => {
     if (itemsToShow < filteredProducts.length) {
-      setItemsToShow((prev) => prev + 16); // Load 16 more products
+      setItemsToShow((prev) => prev + 16);
       setVisibleProducts(filteredProducts.slice(0, itemsToShow + 16));
     }
   };
+  console.log("Products:", products);
+  console.log("Filtered Products:", filteredProducts);
+  console.log("Visible Products:", visibleProducts);
 
   return (
     <div className="flex w-full flex-col justify-between pt-3">
       <h4 className="text-xl my-2 font-mier-bold">{heading}</h4>
-      <div className="flex justify-between w-full ">
+      <div className="flex justify-between w-full">
         {!isMobile && (
           <Sidebar products={products} setFilterProduct={setFilteredProducts} />
         )}
 
         {visibleProducts.length > 0 ? (
-          <div className="flex flex-col w-[100%] ">
-            <Cards
-              ref={cardRef}
-              width={"w-[100%]"}
-              products={visibleProducts}
-            />
-            {/* Load more trigger */}
+          <div className="flex flex-col w-full">
+            <Cards ref={cardRef} width={"w-full"} products={visibleProducts} />
             <div ref={observerRef} className="h-10 w-full"></div>
           </div>
         ) : (

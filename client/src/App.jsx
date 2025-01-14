@@ -8,10 +8,7 @@ import { setUserInfo } from "./redux_store/userInfoSlice";
 import { sendData } from "./utils/fetchData";
 import SupplierDashboardLayout from "./component/SupplierDashboardLayout";
 import { setSupplierInfo } from "./redux_store/supplierInfoSlice";
-import SupplierProduct from "./component/SupplierProduct";
-import SupplierSidebar from "./component/App-sidebar";
 import { SidebarProvider } from "@/components/ui/sidebar";
-import AddProduct from "./pages/AddProduct";
 
 // Utility function for debouncing
 export const debounce = (func, wait) => {
@@ -44,7 +41,9 @@ const UserProfile = lazy(() => import("./pages/UserProfile"));
 const SupplierPortal = lazy(() => import("./pages/supplierAuth"));
 const SupplierRegistration = lazy(() => import("./pages/SupplierRegistration"));
 const Favourite = lazy(() => import("./pages/Favourite"));
-
+const SupplierProduct = lazy(() => import("./component/SupplierProduct"));
+const AddProduct = lazy(() => import("./pages/AddProduct"));
+const SupplierSidebar = lazy(() => import("./component/App-sidebar"));
 function App() {
   const isLoggedIn = useSelector((state) => state.loggedIn.isLoggedIn);
   const dispatch = useDispatch();
@@ -58,30 +57,39 @@ function App() {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (!token) {
-      dispatch(setIsLoggedIn(false));
-      return;
-    }
 
     const validateToken = async () => {
+      if (!token) {
+        dispatch(setIsLoggedIn(false));
+        navigate("/");
+        return;
+      }
       try {
         const response = await sendData("user/auth/validateuser", { token });
-        if (!response?.user) {
-          localStorage.removeItem("token");
+        console.log(response.supplier);
+
+        if (response?.user) {
           dispatch(setIsLoggedIn(false));
+          localStorage.removeItem("token");
           return;
         }
 
         dispatch(setIsLoggedIn(true));
         dispatch(setUserInfo(response.user));
 
-        if (response.user.role === "supplier") {
-          navigate("/supplier/dashboard");
+        if (response.supplier.role === "supplier" || "admin") {
+          dispatch(setSupplierInfo(response.supplier));
         }
       } catch (error) {
         console.error("Error validating token", error);
-        localStorage.removeItem("token");
+
         dispatch(setIsLoggedIn(false));
+        localStorage.removeItem("token");
+        if (response.supplier) {
+          navigate("/supplier");
+        } else {
+          navigate("/user/authenticate");
+        }
       }
     };
 
@@ -131,7 +139,7 @@ function App() {
           <Route path="supplier" element={<SupplierPortal />} />
           <Route path="supplier/auth" element={<SupplierRegistration />} />
           <Route
-            path="/supplier/*"
+            path="/supplier/m/*"
             element={
               <SidebarProvider>
                 <SupplierSidebar />
@@ -139,6 +147,7 @@ function App() {
             }
           >
             <Route path="dashboard" element={<DashBoard />} />
+            <Route index element={<DashBoard />} />
             <Route path="product" element={<SupplierProduct />} />
             <Route path="add-product" element={<AddProduct />} />
           </Route>

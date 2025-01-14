@@ -4,6 +4,7 @@ import ProductCard from "./ProductCard";
 
 const Cards = forwardRef(({ products, width }, ref) => {
   const isMobile = useSelector((state) => state.identifyMobile.isMobile);
+  console.log(products);
 
   return (
     <div

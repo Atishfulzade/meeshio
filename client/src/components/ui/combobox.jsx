@@ -1,4 +1,3 @@
-import * as React from "react";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -15,6 +14,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { useState } from "react";
 
 const sortBy = [
   {
@@ -40,30 +40,42 @@ const sortBy = [
 ];
 
 export function ComboboxDemo({ products, setFilterProduct }) {
-  const [open, setOpen] = React.useState(false);
-  const [value, setValue] = React.useState("");
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState("Relevance");
+  // console.log(products);
 
   const handleSort = (criteria) => {
     let sortedProducts = [...products];
 
     switch (criteria) {
+      case "Relevance":
+        sortedProducts = [...products];
+        break;
       case "New arrivals":
         // Sort by newest arrivals, assuming there's a date or id field to determine recency
         sortedProducts.sort(
-          (a, b) => new Date(b.arrivalDate) - new Date(a.arrivalDate)
+          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
         );
         break;
 
       case "Price (High to Low)":
-        sortedProducts.sort((a, b) => b.price - a.price);
+        sortedProducts.sort(
+          (a, b) => b.min_product_price - a.min_product_price
+        );
         break;
 
       case "Price (Low to High)":
-        sortedProducts.sort((a, b) => a.price - b.price);
+        sortedProducts.sort(
+          (a, b) => a.min_product_price - b.min_product_price
+        );
         break;
 
       case "Ratings":
-        sortedProducts.sort((a, b) => b.rating - a.rating);
+        sortedProducts.sort(
+          (a, b) =>
+            b.catalog_reviews_summary.average_rating -
+            a.catalog_reviews_summary.average_rating
+        );
         break;
 
       case "Discount":

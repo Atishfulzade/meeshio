@@ -34,10 +34,11 @@ import { useSelector } from "react-redux";
 import { Separator } from "../components/ui/separator";
 import { Button } from "../components/ui/button";
 import CardDisplay from "../component/CardDisplay";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
   const ismobile = useSelector((state) => state.identifyMobile.isMobile);
-
+  const navigate = useNavigate();
   return (
     <div
       className={
@@ -87,11 +88,11 @@ const Home = () => {
                 <br /> Returns
               </div>
             </div>
-            <div className="flex items-center gap-2 bg-fuchsia-700 w-fit rounded-sm text-white font-mier-book text-xs lg:text-lg lg:py-4 lg:px-5 py-2 px-3">
+            <div className="flex items-center cursor-pointer gap-2 bg-fuchsia-700 w-fit rounded-sm text-white font-mier-book text-xs lg:text-lg lg:py-4 lg:px-5 py-2 px-3">
               <img
                 src={playstore_small}
                 alt="Play Store icon"
-                className="w-4 lg:w-6"
+                className="w-4 lg:w-6 "
               />
               Download the Meesho App
             </div>
@@ -111,13 +112,20 @@ const Home = () => {
             <img
               src={categories1}
               alt="Category 1"
-              className="w-64 lg:w-[27rem]"
+              className="w-64 lg:w-[27rem] cursor-pointer"
+              onClick={() => navigate("/category/women fashion")}
             />
-            <img src={categories2} alt="Category 2" className="w-52 lg:w-80" />
+            <img
+              src={categories2}
+              alt="Category 2"
+              onClick={() => navigate("/category/mens fashion")}
+              className="w-52 lg:w-80 cursor pointer"
+            />
             <img
               src={categories3}
+              onClick={() => navigate("/category/kids fashion")}
               alt="Category 3"
-              className="w-52   lg:w-80"
+              className="w-52 cursor-pointer  lg:w-80"
             />
           </div>
         </div>
@@ -125,12 +133,13 @@ const Home = () => {
           <img
             src={essentialBanner}
             alt="Essential products banner"
-            className="w-full"
+            className="w-full "
           />
           <img
             src={view_all_btn}
             alt="View all button"
-            className="absolute left-10 w-32 top-40 lg:w-52 lg:top-60 lg:left-20"
+            onClick={() => navigate("/category/essentials")}
+            className="absolute cursor-pointer left-10 w-32 top-40 lg:w-52 lg:top-60 lg:left-20"
           />
           <div className="absolute bottom-3 lg:bottom-10 flex right-5 top-3 items-end justify-end gap-5">
             <div className="flex flex-col ">
@@ -139,7 +148,12 @@ const Home = () => {
                 alt="Essential product 1"
                 className="w-36 lg:w-52"
               />
-              <img src={home_decor} alt="Home decor" className="w-36 lg:w-52" />
+              <img
+                src={home_decor}
+                alt="Home decor"
+                onClick={() => navigate("/category/home decor")}
+                className="w-36 lg:w-52 cursor-pointer"
+              />
             </div>
             <div>
               <img
@@ -150,7 +164,8 @@ const Home = () => {
               <img
                 src={kitchen_appliences}
                 alt="Kitchen appliances"
-                className="w-36 lg:w-52"
+                onClick={() => navigate("/category/kitchen appliences")}
+                className="w-36 lg:w-52 cursor-pointer"
               />
             </div>
             <div>
@@ -162,7 +177,8 @@ const Home = () => {
               <img
                 src={health_care}
                 alt="Health care products"
-                className="w-36 lg:w-52"
+                className="w-36 lg:w-52 cursor-pointer"
+                onClick={() => navigate("/category/health care")}
               />
             </div>
           </div>
@@ -172,6 +188,7 @@ const Home = () => {
           <img
             src={view_all_btn}
             alt="View all button"
+            onClick={() => navigate("/category/accessories")}
             className="absolute left-10 w-32 top-40 lg:w-52 lg:top-60 lg:left-20"
           />
           <div className="absolute bottom-3 lg:bottom-10 flex right-5 top-3 items-end justify-end gap-5">
@@ -183,8 +200,9 @@ const Home = () => {
               />
               <img
                 src={assessories}
+                onClick={() => navigate("/category/accessories")}
                 alt="Accessories"
-                className="w-36 lg:w-52"
+                className="w-36 lg:w-52 cursor-pointer"
               />
             </div>
             <div>
@@ -193,7 +211,12 @@ const Home = () => {
                 alt="Style product 2"
                 className="w-36 lg:w-52"
               />
-              <img src={footwear} alt="Footwear" className="w-36 lg:w-52" />
+              <img
+                src={footwear}
+                alt="Footwear"
+                onClick={() => navigate("/category/footwear")}
+                className="w-36 lg:w-52 cursor-pointer"
+              />
             </div>
             <div>
               <img
@@ -204,7 +227,8 @@ const Home = () => {
               <img
                 src={electronics}
                 alt="Electronics"
-                className="w-36 lg:w-52"
+                onClick={() => navigate("/category/electronics")}
+                className="w-36 lg:w-52 cursor-pointer"
               />
             </div>
           </div>
@@ -220,10 +244,18 @@ const Home = () => {
             </h1>
             <div className="flex gap-2 lg:gap-4 mt-8">
               <div className="w-32 h-12 lg:w-48 lg:h-16 bg-black rounded-md overflow-hidden p-2 ">
-                <img src={playstore} alt="Play Store button" />
+                <img
+                  src={playstore}
+                  alt="Play Store button"
+                  className="cursor-pointer"
+                />
               </div>
               <div className="w-32 h-12 lg:w-48 lg:h-16 bg-black rounded-md overflow-hidden p-2 ">
-                <img src={appstore} alt="App Store button" />
+                <img
+                  src={appstore}
+                  alt="App Store button"
+                  className="cursor-pointer"
+                />
               </div>
             </div>
           </div>
@@ -253,7 +285,10 @@ const Home = () => {
                 Grow your Business 10x
               </div>
             </div>
-            <Button className="bg-white w-fit mt-4 lg:text-sm text-slate-900 font-mier-bold  px-3 py-3  hover:bg-slate-300">
+            <Button
+              onClick={() => navigate("/supplier")}
+              className="bg-white w-fit mt-4 lg:text-sm text-slate-900 font-mier-bold  px-3 py-3  hover:bg-slate-300"
+            >
               Sign up Now
             </Button>
           </div>

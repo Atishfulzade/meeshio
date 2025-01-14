@@ -239,6 +239,7 @@ const Header = () => {
           <SearchBar
             width={"md:w-72 lg:w-96"}
             searchInput={searchInput}
+            showResult={true}
             setSearchInput={setSearchInput}
           />
         )}

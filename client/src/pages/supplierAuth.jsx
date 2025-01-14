@@ -97,7 +97,7 @@ const SupplierLogin = () => {
         localStorage.setItem("supplier", response.supplier?._id);
         dispatch(setIsLoggedIn(true));
         dispatch(setSupplierInfo(response?.supplier));
-        navigate("/supplier/dashboard");
+        navigate("/supplier/m/dashboard");
         setIsLoginOpen(false);
       } catch (error) {
         toast({

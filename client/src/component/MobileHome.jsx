@@ -24,6 +24,7 @@ import { Separator } from "@/components/ui/separator";
 import CardDisplay from "./CardDisplay";
 import { deals, filterData, slide } from "../utils/constant";
 import { Button } from "../components/ui/button";
+import { useNavigate } from "react-router-dom";
 
 // Memoize the SearchBar component
 const MemoizedSearchBar = React.memo(SearchBar);
@@ -33,7 +34,7 @@ const MobileHome = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [searchInput, setSearchInput] = useState("");
   const [activeDrawer, setActiveDrawer] = useState(""); // State to store which drawer is active
-
+  const navigate = useNavigate();
   // Memoize callback for slide change to prevent unnecessary re-renders
   const handleSlideChange = useCallback((swiper) => {
     setActiveIndex(swiper.activeIndex);
@@ -145,6 +146,7 @@ const MobileHome = () => {
         <MemoizedSearchBar
           searchInput={searchInput}
           setSearchInput={setSearchInput}
+          showResult={true}
         />
       </div>
 
@@ -162,7 +164,8 @@ const MobileHome = () => {
           {slide.map((slides, index) => (
             <SwiperSlide key={index}>
               <img
-                src={slides}
+                src={slides.Img}
+                onClick={() => navigate(`${slides.link}`)}
                 alt={`Product ${index + 1}`}
                 className="object-cover h-full w-full"
               />
@@ -195,8 +198,9 @@ const MobileHome = () => {
           {deals.map((deal, index) => (
             <div key={index} className="flex-shrink-0 w-28 h-full">
               <img
-                src={deal}
-                alt=""
+                src={deal.Img}
+                alt={deal}
+                onClick={() => navigate(`${deal.link}`)}
                 className="w-full h-full object-cover border border-slate-600 rounded-lg"
               />
             </div>
