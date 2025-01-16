@@ -1,15 +1,20 @@
-import React from "react";
+import React, { useState } from "react";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Label } from "@radix-ui/react-label";
 import { Input } from "../components/ui/input";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { updateData } from "../utils/fetchData";
-import { DialogDescription } from "@radix-ui/react-dialog";
-import { DialogTitle } from "../components/ui/dialog";
-import { toast } from "../components/ui/use-toast";
+import {
+  DialogDescription,
+  DialogClose,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { toast } from "@/components/ui/use-toast";
 
-const AddressPopup = ({ addressDetail = {}, title, description }) => {
+const AddressPopup = ({ addressDetail = {}, title, description, setUser }) => {
+  const [open, setOpen] = useState(false); // State to control dialog visibility
+
   const formik = useFormik({
     initialValues: {
       name: addressDetail.name || "",
@@ -31,19 +36,22 @@ const AddressPopup = ({ addressDetail = {}, title, description }) => {
       pin: Yup.string()
         .matches(/^\d{6}$/, "Pin must be a 6-digit number")
         .required("Pin Code is required"),
+      landmark: Yup.string().optional(),
     }),
     onSubmit: async (values) => {
       try {
-        await updateData("user/address", { address: values });
+        const res = await updateData("user/address", { address: values });
         formik.resetForm();
+        setUser(res.user);
         toast({
-          title: "Address updated",
+          title: res.message,
           description: "Your address has been successfully updated.",
           type: "success",
         });
+        setOpen(false); // Close the dialog after success
       } catch (error) {
         toast({
-          title: "Update failed",
+          title: error.message,
           description: error.message || "An error occurred.",
           type: "error",
         });
@@ -53,7 +61,7 @@ const AddressPopup = ({ addressDetail = {}, title, description }) => {
 
   return (
     <div>
-      <Dialog>
+      <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
           <button className="rounded-md px-5 text-white bg-fuchsia-600 hover:bg-fuchsia-700 py-2">
             {title}
@@ -68,6 +76,7 @@ const AddressPopup = ({ addressDetail = {}, title, description }) => {
             {description}
           </DialogDescription>
           <form className="flex flex-col gap-3" onSubmit={formik.handleSubmit}>
+            {/* Form Fields */}
             <div className="grid gap-1.5">
               <Label htmlFor="name">Name</Label>
               <Input
@@ -77,20 +86,22 @@ const AddressPopup = ({ addressDetail = {}, title, description }) => {
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 placeholder="Enter Name"
+                className="border"
               />
               {formik.touched.name && formik.errors.name && (
                 <p className="text-red-500">{formik.errors.name}</p>
               )}
             </div>
-            <div className="grid grid-cols-2">
+            <div className="grid grid-cols-2 gap-2 mb-3">
               <div className="grid gap-1.5">
-                <Label htmlFor="name">Contact</Label>
+                <Label htmlFor="contact">Contact</Label>
                 <Input
                   id="contact"
                   name="contact"
                   value={formik.values.contact}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
+                  className="border"
                   placeholder="Enter contact number"
                 />
                 {formik.touched.contact && formik.errors.contact && (
@@ -105,6 +116,7 @@ const AddressPopup = ({ addressDetail = {}, title, description }) => {
                   value={formik.values.landmark}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
+                  className="border"
                   placeholder="Enter landmark"
                 />
                 {formik.touched.landmark && formik.errors.landmark && (
@@ -112,7 +124,7 @@ const AddressPopup = ({ addressDetail = {}, title, description }) => {
                 )}
               </div>
               <div className="grid gap-1.5">
-                <Label htmlFor="name">Street</Label>
+                <Label htmlFor="street">Street</Label>
                 <Input
                   id="street"
                   name="street"
@@ -120,6 +132,7 @@ const AddressPopup = ({ addressDetail = {}, title, description }) => {
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   placeholder="Enter street"
+                  className="border"
                 />
                 {formik.touched.street && formik.errors.street && (
                   <p className="text-red-500">{formik.errors.street}</p>
@@ -133,6 +146,7 @@ const AddressPopup = ({ addressDetail = {}, title, description }) => {
                   value={formik.values.city}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
+                  className="border"
                   placeholder="Enter city"
                 />
                 {formik.touched.city && formik.errors.city && (
@@ -148,9 +162,10 @@ const AddressPopup = ({ addressDetail = {}, title, description }) => {
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   placeholder="Enter pin"
+                  className="border"
                 />
-                {formik.touched.name && formik.errors.name && (
-                  <p className="text-red-500">{formik.errors.name}</p>
+                {formik.touched.pin && formik.errors.pin && (
+                  <p className="text-red-500">{formik.errors.pin}</p>
                 )}
               </div>
               <div className="grid gap-1.5">
@@ -162,12 +177,13 @@ const AddressPopup = ({ addressDetail = {}, title, description }) => {
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   placeholder="Enter state"
+                  className="border"
                 />
                 {formik.touched.state && formik.errors.state && (
                   <p className="text-red-500">{formik.errors.state}</p>
                 )}
               </div>
-            </div>
+            </div>{" "}
             <button
               type="submit"
               className="rounded-md px-5 text-white bg-fuchsia-700 hover:bg-fuchsia-800 py-3"

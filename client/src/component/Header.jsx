@@ -157,238 +157,275 @@ const Header = () => {
   }, [token, id]);
 
   return (
-    <div className="w-full bg-white fixed top-0 left-0 z-10 flex flex-col ">
-      <div className="flex w-full gap-3 justify-between items-center  h-14 md:h-[70px] md:border-b-2 px-3 md:px-24 md:py-2  py-2">
-        <div className="flex gap-3 z-40  justify-between items-center">
-          <Dialog open={isOpen} onOpenChange={setIsOpen}>
-            <DialogTrigger>
-              <IoMenu
-                onClick={() => setIsOpen(true)}
-                size={24}
-                className="text-slate-800 md:hidden"
-              />
-            </DialogTrigger>
+    location.pathname !== "/user/authenticate" && (
+      <div className="w-full bg-white fixed top-0 left-0 z-10 flex flex-col ">
+        <div className="flex w-full gap-3 justify-between items-center  h-14 md:h-[70px] md:border-b-2 px-3 md:px-24 md:py-2  py-2">
+          <div className="flex gap-3 z-40  justify-between items-center">
+            <Dialog open={isOpen} onOpenChange={setIsOpen}>
+              <DialogTrigger>
+                <IoMenu
+                  onClick={() => setIsOpen(true)}
+                  size={24}
+                  className="text-slate-800 md:hidden"
+                />
+              </DialogTrigger>
 
-            <DialogContent className="absolute h-full  flex flex-col w-full shadow-lg">
-              <div
-                className=" flex z-50 relative
+              <DialogContent className="absolute h-full  flex flex-col w-full shadow-lg">
+                <div
+                  className=" flex z-50 relative
                 items-center justify-between"
-              >
-                <h2 className="text-lg font-bold">
-                  <img src={meeshoLogo} alt="logo" className="w-20 " />
-                </h2>
-                {/* <IoClose onClick={() => setIsOpen(false)} size={24} /> */}
-              </div>
-              <div className="flex justify-between">
-                <DialogDescription className="flex flex-col">
-                  <p>Welcome {isLoggedIn ? firstname : "User"}!</p>
-                  {isLoggedIn && (
-                    <div className="flex gap-3 mt-3">
-                      <img
-                        src={profileImage}
-                        alt={firstname}
-                        className="h-7 w-7  rounded-full border border-fuchsia-700"
-                      />
-                      <p className="font-mier-book text-sm">
-                        {firstname} {lastname}
-                      </p>
-                    </div>
-                  )}
-                </DialogDescription>
-                <Button
-                  onClick={
-                    isLoggedIn
-                      ? logoutUser
-                      : () => {
-                          navigate("/user/authenticate");
-                          setIsOpen(false);
-                        }
-                  }
-                  className="bg-fuchsia-600 hover:bg-fuchsia-700"
                 >
-                  {isLoggedIn ? "Logout" : "Login"}
-                </Button>
-              </div>
-              <div className="p-4">
-                <ul className="flex flex-col gap-4">
-                  <Link
-                    variant="link"
-                    to={"/supplier"}
-                    className="text-slate-800 text-[17px] font-normal font-mier-book"
-                  >
-                    Become a supplier
-                  </Link>
-                  <Link
-                    variant="link"
-                    to={"/supplier"}
-                    className="text-slate-800 text-[17px] font-normal font-mier-book"
-                  >
-                    Newsroom
-                  </Link>
-                </ul>
-              </div>
-            </DialogContent>
-          </Dialog>
-          <img
-            src={meeshoLogo}
-            alt="Meesho logo"
-            className="w-24 mb-1 lg:w-40 md:w-32 md:pr-4 lg:pr-0"
-          />
-        </div>
-        {!ismobile && location.pathname !== "/checkout" && (
-          <SearchBar
-            width={"md:w-72 lg:w-96"}
-            searchInput={searchInput}
-            showResult={true}
-            setSearchInput={setSearchInput}
-          />
-        )}
-
-        {location.pathname !== "/checkout" && (
-          <div
-            className={` items-center h-full justify-between ${
-              ismobile ? "hidden" : "flex"
-            } gap-4`}
-          >
-            <div className="lg:flex md:hidden  h-full items-center">
-              <HoverCard>
-                <HoverCardTrigger asChild>
+                  <h2 className="text-lg font-bold">
+                    <img src={meeshoLogo} alt="logo" className="w-20 " />
+                  </h2>
+                  {/* <IoClose onClick={() => setIsOpen(false)} size={24} /> */}
+                </div>
+                <div className="flex justify-between">
+                  <DialogDescription className="flex flex-col">
+                    <p>Welcome {isLoggedIn ? firstname : "User"}!</p>
+                    {isLoggedIn && (
+                      <div className="flex gap-3 mt-3">
+                        <img
+                          src={profileImage}
+                          alt={firstname}
+                          className="h-7 w-7  rounded-full border border-fuchsia-700"
+                        />
+                        <p className="font-mier-book text-sm">
+                          {firstname} {lastname}
+                        </p>
+                      </div>
+                    )}
+                  </DialogDescription>
                   <Button
-                    variant="link"
-                    className="text-slate-800 text-[17px] decoration-2 font-normal font-mier-book  underline-offset-[26px]  "
+                    onClick={
+                      isLoggedIn
+                        ? logoutUser
+                        : () => {
+                            navigate("/user/authenticate");
+                            setIsOpen(false);
+                          }
+                    }
+                    className="bg-fuchsia-600 hover:bg-fuchsia-700"
                   >
-                    <PiDeviceMobile className="mr-2 font-mier-book" size={22} />
-                    Download App
+                    {isLoggedIn ? "Logout" : "Login"}
                   </Button>
-                </HoverCardTrigger>
-                <HoverCardContent className="w-fit mt-3">
-                  <div className="flex justify-between flex-col gap-3 space-x-3">
-                    <h4 className="text-lg font-semibold text-left font-mier-bold">
-                      Download from
-                    </h4>
-                    <div className="w-48 overflow-hidden rounded-lg p-2 bg-black h-fit">
-                      <img
-                        src={playstore}
-                        alt="Playstore"
-                        className="w-full rounded-lg cursor-pointer"
-                      />
-                    </div>
-                    <div className="w-48 overflow-hidden rounded-lg p-2 bg-black h-fit">
-                      <img
-                        src={appstore}
-                        alt="apple store"
-                        className="w-full rounded-lg cursor-pointer"
-                      />
-                    </div>
-                  </div>
-                </HoverCardContent>
-              </HoverCard>
-            </div>
-            <Separator orientation="vertical" />
+                </div>
+                <div className="p-4">
+                  <ul className="flex flex-col gap-4">
+                    <Link
+                      variant="link"
+                      to={"/supplier"}
+                      className="text-slate-800 text-[17px] font-normal font-mier-book"
+                    >
+                      Become a supplier
+                    </Link>
+                    <Link
+                      variant="link"
+                      to={"/supplier"}
+                      className="text-slate-800 text-[17px] font-normal font-mier-book"
+                    >
+                      Newsroom
+                    </Link>
+                  </ul>
+                </div>
+              </DialogContent>
+            </Dialog>
+            <img
+              src={meeshoLogo}
+              alt="Meesho logo"
+              className="w-24 mb-1 lg:w-40 md:w-32 md:pr-4 lg:pr-0"
+            />
+          </div>
+          {!ismobile && location.pathname !== "/checkout" && (
+            <SearchBar
+              width={"md:w-72 lg:w-96"}
+              searchInput={searchInput}
+              showResult={true}
+              setSearchInput={setSearchInput}
+            />
+          )}
 
-            <Link
-              variant="link"
-              to={"/supplier"}
-              className="text-slate-800 text-[17px] font-normal font-mier-book"
+          {location.pathname !== "/checkout" && (
+            <div
+              className={` items-center h-full justify-between ${
+                ismobile ? "hidden" : "flex"
+              } gap-4`}
             >
-              Become a supplier
-            </Link>
-            <Separator orientation="vertical" />
-            <Link
-              variant="link"
-              className="md:hidden lg:block text-slate-800 text-[17px] font-normal font-mier-book"
-            >
-              Newsroom
-            </Link>
-            <Separator orientation="vertical" className="md:hidden lg:block" />
-
-            {location.pathname !== "/user/authenticate" && (
-              <div className="flex justify-between w-32 relative items-center h-full ">
+              <div className="lg:flex md:hidden  h-full items-center">
                 <HoverCard>
                   <HoverCardTrigger asChild>
                     <Button
                       variant="link"
-                      className="text-slate-800 decoration-2 underline-offset-[14px] font-normal justify-center items-center flex flex-col h-full"
+                      className="text-slate-800 text-[17px] decoration-2 font-normal font-mier-book  underline-offset-[26px]  "
                     >
-                      <FaRegUser size={24} />
-                      <p className="text-[17px] font-mier-book">Profile</p>
+                      <PiDeviceMobile
+                        className="mr-2 font-mier-book"
+                        size={22}
+                      />
+                      Download App
                     </Button>
                   </HoverCardTrigger>
-                  <HoverCardContent className="w-fit mt-[5px]">
-                    <div className="flex relative justify-between flex-col space-x-3 gap-1 ">
-                      {isLoggedIn ? (
-                        <div className="flex flex-col">
-                          <h4 className="text-lg font-semibold text-left">
-                            Hello, {firstname}
-                          </h4>
-                          <div
-                            className="flex gap-1 font-medium items-center cursor-pointer "
-                            onClick={() =>
-                              isLoggedIn ? navigate("/profile") : ""
-                            }
-                          >
-                            <img
-                              src={ProfilePhoto || avatar}
-                              alt="User Avatar"
-                              className="h-10 w-10 border  rounded-full"
-                            />
-                            <div className="flex flex-col">
-                              <h3>{firstname + " " + lastname}</h3>
-                              <h5 className="text-xs">{email}</h5>
-                            </div>
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="flex flex-col">
-                          <h4 className="text-lg font-semibold text-left">
-                            Hello, User
-                          </h4>
-                          <p className="text-sm my-2">
-                            To access your Meesho account
-                          </p>
-                          {!isLoggedIn && (
-                            <Button
-                              onClick={() => navigate("/user/authenticate")}
-                              className="py-5 text-[16px] bg-fuchsia-600 hover:bg-fuchsia-700"
-                            >
-                              Sign up
-                            </Button>
-                          )}
-                        </div>
-                      )}
-                      <Separator variant="horizantal" className="my-2" />
-                      <Link className="flex gap-3 items-center h-10 text-[18px]">
-                        <HiOutlineShoppingBag /> My orders
-                      </Link>
-                      <Separator variant="horizantal" />
-                      <Link className="flex gap-3 items-center h-10 text-[18px]">
-                        Delete account
-                      </Link>
-                      <Separator variant="horizantal" />
-                      {isLoggedIn ? (
-                        <p
-                          className="flex gap-3 items-center cursor-pointer h-10 text-[18px]"
-                          onClick={logoutUser}
-                        >
-                          <IoLogOutOutline size={22} /> Log Out
-                        </p>
-                      ) : (
-                        ""
-                      )}
+                  <HoverCardContent className="w-fit mt-3">
+                    <div className="flex justify-between flex-col gap-3 space-x-3">
+                      <h4 className="text-lg font-semibold text-left font-mier-bold">
+                        Download from
+                      </h4>
+                      <div className="w-48 overflow-hidden rounded-lg p-2 bg-black h-fit">
+                        <img
+                          src={playstore}
+                          alt="Playstore"
+                          className="w-full rounded-lg cursor-pointer"
+                        />
+                      </div>
+                      <div className="w-48 overflow-hidden rounded-lg p-2 bg-black h-fit">
+                        <img
+                          src={appstore}
+                          alt="apple store"
+                          className="w-full rounded-lg cursor-pointer"
+                        />
+                      </div>
                     </div>
                   </HoverCardContent>
                 </HoverCard>
+              </div>
+              <Separator orientation="vertical" />
+
+              <Link
+                variant="link"
+                to={"/supplier"}
+                className="text-slate-800 text-[17px] font-normal font-mier-book"
+              >
+                Become a supplier
+              </Link>
+              <Separator orientation="vertical" />
+              <Link
+                variant="link"
+                className="md:hidden lg:block text-slate-800 text-[17px] font-normal font-mier-book"
+              >
+                Newsroom
+              </Link>
+              <Separator
+                orientation="vertical"
+                className="md:hidden lg:block"
+              />
+
+              {location.pathname !== "/user/authenticate" && (
+                <div className="flex justify-between w-32 relative items-center h-full ">
+                  <HoverCard>
+                    <HoverCardTrigger asChild>
+                      <Button
+                        variant="link"
+                        className="text-slate-800 decoration-2 underline-offset-[14px] font-normal justify-center items-center flex flex-col h-full"
+                      >
+                        <FaRegUser size={24} />
+                        <p className="text-[17px] font-mier-book">Profile</p>
+                      </Button>
+                    </HoverCardTrigger>
+                    <HoverCardContent className="w-fit mt-[5px]">
+                      <div className="flex relative justify-between flex-col space-x-3 gap-1 ">
+                        {isLoggedIn ? (
+                          <div className="flex flex-col">
+                            <h4 className="text-lg font-semibold text-left">
+                              Hello, {firstname}
+                            </h4>
+                            <div
+                              className="flex gap-1 font-medium items-center cursor-pointer "
+                              onClick={() =>
+                                isLoggedIn ? navigate("/profile") : ""
+                              }
+                            >
+                              <img
+                                src={ProfilePhoto || avatar}
+                                alt="User Avatar"
+                                className="h-10 w-10 border  rounded-full"
+                              />
+                              <div className="flex flex-col">
+                                <h3>{firstname + " " + lastname}</h3>
+                                <h5 className="text-xs">{email}</h5>
+                              </div>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="flex flex-col">
+                            <h4 className="text-lg font-semibold text-left">
+                              Hello, User
+                            </h4>
+                            <p className="text-sm my-2">
+                              To access your Meesho account
+                            </p>
+                            {!isLoggedIn && (
+                              <Button
+                                onClick={() => navigate("/user/authenticate")}
+                                className="py-5 text-[16px] bg-fuchsia-600 hover:bg-fuchsia-700"
+                              >
+                                Sign up
+                              </Button>
+                            )}
+                          </div>
+                        )}
+                        <Separator variant="horizantal" className="my-2" />
+                        <Link className="flex gap-3 items-center h-10 text-[18px]">
+                          <HiOutlineShoppingBag /> My orders
+                        </Link>
+                        <Separator variant="horizantal" />
+                        <Link className="flex gap-3 items-center h-10 text-[18px]">
+                          Delete account
+                        </Link>
+                        <Separator variant="horizantal" />
+                        {isLoggedIn ? (
+                          <p
+                            className="flex gap-3 items-center cursor-pointer h-10 text-[18px]"
+                            onClick={logoutUser}
+                          >
+                            <IoLogOutOutline size={22} /> Log Out
+                          </p>
+                        ) : (
+                          ""
+                        )}
+                      </div>
+                    </HoverCardContent>
+                  </HoverCard>
+
+                  <Link
+                    to={"/checkout"}
+                    variant="link"
+                    className="text-slate-800 font-mier-book text-[17px] font-normal justify-center items-center flex flex-col h-full"
+                  >
+                    <PiShoppingCart size={20} />
+                    Cart
+                  </Link>
+                  {(cart && cart.length > 0) || localCart.length > 0 ? (
+                    <Badge className="bg-fuchsia-200 text-fuchsia-800 h-5 w-5 text-xs flex justify-center absolute top-[-5px] right-0 lg:right-[-12px]">
+                      {cart.length > 0 ? cart.length : localCart.length}
+                    </Badge>
+                  ) : (
+                    ""
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+          {ismobile &&
+            location.pathname !== "/user/authenticate" &&
+            "/checkout" && (
+              <div className=" flex gap-6">
+                <Link
+                  to={"/favourite"}
+                  variant="link"
+                  className="text-slate-800 font-mier-book text-[17px] font-normal justify-center items-center flex flex-col h-full"
+                >
+                  <ImHeart size={20} fill="red" />
+                </Link>
 
                 <Link
                   to={"/checkout"}
                   variant="link"
                   className="text-slate-800 font-mier-book text-[17px] font-normal justify-center items-center flex flex-col h-full"
                 >
-                  <PiShoppingCart size={20} />
-                  Cart
+                  <HiMiniShoppingCart size={20} />
                 </Link>
                 {(cart && cart.length > 0) || localCart.length > 0 ? (
-                  <Badge className="bg-fuchsia-200 text-fuchsia-800 h-5 w-5 text-xs flex justify-center absolute top-[-5px] right-0 lg:right-[-12px]">
+                  <Badge className="bg-fuchsia-200 text-fuchsia-800 h-5 w-5 text-xs flex justify-center absolute top-0 right-0 lg:right-[-12px]">
                     {cart.length > 0 ? cart.length : localCart.length}
                   </Badge>
                 ) : (
@@ -396,41 +433,13 @@ const Header = () => {
                 )}
               </div>
             )}
-          </div>
-        )}
-        {ismobile &&
-          location.pathname !== "/user/authenticate" &&
-          "/checkout" && (
-            <div className=" flex gap-6">
-              <Link
-                to={"/favourite"}
-                variant="link"
-                className="text-slate-800 font-mier-book text-[17px] font-normal justify-center items-center flex flex-col h-full"
-              >
-                <ImHeart size={20} fill="red" />
-              </Link>
-
-              <Link
-                to={"/checkout"}
-                variant="link"
-                className="text-slate-800 font-mier-book text-[17px] font-normal justify-center items-center flex flex-col h-full"
-              >
-                <HiMiniShoppingCart size={20} />
-              </Link>
-              {(cart && cart.length > 0) || localCart.length > 0 ? (
-                <Badge className="bg-fuchsia-200 text-fuchsia-800 h-5 w-5 text-xs flex justify-center absolute top-0 right-0 lg:right-[-12px]">
-                  {cart.length > 0 ? cart.length : localCart.length}
-                </Badge>
-              ) : (
-                ""
-              )}
-            </div>
-          )}
+        </div>
+        {location.pathname !== "/checkout" &&
+          location.pathname !== "/category/:categoryName" &&
+          location.pathname !== "/profile" &&
+          !ismobile && <Navbar_second />}
       </div>
-      {location.pathname !== "/checkout" &&
-        location.pathname !== "/category/:categoryName" &&
-        !ismobile && <Navbar_second />}
-    </div>
+    )
   );
 };
 

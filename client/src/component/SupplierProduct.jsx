@@ -28,7 +28,7 @@ import {
   SelectValue,
 } from "../components/ui/select";
 import { useSelector } from "react-redux";
-import { getData, updateData } from "../utils/fetchData";
+import { deleteData, getData, updateData } from "../utils/fetchData";
 import { fetchSignedUrls } from "../utils/signedUrl";
 import { toast } from "../components/ui/use-toast";
 import { Bell, Loader, Pen, Trash } from "lucide-react";

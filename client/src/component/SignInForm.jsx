@@ -109,8 +109,11 @@ const SignInForm = () => {
       <img src={signIn} alt="Sign In" className="h-[44%] w-full" />
       <form
         onSubmit={formik.handleSubmit}
-        className="flex flex-col gap-4 p-3 mb-2 mt-6 justify-start w-full"
+        className="flex flex-col gap-4 p-3 mb-2  justify-start w-full"
       >
+        <h1 className="text-center font-bold font-mier-bold text-xl text-slate-500">
+          {isRegistering ? "Register your Account" : "Log in your account"}
+        </h1>
         {isRegistering && (
           <>
             <div>
@@ -200,7 +203,7 @@ const SignInForm = () => {
               Already have an account?&nbsp;
               <span
                 onClick={() => setIsRegistering(false)}
-                className="text-blue-600 font-semibold hover:text-blue-700 cursor-pointer"
+                className="text-blue-600 font-medium hover:text-blue-700 cursor-pointer"
               >
                 Login here
               </span>
@@ -210,7 +213,7 @@ const SignInForm = () => {
               New to Meeshio?&nbsp;
               <span
                 onClick={() => setIsRegistering(true)}
-                className="text-blue-600 font-semibold hover:text-blue-700 cursor-pointer"
+                className="text-blue-600 font-medium hover:text-blue-700 cursor-pointer"
               >
                 Register here
               </span>
@@ -219,7 +222,7 @@ const SignInForm = () => {
           {!isRegistering && (
             <Link
               to="/forgot-password"
-              className="text-blue-600 font-semibold hover:text-blue-700 cursor-pointer"
+              className="text-blue-600 font-medium hover:text-blue-700 cursor-pointer"
             >
               Forgot password
             </Link>

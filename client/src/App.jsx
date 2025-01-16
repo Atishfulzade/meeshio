@@ -41,51 +41,57 @@ const UserProfile = lazy(() => import("./pages/UserProfile"));
 const SupplierPortal = lazy(() => import("./pages/supplierAuth"));
 const SupplierRegistration = lazy(() => import("./pages/SupplierRegistration"));
 const Favourite = lazy(() => import("./pages/Favourite"));
+const VerifyEmail = lazy(() => import("./pages/VerifyEmail"));
 const SupplierProduct = lazy(() => import("./component/SupplierProduct"));
 const AddProduct = lazy(() => import("./pages/AddProduct"));
 const SupplierSidebar = lazy(() => import("./component/App-sidebar"));
+const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
 function App() {
   const isLoggedIn = useSelector((state) => state.loggedIn.isLoggedIn);
   const dispatch = useDispatch();
   const isMobile = useSelector((state) => state.identifyMobile.isMobile);
   const navigate = useNavigate();
-
+  const token = localStorage.getItem("token");
   const updateIsMobile = useCallback(() => {
     const windowSize = window.innerWidth <= 768;
     dispatch(setIsMobile(windowSize));
   }, []);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-
     const validateToken = async () => {
       if (!token) {
         dispatch(setIsLoggedIn(false));
-        navigate("/");
+
         return;
       }
+
       try {
         const response = await sendData("user/auth/validateuser", { token });
-        console.log(response.supplier);
 
         if (response?.user) {
+          dispatch(setIsLoggedIn(true));
+          dispatch(setUserInfo(response.user));
+
+          if (
+            response.supplier &&
+            (response.supplier.role === "supplier" ||
+              response.supplier.role === "admin")
+          ) {
+            dispatch(setSupplierInfo(response.supplier));
+            dispatch(setIsLoggedIn(true));
+          }
+        } else {
           dispatch(setIsLoggedIn(false));
           localStorage.removeItem("token");
-          return;
-        }
-
-        dispatch(setIsLoggedIn(true));
-        dispatch(setUserInfo(response.user));
-
-        if (response.supplier.role === "supplier" || "admin") {
-          dispatch(setSupplierInfo(response.supplier));
+          navigate("/user/authenticate");
         }
       } catch (error) {
         console.error("Error validating token", error);
 
         dispatch(setIsLoggedIn(false));
         localStorage.removeItem("token");
-        if (response.supplier) {
+
+        if (response?.supplier) {
           navigate("/supplier");
         } else {
           navigate("/user/authenticate");
@@ -109,9 +115,11 @@ function App() {
     <Suspense fallback={<Loader />}>
       <Routes>
         <Route path="/" element={<Layout />}>
+          <Route path="verify-email" element={<VerifyEmail />} />
           <Route index element={isMobile ? <MobileHome /> : <Home />} />
           <Route path="product/:productId" element={<ProductPage />} />
           <Route path="user/authenticate" element={<AuthenticatePage />} />
+          <Route path="forgot-password" element={<ForgotPassword />} />
           <Route path="user/profile" element={<ProfilePage />} />
           <Route path="*" element={<ErrorPage />} />
           <Route path="category" element={<CategoryPage />} />

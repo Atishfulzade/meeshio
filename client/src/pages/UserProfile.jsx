@@ -17,7 +17,7 @@ import {
 import { getData, sendData, updateData } from "../utils/fetchData";
 import { toast } from "../components/ui/use-toast";
 import AddressPopup from "../component/AddressPopup";
-
+import { fetchSignedUrl } from "../utils/signedUrl";
 // Validation schema for address and card details
 const validationSchema = Yup.object({
   address: Yup.object({
@@ -81,21 +81,19 @@ const UserProfile = () => {
     formData.append("profileImage", imageFile);
 
     try {
-      await updateData("user/profile", formData);
+      const res = await updateData("user/profile", formData);
+      console.log(res);
 
       toast({
-        title: "Profile Image Updated",
+        title: res.message,
         description: "Your profile image has been updated successfully.",
         type: "success",
       });
 
       // Re-fetch user data after successful update
-      const updatedUser = await getData("user/profile");
-      setUser(updatedUser);
-      if (updatedUser?.profileImage) {
-        const updatedImageUrl = await fetchSignedImageUrl(
-          updatedUser.profileImage
-        );
+      setUser(res.user);
+      if (res?.user.profileImage) {
+        const updatedImageUrl = await fetchSignedUrl(res?.user.profileImage);
         setImageURL(updatedImageUrl);
       }
       setIsEditing({ ...isEditing, profileImage: false });
@@ -197,7 +195,7 @@ const UserProfile = () => {
             <img
               src={imageURL}
               alt="Profile"
-              className="w-20 h-20 rounded-full border object-cover p-1 border-fuchsia-500"
+              className="w-32 h-32 rounded-full border object-cover p-1 border-fuchsia-500"
             />
             <Button
               variant="outlined"
@@ -240,6 +238,7 @@ const UserProfile = () => {
             addressDetail={user?.address}
             title=" Update address"
             description={"Update your delivery address"}
+            setUser={setUser}
           />
         </div>
 

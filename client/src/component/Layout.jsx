@@ -3,22 +3,35 @@ import { Outlet, useLocation } from "react-router-dom";
 import Header from "./Header";
 import { Toaster } from "../components/ui/toaster";
 import Footer from "./Footer";
-import SupplierHeader from "./SupplierHeader";
 
 const Layout = () => {
-  const location = useLocation();
+  const { pathname } = useLocation();
 
-  // Check if the current path matches specific routes
-  const isSupplierDashboard = location.pathname === "/supplier/dashboard";
-  const isProfile = location.pathname === "/profile";
-  const isSupplierPath = location.pathname.startsWith("/supplier");
+  // Define route conditions
+  const isSupplierDashboard = pathname === "/supplier/dashboard";
+  const isProfilePage = pathname === "/profile";
+  const isSupplierRoute = pathname.startsWith("/supplier");
+  const isVerificationPage = pathname === "/verify-email";
+  const isAuthenticationPage = pathname === "/user/authenticate";
+  const isForgotPasswordPage = pathname === "/forgot-password";
 
   return (
     <div>
-      {!isSupplierDashboard && !isSupplierPath && <Header />}
+      {/* Show Header only when not on specific pages */}
+      {!isSupplierDashboard &&
+        !isSupplierRoute &&
+        !isVerificationPage &&
+        !isForgotPasswordPage && <Header />}
+
       <Toaster />
       <Outlet />
-      {!isProfile && !isSupplierDashboard && !isSupplierPath && <Footer />}
+
+      {/* Show Footer only when not on specific pages */}
+      {!isProfilePage &&
+        !isSupplierDashboard &&
+        !isSupplierRoute &&
+        !isAuthenticationPage &&
+        !isVerificationPage && <Footer />}
     </div>
   );
 };
