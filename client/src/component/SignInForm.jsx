@@ -12,13 +12,31 @@ import { useToast } from "@/components/ui/use-toast";
 import { sendData } from "../utils/fetchData";
 import * as Yup from "yup";
 import Cookies from "js-cookie";
-
+import { format } from "date-fns";
+import { CalendarIcon } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { cn } from "@/lib/utils";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 const SignInForm = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [isRegistering, setIsRegistering] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [date, setDate] = useState();
 
   const validationSchema = Yup.object({
     email: Yup.string()
@@ -105,7 +123,7 @@ const SignInForm = () => {
   });
 
   return (
-    <div className="md:h-fit pb-3 justify-center items-center md:w-[25%] w-[90%] mt-20 rounded-md overflow-hidden bg-white border">
+    <div className="md:h-fit  justify-center items-center md:w-[25%] w-[90%]  rounded-md overflow-hidden bg-white border">
       <img src={signIn} alt="Sign In" className="h-[44%] w-full" />
       <form
         onSubmit={formik.handleSubmit}
@@ -116,40 +134,77 @@ const SignInForm = () => {
         </h1>
         {isRegistering && (
           <>
-            <div>
-              <Input
-                type="text"
-                name="firstname"
-                placeholder="Enter first name"
-                value={formik.values.firstname}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                className="p-2 border rounded w-full"
-                disabled={isLoading}
-              />
-              {formik.touched.firstname && formik.errors.firstname ? (
-                <div className="text-red-500 text-sm">
-                  {formik.errors.firstname}
-                </div>
-              ) : null}
+            <div className="flex gap-2">
+              <div>
+                <Input
+                  type="text"
+                  name="firstname"
+                  placeholder="First name"
+                  value={formik.values.firstname}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  className="p-2 border rounded w-full"
+                  disabled={isLoading}
+                />
+                {formik.touched.firstname && formik.errors.firstname ? (
+                  <div className="text-red-500 text-sm">
+                    {formik.errors.firstname}
+                  </div>
+                ) : null}
+              </div>
+              <div>
+                <Input
+                  type="text"
+                  name="lastname"
+                  placeholder="Last name"
+                  value={formik.values.lastname}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  className="p-2 border rounded w-full"
+                  disabled={isLoading}
+                />
+                {formik.touched.lastname && formik.errors.lastname ? (
+                  <div className="text-red-500 text-sm">
+                    {formik.errors.lastname}
+                  </div>
+                ) : null}
+              </div>
             </div>
-            <div>
-              <Input
-                type="text"
-                name="lastname"
-                placeholder="Enter last name"
-                value={formik.values.lastname}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                className="p-2 border rounded w-full"
-                disabled={isLoading}
-              />
-              {formik.touched.lastname && formik.errors.lastname ? (
-                <div className="text-red-500 text-sm">
-                  {formik.errors.lastname}
-                </div>
-              ) : null}
-            </div>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant={"outline"}
+                  className={cn(
+                    " justify-start text-left font-normal",
+                    !date && "text-muted-foreground"
+                  )}
+                >
+                  <CalendarIcon />
+                  {date ? format(date, "PPP") : <span>Choose Birth date</span>}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0">
+                <Calendar
+                  mode="single"
+                  selected={date}
+                  onSelect={setDate}
+                  initialFocus
+                />
+              </PopoverContent>
+            </Popover>
+            <Select>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select Gender" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Select your gender</SelectLabel>
+                  <SelectItem value="male">Male</SelectItem>
+                  <SelectItem value="female">Female</SelectItem>
+                  <SelectItem value="other">Other</SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
           </>
         )}
         <div>
@@ -167,6 +222,7 @@ const SignInForm = () => {
             <div className="text-red-500 text-sm">{formik.errors.email}</div>
           ) : null}
         </div>
+
         <div>
           <Input
             type="password"

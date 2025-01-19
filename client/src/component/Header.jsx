@@ -153,7 +153,7 @@ const Header = () => {
       updateServerCart(); // Update the server cart
       fetchCartFromServer(); // Fetch cart data from the server
     }
-    profileImageUpdate();
+    profileImageUpdate(profileImage);
   }, [token, id]);
 
   return (
@@ -368,7 +368,10 @@ const Header = () => {
                           <HiOutlineShoppingBag /> My orders
                         </Link>
                         <Separator variant="horizantal" />
-                        <Link className="flex gap-3 items-center h-10 text-[18px]">
+                        <Link
+                          to="/delete"
+                          className="flex gap-3 items-center h-10 text-[18px]"
+                        >
                           Delete account
                         </Link>
                         <Separator variant="horizantal" />

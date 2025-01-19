@@ -11,8 +11,16 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { toast } from "@/components/ui/use-toast";
+import { Button } from "../components/ui/button";
 
-const AddressPopup = ({ addressDetail = {}, title, description, setUser }) => {
+const AddressPopup = ({
+  addressDetail = {},
+  loading,
+  title,
+  setLoading,
+  description,
+  setUser,
+}) => {
   const [open, setOpen] = useState(false); // State to control dialog visibility
 
   const formik = useFormik({
@@ -39,6 +47,7 @@ const AddressPopup = ({ addressDetail = {}, title, description, setUser }) => {
       landmark: Yup.string().optional(),
     }),
     onSubmit: async (values) => {
+      setLoading(true); // Show loading spinner while updating address
       try {
         const res = await updateData("user/address", { address: values });
         formik.resetForm();
@@ -48,6 +57,7 @@ const AddressPopup = ({ addressDetail = {}, title, description, setUser }) => {
           description: "Your address has been successfully updated.",
           type: "success",
         });
+        setLoading(false);
         setOpen(false); // Close the dialog after success
       } catch (error) {
         toast({
@@ -60,12 +70,10 @@ const AddressPopup = ({ addressDetail = {}, title, description, setUser }) => {
   });
 
   return (
-    <div>
+    <div className="absolute top-12 right-0 ">
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
-          <button className="rounded-md px-5 text-white bg-fuchsia-600 hover:bg-fuchsia-700 py-2">
-            {title}
-          </button>
+          <Button className="rounded-md border py-1 px-3">{title}</Button>
         </DialogTrigger>
 
         <DialogContent>
@@ -186,9 +194,10 @@ const AddressPopup = ({ addressDetail = {}, title, description, setUser }) => {
             </div>{" "}
             <button
               type="submit"
+              disabled={loading}
               className="rounded-md px-5 text-white bg-fuchsia-700 hover:bg-fuchsia-800 py-3"
             >
-              Submit address
+              {loading ? "Submitting" : "Submit address"}
             </button>
           </form>
         </DialogContent>

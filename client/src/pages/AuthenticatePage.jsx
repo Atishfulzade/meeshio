@@ -7,7 +7,7 @@ const AuthenticatePage = () => {
 
   return (
     <div
-      className="flex justify-center items-center h-screen w-full bg-white"
+      className="flex justify-center  items-center h-screen  w-full bg-white"
       style={{
         backgroundImage: "url('./assets/bg.svg')",
         backgroundSize: "cover",

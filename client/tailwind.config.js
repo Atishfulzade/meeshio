@@ -1,4 +1,5 @@
 /** @type {import('tailwindcss').Config} */
+import { creditCard } from "./src/assets";
 import { mier } from "./src/fonts";
 import { mier_bold } from "./src/fonts";
 import { mier_book } from "./src/fonts";
@@ -28,6 +29,9 @@ module.exports = {
       "mier-demi": ["mier_demi", "sans-serif"],
     },
     extend: {
+      backgroundImage: {
+        card: "url(./src/assets/credit-card.png)",
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

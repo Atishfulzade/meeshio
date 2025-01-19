@@ -46,6 +46,7 @@ const SupplierProduct = lazy(() => import("./component/SupplierProduct"));
 const AddProduct = lazy(() => import("./pages/AddProduct"));
 const SupplierSidebar = lazy(() => import("./component/App-sidebar"));
 const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
+const DeleteAccount = lazy(() => import("./pages/DeleteAccont"));
 function App() {
   const isLoggedIn = useSelector((state) => state.loggedIn.isLoggedIn);
   const dispatch = useDispatch();
@@ -115,6 +116,7 @@ function App() {
     <Suspense fallback={<Loader />}>
       <Routes>
         <Route path="/" element={<Layout />}>
+          <Route path="delete" element={<DeleteAccount />} />
           <Route path="verify-email" element={<VerifyEmail />} />
           <Route index element={isMobile ? <MobileHome /> : <Home />} />
           <Route path="product/:productId" element={<ProductPage />} />

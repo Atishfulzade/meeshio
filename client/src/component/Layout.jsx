@@ -14,6 +14,7 @@ const Layout = () => {
   const isVerificationPage = pathname === "/verify-email";
   const isAuthenticationPage = pathname === "/user/authenticate";
   const isForgotPasswordPage = pathname === "/forgot-password";
+  const deleteAccountPage = pathname === "/delete";
 
   return (
     <div>
@@ -21,7 +22,8 @@ const Layout = () => {
       {!isSupplierDashboard &&
         !isSupplierRoute &&
         !isVerificationPage &&
-        !isForgotPasswordPage && <Header />}
+        !isForgotPasswordPage &&
+        !deleteAccountPage && <Header />}
 
       <Toaster />
       <Outlet />
@@ -31,6 +33,7 @@ const Layout = () => {
         !isSupplierDashboard &&
         !isSupplierRoute &&
         !isAuthenticationPage &&
+        !deleteAccountPage &&
         !isVerificationPage && <Footer />}
     </div>
   );

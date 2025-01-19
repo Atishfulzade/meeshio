@@ -14,27 +14,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from "../components/ui/dialog";
-import { getData, sendData, updateData } from "../utils/fetchData";
+import { deleteData, getData, sendData, updateData } from "../utils/fetchData";
 import { toast } from "../components/ui/use-toast";
 import AddressPopup from "../component/AddressPopup";
-import { fetchSignedUrl } from "../utils/signedUrl";
-// Validation schema for address and card details
-const validationSchema = Yup.object({
-  address: Yup.object({
-    street: Yup.string().required("Street is required"),
-    city: Yup.string().required("City is required"),
-    state: Yup.string().required("State is required"),
-    zipCode: Yup.string().required("Zip code is required"),
-    contactNumber: Yup.string().required("Contact number is required"),
-  }),
-  card: Yup.object({
-    cardNumber: Yup.string().required("Card Number is required"),
-    expiryDate: Yup.string().required("Expiry Date is required"),
-    cvv: Yup.string().required("CVV is required"),
-    cardholderName: Yup.string().required("Cardholder Name is required"),
-    userId: Yup.string().required("User ID is required"),
-  }),
-});
+import Loader from "../component/Loader";
+import { Loader2 } from "lucide-react";
 
 const UserProfile = () => {
   const [user, setUser] = useState(null);
@@ -44,45 +28,42 @@ const UserProfile = () => {
     cardDetails: false,
   });
   const [imageFile, setImageFile] = useState(null);
-  const [imageURL, setImageURL] = useState();
-
-  // Fetch user profile only on mount
+  const [imageURL, setImageURL] = useState(null);
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
       try {
         const response = await getData("user/profile");
         setUser(response);
 
-        // Fetch image if profileImage is available
         if (response?.profileImage) {
           const imageUrl = await fetchSignedImageUrl(response.profileImage);
           setImageURL(imageUrl);
-          console.log(imageURL);
         }
       } catch (error) {
-        console.log("Error fetching profile:", error);
+        console.error("Error fetching profile:", error);
       }
+      setLoading(false);
     };
 
     const fetchSignedImageUrl = async (key) => {
       const cleanedKey = key.replace("uploads/", "");
       const response = await getData(`images/${cleanedKey}`);
-      return response.signedUrl; // Adjust based on your API response structure
+      return response.signedUrl;
     };
 
-    fetchData(); // Fetch profile once on mount
-  }, []); // Empty dependency array ensures this only runs once when the component mounts
+    fetchData();
+  }, []);
 
-  // Handle Profile Image Update
   const handleProfileImageSubmit = async () => {
     if (!imageFile) return;
-
+    setLoading(true);
     const formData = new FormData();
     formData.append("profileImage", imageFile);
 
     try {
       const res = await updateData("user/profile", formData);
-      console.log(res);
 
       toast({
         title: res.message,
@@ -90,49 +71,22 @@ const UserProfile = () => {
         type: "success",
       });
 
-      // Re-fetch user data after successful update
       setUser(res.user);
-      if (res?.user.profileImage) {
-        const updatedImageUrl = await fetchSignedUrl(res?.user.profileImage);
-        setImageURL(updatedImageUrl);
-      }
+
       setIsEditing({ ...isEditing, profileImage: false });
+      setLoading(false);
     } catch (error) {
-      console.error("Error uploading profile image:", error);
       toast({
-        title: "Update Failed",
+        title: error.message,
         description: "Something went wrong while updating the image.",
         type: "error",
       });
     }
   };
 
-  const handleAddressSubmit = async (newAddress) => {
-    try {
-      await updateData("user/address", { address: newAddress }, false);
-
-      toast({
-        title: "Address Updated",
-        description: "Your address has been updated successfully.",
-        type: "success",
-      });
-
-      // Update user data locally after successful update
-      setUser((prevUser) => ({ ...prevUser, address: newAddress }));
-      setIsEditing({ ...isEditing, address: false });
-    } catch (error) {
-      console.error("Error updating address:", error);
-      toast({
-        title: "Update Failed",
-        description: "Something went wrong while updating the address.",
-        type: "error",
-      });
-    }
-  };
-
   const handleCardDetailsSubmit = async (values) => {
+    setLoading(true);
     try {
-      const token = localStorage.getItem("token");
       const data = {
         cardNumber: values.cardNumber,
         cardholderName: values.cardholderName,
@@ -141,7 +95,7 @@ const UserProfile = () => {
         userId: values.userId,
       };
 
-      await sendData("user/card", data, token);
+      await sendData("user/card", data);
 
       toast({
         title: "Card Added",
@@ -149,12 +103,12 @@ const UserProfile = () => {
         type: "success",
       });
 
-      // Update user data locally after successful card addition
       setUser((prevUser) => ({
         ...prevUser,
         cards: [...(prevUser.cards || []), data],
       }));
       setIsEditing({ ...isEditing, cardDetails: false });
+      setLoading(false);
     } catch (error) {
       console.error("Error adding card details:", error);
       toast({
@@ -164,49 +118,43 @@ const UserProfile = () => {
       });
     }
   };
-
-  const initialValues = {
-    address: {
-      street: user?.address?.street || "",
-      city: user?.address?.city || "",
-      state: user?.address?.state || "",
-      zipCode: user?.address?.zipCode || "",
-      contactNumber: user?.address?.contactNumber || "",
-    },
-    card: {
-      cardNumber: user?.cardDetails?.cardNumber || "",
-      expiryDate: user?.cardDetails?.expiryDate || "",
-      cvv: user?.cardDetails?.cvv || "",
-      cardholderName: user?.cardDetails?.cardholderName || "",
-      userId: user?._id || "",
-    },
+  const deleteCard = async (cardId) => {
+    try {
+      const response = await deleteData("user/card", { cardId: cardId });
+      setUser(response.user);
+      toast({
+        title: "Card deleted successfully",
+        description: "Card deleted successfully",
+      });
+    } catch (error) {
+      console.log(error);
+    }
   };
-
+  if (!user) return <Loader />;
   return (
-    <div className="h-screen px-6 mt-32">
-      <div className="h-full shadow-lg py-8 rounded-lg">
-        <div className="flex justify-between items-center">
-          <h2 className="text-lg text-slate-800 font-mier-bold border rounded-full px-4 border-slate-300 py-1 flex gap-2 items-center">
-            <FaRegUser /> Profile
-          </h2>
-        </div>
-        <div className="flex py-3 gap-3">
+    <div className="h-screen md:p-10 p-3 ">
+      <div className="h-full  py-8 rounded-lg">
+        <div className="flex py-3 gap-3 mt-5">
           <div className="mb-4 text-start flex relative w-36">
-            <img
-              src={imageURL}
-              alt="Profile"
-              className="w-32 h-32 rounded-full border object-cover p-1 border-fuchsia-500"
-            />
+            {imageURL ? (
+              <img
+                src={imageURL}
+                alt="Profile"
+                className="w-32 h-32 rounded-full border object-cover p-1 border-fuchsia-500"
+              />
+            ) : (
+              <Loader2 />
+            )}
             <Button
               variant="outlined"
               onClick={() => setIsEditing({ ...isEditing, profileImage: true })}
-              className=" rounded-full w-fit bg-white border text-gray-800 shadow-md absolute bottom-1 right-10"
+              className=" rounded-full w-10 h-10 bg-white border text-gray-800 shadow-md absolute md:bottom-2 bottom-3 right-3"
             >
               <MdOutlineEdit size={16} />
             </Button>
           </div>
           <div className="flex flex-col">
-            <p className="text-4xl font-mier-book flex items-center">
+            <p className="md:text-4xl text-2xl font-mier-bold font-semibold text-slate-700 flex items-center">
               {user?.firstname} {user?.lastname}
               {user?.isVerified && (
                 <MdVerified size={18} className="ml-3" color="green" />
@@ -215,53 +163,73 @@ const UserProfile = () => {
             <p className="text-sm font-mier-demi text-stone-500">
               {user?.email}
             </p>
+            <p className="text-sm font-mier-demi text-stone-500">
+              {user.gender}
+            </p>
+            <p className="text-sm font-mier-demi text-stone-500">
+              {user.address?.contact}
+            </p>
+            <p className="text-sm font-mier-demi text-stone-500">
+              Member since 2019
+            </p>
           </div>
         </div>
 
         {/* Address Section */}
-        <div className="">
-          <h2 className="text-lg text-slate-800 w-fit font-mier-bold border rounded-full px-4 border-slate-300 py-1 flex gap-2 items-center">
+        <div className="relative">
+          <h2 className="text-lg bg-slate-100 text-slate-700 font-mier-bold border rounded-full px-4 border-slate-300 py-1 flex gap-2 items-center">
             <TiHomeOutline />
             Address
           </h2>
-          <p className="flex flex-col py-5 ">
-            <p className="font-mier-book">{user?.address?.landmark},</p>
-            <p className="font-mier-book">{user?.address?.street},</p>
-            <p className="font-mier-book">
-              {user?.address?.city}, {user?.address?.state}
+          {user?.address && (
+            <p className="flex flex-col py-5 ">
+              <p className="font-mier-book">{user?.address?.landmark},</p>
+              <p className="font-mier-book">{user?.address?.street},</p>
+              <p className="font-mier-book">
+                {user?.address?.city}, {user?.address?.state}
+              </p>
+              <p className="font-mier-book"> {user?.address?.pin}</p>
+              <p className="font-mier-book">
+                Contact: {user?.address?.contact}
+              </p>
             </p>
-            <p className="font-mier-book"> {user?.address?.pin}</p>
-            <p className="font-mier-book">Contact: {user?.address?.contact}</p>
-          </p>
+          )}
 
           <AddressPopup
             addressDetail={user?.address}
-            title=" Update address"
+            title=" Update"
             description={"Update your delivery address"}
             setUser={setUser}
+            loading={loading}
+            setLoading={setLoading}
           />
         </div>
 
         {/* Card Details Section */}
-        <div className="mt-5">
-          <h2 className="text-lg w-fit text-slate-800 font-mier-bold border rounded-full px-4 border-slate-300 py-1 flex gap-2 items-center">
+        <div className="mt-5 relative">
+          <h2 className="text-lg bg-slate-100 text-slate-700 font-mier-bold border rounded-full px-4 border-slate-300 py-1 flex gap-2 items-center">
             <MdOutlineAddCard />
             Card Details
           </h2>
-          <div className=" flex gap-3 py-5">
+          <div className=" flex gap-3 my-5 ">
             {user?.cards?.map((card, index) => (
               <div
                 key={index}
-                className="flex justify-center  flex-col border shadow-md p-3 rounded-md items-start "
+                className="group  bg-[url(./src/assets/credit-card.png)] bg-no-repeat bg-center rounded-md bg-cover h-20 relative w-32"
               >
-                <p className="font-mier-book">{card.cardholderName}</p>
-                <p className="font-mier-book">
-                  **** **** **** {card.cardNumber.slice(-4)}
+                <p className="font-mier-book font-thin   absolute text-[10px] bottom-8 w-full left-4 text-white">
+                  {card.cardholderName}
                 </p>
+                <div className="bg-orange-500 absolute bottom-1 ps-3 left-0 right-0">
+                  <p className="font-mier-book text-xs ">
+                    **** **** **** {card.cardNumber.slice(-4)}
+                  </p>
+                  <p className="text-[8px]">Expiry : {card.expiryDate}</p>
+                </div>
                 <RiDeleteBin7Line
-                  className="cursor-pointer"
+                  className="cursor-pointer group-hover:block absolute text-white h-8 w-8 transition-all bg-violet-800 p-2 hidden rounded-full bottom-0 right-0"
                   onClick={() => {
-                    /* Handle delete */
+                    deleteCard(card._id);
                   }}
                 />
               </div>
@@ -269,13 +237,12 @@ const UserProfile = () => {
           </div>
           <Button
             onClick={() => setIsEditing({ ...isEditing, cardDetails: true })}
-            className="flex justify-center gap-2 items-center bg-fuchsia-500 hover:bg-fuchsia-600"
+            className="rounded-md border py-1 px-3 absolute top-12 right-0"
           >
-            <FaRegCreditCard /> Add Card
+            Add card{" "}
           </Button>
         </div>
 
-        {/* Profile Image Dialog */}
         <Dialog
           open={isEditing.profileImage}
           onOpenChange={() =>
@@ -298,7 +265,7 @@ const UserProfile = () => {
                 className="mt-4"
                 onClick={handleProfileImageSubmit}
               >
-                Save Changes
+                {loading ? "Saving" : "Save Changes"}
               </Button>
             </form>
           </DialogContent>
@@ -313,47 +280,74 @@ const UserProfile = () => {
         >
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>
-                <MdOutlineAddCard />
-                Add Card Details
-              </DialogTitle>
+              <DialogTitle>Add Card</DialogTitle>
             </DialogHeader>
             <Formik
-              initialValues={initialValues.card}
-              validationSchema={Yup.object().shape(validationSchema.card)}
-              onSubmit={handleCardDetailsSubmit}
+              initialValues={{
+                cardNumber: "",
+                expiryDate: "",
+                cvv: "",
+                cardholderName: "",
+                userId: user?._id || "",
+              }}
+              validationSchema={Yup.object({
+                cardNumber: Yup.string().required("Card Number is required"),
+                expiryDate: Yup.string().required("Expiry Date is required"),
+                cvv: Yup.string().required("CVV is required"),
+                cardholderName: Yup.string().required(
+                  "Cardholder Name is required"
+                ),
+              })}
+              onSubmit={(values, { setSubmitting }) => {
+                handleCardDetailsSubmit(values);
+                setSubmitting(false);
+              }}
             >
-              {({ errors, touched }) => (
-                <Form>
-                  <Field
-                    name="cardNumber"
-                    component={Input}
-                    placeholder="Card Number"
-                  />
-                  {errors.cardNumber && touched.cardNumber && (
-                    <div>{errors.cardNumber}</div>
-                  )}
-                  <Field
-                    name="expiryDate"
-                    component={Input}
-                    placeholder="Expiry Date"
-                  />
-                  {errors.expiryDate && touched.expiryDate && (
-                    <div>{errors.expiryDate}</div>
-                  )}
-                  <Field name="cvv" component={Input} placeholder="CVV" />
-                  {errors.cvv && touched.cvv && <div>{errors.cvv}</div>}
-                  <Field
-                    name="cardholderName"
-                    component={Input}
-                    placeholder="Cardholder Name"
-                  />
-                  {errors.cardholderName && touched.cardholderName && (
-                    <div>{errors.cardholderName}</div>
-                  )}
-                  <Field name="userId" type="hidden" value={user?._id} />
-                  <Button type="submit" className="mt-4">
-                    Add Card
+              {({ isSubmitting }) => (
+                <Form className="space-y-4">
+                  <div>
+                    <label>Card Number</label>
+                    <Field
+                      name="cardNumber"
+                      type="text"
+                      as={Input}
+                      placeholder="Enter Card Number"
+                    />
+                  </div>
+                  <div>
+                    <label>Expiry Date</label>
+                    <Field
+                      name="expiryDate"
+                      type="text"
+                      as={Input}
+                      placeholder="MM/YY"
+                    />
+                  </div>
+                  <div>
+                    <label>CVV</label>
+                    <Field
+                      name="cvv"
+                      type="text"
+                      as={Input}
+                      placeholder="Enter CVV"
+                    />
+                  </div>
+                  <div>
+                    <label>Cardholder Name</label>
+                    <Field
+                      name="cardholderName"
+                      type="text"
+                      as={Input}
+                      placeholder="Enter Cardholder Name"
+                    />
+                  </div>
+
+                  <Button
+                    type="submit"
+                    disabled={isSubmitting || loading}
+                    className="bg-fuchsia-500 hover:bg-fuchsia-600"
+                  >
+                    {loading ? "Adding..." : "Add Card"}
                   </Button>
                 </Form>
               )}

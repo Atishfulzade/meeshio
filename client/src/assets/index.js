@@ -43,6 +43,7 @@ import securePayment from "./securePayment.png";
 import upi from "./upi.png";
 import cardPayment from "./cardPayment.png";
 import avatar from "./user.png";
+import creditCard from "./credit-card.png";
 import mobile_poster from "./mobile_poster.webp";
 import slider1 from "./mobile_slider-1.webp";
 import slider2 from "./mobile_slider-2.webp";
@@ -109,6 +110,7 @@ export {
   avatar,
   assessories,
   footwear,
+  creditCard,
   electronics,
   style3,
   securePayment,
