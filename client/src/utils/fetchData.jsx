@@ -1,7 +1,7 @@
 import axios from "axios";
 
-// const baseURL = "http://localhost:3000/api/v1";
-const baseURL = "https://meeshio.onrender.com/api/v1";
+const baseURL = "http://localhost:3000/api/v1";
+// const baseURL = "https://meeshio.onrender.com/api/v1";
 
 // Helper function to attach the token to the Authorization header
 const getAuthHeaders = (token) => {

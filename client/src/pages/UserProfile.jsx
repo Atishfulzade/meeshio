@@ -1,13 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { Formik, Field, Form } from "formik";
 import * as Yup from "yup";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { MdVerified, MdOutlineEdit, MdOutlineAddCard } from "react-icons/md";
 import { RiDeleteBin7Line } from "react-icons/ri";
-import { FaRegCreditCard } from "react-icons/fa6";
 import { TiHomeOutline } from "react-icons/ti";
-import { FaRegUser } from "react-icons/fa";
 import {
   Dialog,
   DialogContent,
@@ -30,31 +28,36 @@ const UserProfile = () => {
   const [imageFile, setImageFile] = useState(null);
   const [imageURL, setImageURL] = useState(null);
   const [loading, setLoading] = useState(false);
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const response = await getData("user/profile");
-        setUser(response);
 
-        if (response?.profileImage) {
-          const imageUrl = await fetchSignedImageUrl(response.profileImage);
-          setImageURL(imageUrl);
-        }
-      } catch (error) {
-        console.error("Error fetching profile:", error);
-      }
-      setLoading(false);
-    };
-
-    const fetchSignedImageUrl = async (key) => {
+  const fetchSignedImageUrl = async (key) => {
+    try {
       const cleanedKey = key.replace("uploads/", "");
       const response = await getData(`images/${cleanedKey}`);
       return response.signedUrl;
-    };
+    } catch (error) {
+      console.error("Error fetching signed image URL:", error);
+      return null;
+    }
+  };
 
-    fetchData();
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await getData("user/profile");
+      setUser(response);
+      if (response?.profileImage) {
+        const imageUrl = await fetchSignedImageUrl(response.profileImage);
+        setImageURL(imageUrl);
+      }
+    } catch (error) {
+      console.error("Error fetching profile:", error);
+    }
+    setLoading(false);
   }, []);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const handleProfileImageSubmit = async () => {
     if (!imageFile) return;
@@ -64,27 +67,26 @@ const UserProfile = () => {
 
     try {
       const res = await updateData("user/profile", formData);
-
       toast({
         title: res.message,
         description: "Your profile image has been updated successfully.",
-        type: "success",
+        variant: "success",
       });
 
       setUser(res.user);
-
       setIsEditing({ ...isEditing, profileImage: false });
-      setLoading(false);
     } catch (error) {
       toast({
-        title: error.message,
+        title: "Error",
         description: "Something went wrong while updating the image.",
-        type: "error",
+        variant: "error",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleCardDetailsSubmit = async (values) => {
+  const handleCardDetailsSubmit = async (values, { setSubmitting }) => {
     setLoading(true);
     try {
       const data = {
@@ -100,40 +102,51 @@ const UserProfile = () => {
       toast({
         title: "Card Added",
         description: "Your new card details have been added successfully.",
-        type: "success",
+        variant: "success",
       });
 
       setUser((prevUser) => ({
         ...prevUser,
         cards: [...(prevUser.cards || []), data],
       }));
+
       setIsEditing({ ...isEditing, cardDetails: false });
-      setLoading(false);
     } catch (error) {
       console.error("Error adding card details:", error);
       toast({
         title: "Update Failed",
         description: "Something went wrong while adding card details.",
-        type: "error",
+        variant: "error",
       });
+    } finally {
+      setLoading(false);
+      setSubmitting(false);
     }
   };
+
   const deleteCard = async (cardId) => {
     try {
-      const response = await deleteData("user/card", { cardId: cardId });
+      const response = await deleteData("user/card", { cardId });
       setUser(response.user);
       toast({
-        title: "Card deleted successfully",
+        title: "Success",
         description: "Card deleted successfully",
+        variant: "success",
       });
     } catch (error) {
-      console.log(error);
+      toast({
+        title: "Error",
+        description: "Failed to delete the card. Try again.",
+        variant: "error",
+      });
     }
   };
+
   if (!user) return <Loader />;
+
   return (
-    <div className="h-screen md:p-10 p-3 ">
-      <div className="h-full  py-8 rounded-lg">
+    <div className="h-screen md:p-10 p-3">
+      <div className="h-full py-8 rounded-lg">
         <div className="flex py-3 gap-3 mt-5">
           <div className="mb-4 text-start flex relative w-36">
             {imageURL ? (
@@ -146,102 +159,30 @@ const UserProfile = () => {
               <Loader2 />
             )}
             <Button
-              variant="outlined"
               onClick={() => setIsEditing({ ...isEditing, profileImage: true })}
-              className=" rounded-full w-10 h-10 bg-white border text-gray-800 shadow-md absolute md:bottom-2 bottom-3 right-3"
+              className="absolute bottom-3 right-3"
             >
               <MdOutlineEdit size={16} />
             </Button>
           </div>
           <div className="flex flex-col">
-            <p className="md:text-4xl text-2xl font-mier-bold font-semibold text-slate-700 flex items-center">
+            <p className="md:text-4xl text-2xl font-semibold text-slate-700 flex items-center">
               {user?.firstname} {user?.lastname}
               {user?.isVerified && (
                 <MdVerified size={18} className="ml-3" color="green" />
               )}
             </p>
-            <p className="text-sm font-mier-demi text-stone-500">
-              {user?.email}
-            </p>
-            <p className="text-sm font-mier-demi text-stone-500">
-              {user.gender}
-            </p>
-            <p className="text-sm font-mier-demi text-stone-500">
-              {user.address?.contact}
-            </p>
-            <p className="text-sm font-mier-demi text-stone-500">
-              Member since 2019
-            </p>
+            <p className="text-sm text-stone-500">{user?.email}</p>
+            <p className="text-sm text-stone-500">{user?.gender}</p>
           </div>
         </div>
 
-        {/* Address Section */}
-        <div className="relative">
-          <h2 className="text-lg bg-slate-100 text-slate-700 font-mier-bold border rounded-full px-4 border-slate-300 py-1 flex gap-2 items-center">
-            <TiHomeOutline />
-            Address
-          </h2>
-          {user?.address && (
-            <p className="flex flex-col py-5 ">
-              <p className="font-mier-book">{user?.address?.landmark},</p>
-              <p className="font-mier-book">{user?.address?.street},</p>
-              <p className="font-mier-book">
-                {user?.address?.city}, {user?.address?.state}
-              </p>
-              <p className="font-mier-book"> {user?.address?.pin}</p>
-              <p className="font-mier-book">
-                Contact: {user?.address?.contact}
-              </p>
-            </p>
-          )}
-
-          <AddressPopup
-            addressDetail={user?.address}
-            title=" Update"
-            description={"Update your delivery address"}
-            setUser={setUser}
-            loading={loading}
-            setLoading={setLoading}
-          />
-        </div>
-
-        {/* Card Details Section */}
-        <div className="mt-5 relative">
-          <h2 className="text-lg bg-slate-100 text-slate-700 font-mier-bold border rounded-full px-4 border-slate-300 py-1 flex gap-2 items-center">
-            <MdOutlineAddCard />
-            Card Details
-          </h2>
-          <div className=" flex gap-3 my-5 ">
-            {user?.cards?.map((card, index) => (
-              <div
-                key={index}
-                className="group  bg-[url(./src/assets/credit-card.png)] bg-no-repeat bg-center rounded-md bg-cover h-20 relative w-32"
-              >
-                <p className="font-mier-book font-thin   absolute text-[10px] bottom-8 w-full left-4 text-white">
-                  {card.cardholderName}
-                </p>
-                <div className="bg-orange-500 absolute bottom-1 ps-3 left-0 right-0">
-                  <p className="font-mier-book text-xs ">
-                    **** **** **** {card.cardNumber.slice(-4)}
-                  </p>
-                  <p className="text-[8px]">Expiry : {card.expiryDate}</p>
-                </div>
-                <RiDeleteBin7Line
-                  className="cursor-pointer group-hover:block absolute text-white h-8 w-8 transition-all bg-violet-800 p-2 hidden rounded-full bottom-0 right-0"
-                  onClick={() => {
-                    deleteCard(card._id);
-                  }}
-                />
-              </div>
-            ))}
-          </div>
-          <Button
-            onClick={() => setIsEditing({ ...isEditing, cardDetails: true })}
-            className="rounded-md border py-1 px-3 absolute top-12 right-0"
-          >
-            Add card{" "}
-          </Button>
-        </div>
+        <AddressPopup
+          addressDetail={user?.address}
+          setUser={setUser}
+          loading={loading}
+          setLoading={setLoading}
+        />
 
         <Dialog
           open={isEditing.profileImage}
@@ -260,18 +201,13 @@ const UserProfile = () => {
                 accept="image/*"
                 onChange={(e) => setImageFile(e.target.files[0])}
               />
-              <Button
-                type="button"
-                className="mt-4"
-                onClick={handleProfileImageSubmit}
-              >
+              <Button onClick={handleProfileImageSubmit}>
                 {loading ? "Saving" : "Save Changes"}
               </Button>
             </form>
           </DialogContent>
         </Dialog>
 
-        {/* Card Details Dialog */}
         <Dialog
           open={isEditing.cardDetails}
           onOpenChange={() =>
@@ -298,55 +234,16 @@ const UserProfile = () => {
                   "Cardholder Name is required"
                 ),
               })}
-              onSubmit={(values, { setSubmitting }) => {
-                handleCardDetailsSubmit(values);
-                setSubmitting(false);
-              }}
+              onSubmit={handleCardDetailsSubmit}
             >
               {({ isSubmitting }) => (
-                <Form className="space-y-4">
-                  <div>
-                    <label>Card Number</label>
-                    <Field
-                      name="cardNumber"
-                      type="text"
-                      as={Input}
-                      placeholder="Enter Card Number"
-                    />
-                  </div>
-                  <div>
-                    <label>Expiry Date</label>
-                    <Field
-                      name="expiryDate"
-                      type="text"
-                      as={Input}
-                      placeholder="MM/YY"
-                    />
-                  </div>
-                  <div>
-                    <label>CVV</label>
-                    <Field
-                      name="cvv"
-                      type="text"
-                      as={Input}
-                      placeholder="Enter CVV"
-                    />
-                  </div>
-                  <div>
-                    <label>Cardholder Name</label>
-                    <Field
-                      name="cardholderName"
-                      type="text"
-                      as={Input}
-                      placeholder="Enter Cardholder Name"
-                    />
-                  </div>
-
-                  <Button
-                    type="submit"
-                    disabled={isSubmitting || loading}
-                    className="bg-fuchsia-500 hover:bg-fuchsia-600"
-                  >
+                <Form>
+                  <Field
+                    name="cardNumber"
+                    as={Input}
+                    placeholder="Enter Card Number"
+                  />
+                  <Button type="submit" disabled={isSubmitting || loading}>
                     {loading ? "Adding..." : "Add Card"}
                   </Button>
                 </Form>
