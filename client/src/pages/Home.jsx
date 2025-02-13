@@ -55,7 +55,7 @@ const Home = () => {
               <br />
               Best Quality Shopping
             </h1>
-            <div className="flex justify-around bg-white p-3 rounded-sm">
+            <div className="flex justify-around bg-white md:p-1 lg:p-3 rounded-sm">
               <div className="flex items-center font-mier-demi lg:gap-3 leading-4 text-xs lg:text-sm  gap-1">
                 <img
                   src={free_delivery_jamun}
@@ -108,24 +108,24 @@ const Home = () => {
         </div>
         <div className="relative w-full h-fit rounded-sm overflow-hidden">
           <img src={category_banner} alt="Category banner" className="w-full" />
-          <div className="absolute justify-between top-16 right-3 lg:right-4 left-3 flex h-full items-baseline gap-3">
+          <div className="absolute justify-between top-20 lg:top-16 right-3 lg:right-4 left-3 flex h-full items-baseline gap-3">
             <img
               src={categories1}
               alt="Category 1"
-              className="w-64 lg:w-[27rem] cursor-pointer"
+              className="w-48 lg:w-[27rem] cursor-pointer"
               onClick={() => navigate("/category/women fashion")}
             />
             <img
               src={categories2}
               alt="Category 2"
               onClick={() => navigate("/category/mens fashion")}
-              className="w-52 lg:w-80 cursor pointer"
+              className="w-48 lg:w-80 cursor pointer"
             />
             <img
               src={categories3}
               onClick={() => navigate("/category/kids fashion")}
               alt="Category 3"
-              className="w-52 cursor-pointer  lg:w-80"
+              className="w-48 cursor-pointer  lg:w-80"
             />
           </div>
         </div>
@@ -146,38 +146,38 @@ const Home = () => {
               <img
                 src={essential1}
                 alt="Essential product 1"
-                className="w-36 lg:w-52"
+                className="w-32 lg:w-52"
               />
               <img
                 src={home_decor}
                 alt="Home decor"
                 onClick={() => navigate("/category/home decor")}
-                className="w-36 lg:w-52 cursor-pointer"
+                className="w-32 lg:w-52 cursor-pointer"
               />
             </div>
             <div>
               <img
                 src={essential2}
                 alt="Essential product 2"
-                className="w-36 lg:w-52"
+                className="w-32 lg:w-52"
               />
               <img
                 src={kitchen_appliences}
                 alt="Kitchen appliances"
                 onClick={() => navigate("/category/kitchen appliences")}
-                className="w-36 lg:w-52 cursor-pointer"
+                className="w-32 lg:w-52 cursor-pointer"
               />
             </div>
             <div>
               <img
                 src={essential3}
                 alt="Essential product 3"
-                className="w-36 lg:w-52"
+                className="w-32 lg:w-52"
               />
               <img
                 src={health_care}
                 alt="Health care products"
-                className="w-36 lg:w-52 cursor-pointer"
+                className="w-32 lg:w-52 cursor-pointer"
                 onClick={() => navigate("/category/health care")}
               />
             </div>
@@ -196,39 +196,39 @@ const Home = () => {
               <img
                 src={style1}
                 alt="Style product 1"
-                className="w-36 lg:w-52"
+                className="w-32 lg:w-52"
               />
               <img
                 src={assessories}
                 onClick={() => navigate("/category/accessories")}
                 alt="Accessories"
-                className="w-36 lg:w-52 cursor-pointer"
+                className="w-32 lg:w-52 cursor-pointer"
               />
             </div>
             <div>
               <img
                 src={style2}
                 alt="Style product 2"
-                className="w-36 lg:w-52"
+                className="w-32 lg:w-52"
               />
               <img
                 src={footwear}
                 alt="Footwear"
                 onClick={() => navigate("/category/footwear")}
-                className="w-36 lg:w-52 cursor-pointer"
+                className="w-32 lg:w-52 cursor-pointer"
               />
             </div>
             <div>
               <img
                 src={style3}
                 alt="Style product 3"
-                className="w-36 lg:w-52"
+                className="w-32 lg:w-52"
               />
               <img
                 src={electronics}
                 alt="Electronics"
                 onClick={() => navigate("/category/electronics")}
-                className="w-36 lg:w-52 cursor-pointer"
+                className="w-32 lg:w-52 cursor-pointer"
               />
             </div>
           </div>
@@ -262,7 +262,7 @@ const Home = () => {
         </div>
         <div className="relative w-full rounded-sm overflow-hidden h-full ">
           <img src={supply_banner} alt="Supplier banner" className="w-full" />
-          <div className="absolute top-8 bottom-8 flex flex-col justify-around left-6 text-white">
+          <div className="absolute top-6 lg:top-8 bottom-8 flex flex-col justify-around left-6 text-white">
             <h1 className="text-xl lg:text-4xl">
               Register as a Meesho Supplier
             </h1>
@@ -287,7 +287,7 @@ const Home = () => {
             </div>
             <Button
               onClick={() => navigate("/supplier")}
-              className="bg-white w-fit mt-4 lg:text-sm text-slate-900 font-mier-bold  px-3 py-3  hover:bg-slate-300"
+              className="bg-white w-fit mt-4 lg:text-sm text-slate-900 font-mier-bold  px-4 lg:py-3  hover:bg-slate-300"
             >
               Sign up Now
             </Button>

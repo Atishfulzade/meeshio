@@ -14,13 +14,13 @@ const Navbar_second = () => {
   const navigate = useNavigate();
   return (
     <div className=" w-full lg:h-12 md:h-10">
-      <div className=" md:flex w-full h-full items-center justify-between md:px-20">
+      <div className=" md:flex bg-white  items-center justify-between md:px-10 lg:px-20 ">
         {navbar_second.map((item, itemIndex) => (
           <HoverCard key={itemIndex}>
             <HoverCardTrigger asChild>
               <Button
                 variant="link"
-                className="text-slate-800 decoration-2 lg:underline-offset-[17px] md:underline-offset-[14px] font-normal justify-center items-center flex flex-col h-full"
+                className="text-slate-800 px-1 py-3 decoration-2 lg:underline-offset-[17px] md:underline-offset-[14px] font-normal  h-full"
               >
                 <p className="lg:text-[17px] md:text-[14px] font-medium hover:text-fuchsia-600 transition-all font-mier-book">
                   {item.title}

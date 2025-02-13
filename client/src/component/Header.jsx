@@ -238,7 +238,7 @@ const Header = () => {
           </div>
           {!ismobile && location.pathname !== "/checkout" && (
             <SearchBar
-              width={"md:w-72 lg:w-96"}
+              width={"md:w-72 lg:w-96 w-[35%]"}
               searchInput={searchInput}
               showResult={true}
               setSearchInput={setSearchInput}
@@ -293,7 +293,7 @@ const Header = () => {
               <Link
                 variant="link"
                 to={"/supplier"}
-                className="text-slate-800 text-[17px] font-normal font-mier-book"
+                className="text-slate-800 text-center  text-[17px] font-normal font-mier-book"
               >
                 Become a supplier
               </Link>
